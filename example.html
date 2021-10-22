@@ -1,0 +1,13 @@
+<script type="text/javascript" src="src/hansken.js"></script>
+<script type="text/javascript">
+    const hansken = new HanskenClient('http://localhost:9091/gatekeeper');
+    hansken.projects().then((projects) => {
+        projects.forEach((project) => {
+            hansken.searchTraces(project.id, '', 0)
+                .then((result) => result.totalResults)
+                .then((totalResults) => {
+                    document.write(`<li>${project.name} <font color="blue">${totalResults}</font>`);
+                });
+        });
+    });
+</script>

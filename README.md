@@ -1,6 +1,15 @@
 # Hansken Javascript Client
 Work in progress
 
+## Installation
+Install via NPM:
+
+```bash
+npm install hansken-js
+
+```
+
+
 ```javascript
 <script type="text/javascript" src="hanskenAPI.js"></script>
 <script type="text/javascript">

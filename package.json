@@ -1,0 +1,27 @@
+{
+  "name": "hansken-js",
+  "version": "0.1.0",
+  "description": "The Hansken Javascript API",
+  "main": "src/hansken.js",
+  "license": "MIT",
+  "keywords": [
+    "Hansken"
+  ],
+  "author": "Netherlands Forensic Institute",
+  "engines": {
+    "node": ">4.0"
+  },
+  "homepage": "https://github.com/NetherlandsForensicInstitute/hansken-js",
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/NetherlandsForensicInstitute/hansken-js/LICENSE"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/NetherlandsForensicInstitute/hansken-js.git"
+  },
+  "devDependencies": {
+  }
+}

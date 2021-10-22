@@ -1,20 +1,3 @@
-/*
-Usage:
-```javascript
-<script type="text/javascript" src="./src/hanskenAPI.js"></script>
-<script type="text/javascript">
-    const hansken = new HanskenClient('https://gatekeeper01.test.hansken.holmes.nl/gatekeeper');
-
-    hansken.projects().then((projects) => {
-        projects.forEach((project) => {
-            document.write(`<li>${project.name}`);
-        });
-    });
-</script>
-```
-*/
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 class HanskenClient {
     
     constructor(gatekeeper) {
@@ -126,7 +109,7 @@ class HanskenClient {
             count
         };
         if (typeof query === 'string') {
-            request.query = {hql: query};
+            request.query = {human: query};
         } else {
             request.query = query;
         }
@@ -134,9 +117,12 @@ class HanskenClient {
         return HanskenClient.#fetch(this.gatekeeper, `/projects/${projectId}/traces/search`, {
             method: 'POST',
             headers: {
-              'Content-Type': 'application/json'
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify(request)
         }).then((response) => response.json());
     }; 
 }
+
+module.exports.HanskenClient = HanskenClient;
