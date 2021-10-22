@@ -11,7 +11,7 @@ npm install hansken-js
 
 
 ```javascript
-<script type="text/javascript" src="hanskenAPI.js"></script>
+<script type="text/javascript" src="hansken.js"></script>
 <script type="text/javascript">
     const hansken = new HanskenClient('https://gatekeeper01.hansken.org/gatekeeper');
 
