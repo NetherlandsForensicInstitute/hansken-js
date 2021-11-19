@@ -1,6 +1,6 @@
 {
   "name": "hansken-js",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "The Hansken Javascript API",
   "main": "src/hansken.js",
   "license": "MIT",
@@ -22,6 +22,5 @@
     "type": "git",
     "url": "https://github.com/NetherlandsForensicInstitute/hansken-js.git"
   },
-  "devDependencies": {
-  }
+  "devDependencies": {}
 }
