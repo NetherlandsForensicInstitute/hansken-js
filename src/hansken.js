@@ -125,4 +125,4 @@ class HanskenClient {
     }; 
 }
 
-module.exports.HanskenClient = HanskenClient;
+export { HanskenClient };
