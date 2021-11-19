@@ -1,0 +1,64 @@
+class SessionManager {
+
+    constructor(gatekeeperUrl) {
+        this.gatekeeperUrl = gatekeeperUrl;
+    }
+
+    static #login(base, entityID) {
+        window.location.href = `${base}/saml/login?idp=${encodeURIComponent(entityID)}&redirectUrl=${encodeURIComponent(window.location.href)}`;
+        return Promise.reject(new Error('Redirecting to login page')); // We won't get here
+    }
+
+    static #fetch(base, url, req) {
+        // Defaults for Cross Origin Resource Sharing
+        const request = req || {};
+        request.credentials = 'include';
+        request.mode = 'cors';
+
+        // TODO accept Request as argument
+        return window.fetch(`${base}${url}`, request)
+            .then((response) => {
+                const contentType = response.headers.get('Content-Type');
+                if (response.status === 401 || (response.status === 200 && contentType.indexOf('text/html') === 0)) {
+                    return response.text()
+                        .then((text) => {
+                            if (text.indexOf('SAMLRequest') !== -1) {
+                                // This is an html form page redirecting you to the default Identity Provider.
+                                // Let's orchestrate that request ourself
+                                
+                                return window.fetch(`${base}/saml/idps`, {credentials: 'include', mode: 'cors'})
+                                    .then((idps) => idps.json())
+                                    .then((idps) => {
+                                        if (idps.length === 1) {
+                                            // Only one Identity Provider available, redirect to login page with redirectUrl
+                                            return SessionManager.#login(base, idps[0].entityID);
+                                        }
+
+                                        // Ask the user which Identity Provider should be used
+                                        const descriptions = idps.map(idp => idp.description || idp.entityID).map(idp => `"${idp}"`).join(', ');
+                                        for (let i = 0; i < idps.length; i += 1) {
+                                            const idp = idps[i];
+                                            // Disable these eslint rules to make sure we can use confirm().
+                                            // This is an old browser component, but it is very useful for this case as it is UI Framework independent
+                                            // and blocking the thread.
+                                            // eslint-disable-next-line no-alert, no-restricted-globals
+                                            if (confirm(`Multiple Identity Providers found: ${descriptions}. Do you want to login with Identity Provider "${(idp.description ? idp.description : idp.entityID)}"?`)) {
+                                                return SessionManager.#login(base, idp.entityID);
+                                            }
+                                        }
+                                        return Promise.reject(new Error('No Identity Provider chosen, unable to retrieve data'));
+                                    });
+                            }
+
+                            // TODO recreate request and return?
+                            return Promise.reject(new Error('Body was of type "text/html" but no SAMLRequest was found in the text'))
+                        });
+                }
+                return response;
+            });
+    };
+
+    gatekeeper = (url, req) => SessionManager.#fetch(this.gatekeeperUrl, url, req);
+}
+
+export { SessionManager };
