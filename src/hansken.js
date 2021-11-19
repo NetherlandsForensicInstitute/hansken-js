@@ -4,9 +4,20 @@ import { Projects } from './modules/projects.js';
 class HanskenClient {
     
     constructor(gatekeeperUrl) {
-      const sessionManager = new SessionManager(gatekeeperUrl);
-      this.projects = new Projects(sessionManager);
+      this.sessionManager = new SessionManager(gatekeeperUrl);
+      
     }
+
+
+    /**
+     * Get all projects.
+     *
+     * @returns All projects the current user is authorized for
+     */
+    projects = () => this.sessionManager.gatekeeper('/projects').then((response) => response.json());
+
+    project = (projectId) => new ProjectContext(sessionManager, projectId);
+
 
     /**
      * Search for traces in a project.
