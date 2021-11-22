@@ -22,5 +22,8 @@
     "type": "git",
     "url": "https://github.com/NetherlandsForensicInstitute/hansken-js.git"
   },
-  "devDependencies": {}
+  "devDependencies": {},
+  "dependencies": {
+    "express": "^4.17.1"
+  }
 }

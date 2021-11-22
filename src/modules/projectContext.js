@@ -1,4 +1,4 @@
-import { ProjectImageContext } from './modules/projectImageContext.js';
+import { ProjectImageContext } from './projectImageContext.js';
 
 class ProjectContext {
 

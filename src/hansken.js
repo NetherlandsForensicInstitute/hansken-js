@@ -1,5 +1,5 @@
 import { SessionManager } from './modules/sessionManager.js';
-import { Projects } from './modules/projects.js';
+import { ProjectContext } from './modules/projectContext.js';
 
 class HanskenClient {
     
@@ -7,7 +7,6 @@ class HanskenClient {
       this.sessionManager = new SessionManager(gatekeeperUrl);
       
     }
-
 
     /**
      * Get all projects.
@@ -17,7 +16,6 @@ class HanskenClient {
     projects = () => this.sessionManager.gatekeeper('/projects').then((response) => response.json());
 
     project = (projectId) => new ProjectContext(sessionManager, projectId);
-
 
     /**
      * Search for traces in a project.
