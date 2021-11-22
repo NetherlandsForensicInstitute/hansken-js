@@ -4,7 +4,7 @@
     const params = {};
     window.location.search.substr(1).split('&').forEach((param) => {
         const parts = param.split('=');
-        params[parts[0]] = parts[1];
+        params[parts[0]] = decodeURIComponent(parts[1]);
     });
 
     const projectId = params.projectId;
