@@ -8,5 +8,5 @@ app.use('/', express.static(path.join(__dirname, '/')));
 app.use('/src', express.static(path.join(__dirname, '../src')));
 
 app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`);
+  console.log(`Example server started at http://localhost:${port}`);
 });
