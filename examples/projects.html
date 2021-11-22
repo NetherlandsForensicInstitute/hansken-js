@@ -1,10 +1,10 @@
 <script type="module">
     import {HanskenClient} from './src/hansken.js';
    
-    const hansken = new HanskenClient('https://gatekeeper01.test.hansken.holmes.nl/gatekeeper');
+    const hansken = new HanskenClient('http://localhost:9091/gatekeeper');
     hansken.projects().then((projects) => {
         projects.forEach((project) => {
-            document.write(`<li><a href="projectImages.html?projectId=${project.id}">${project.name}</a>`);
+            document.write(`<li><a href="project-images.html?projectId=${project.id}">${project.name}</a>`);
         });
     });
 </script>
