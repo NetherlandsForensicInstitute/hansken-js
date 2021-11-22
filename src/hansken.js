@@ -15,7 +15,7 @@ class HanskenClient {
      */
     projects = () => this.sessionManager.gatekeeper('/projects').then((response) => response.json());
 
-    project = (projectId) => new ProjectContext(sessionManager, projectId);
+    project = (projectId) => new ProjectContext(this.sessionManager, projectId);
 
     /**
      * Search for traces in a project.

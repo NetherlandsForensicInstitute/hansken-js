@@ -4,7 +4,7 @@
     const hansken = new HanskenClient('https://gatekeeper01.test.hansken.holmes.nl/gatekeeper');
     hansken.projects().then((projects) => {
         projects.forEach((project) => {
-            document.write(`<li>${project.name}`);
+            document.write(`<li><a href="projectImages.html?projectId=${project.id}">${project.name}</a>`);
         });
     });
 </script>
