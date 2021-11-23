@@ -5,7 +5,6 @@ class HanskenClient {
     
     constructor(gatekeeperUrl) {
       this.sessionManager = new SessionManager(gatekeeperUrl);
-      
     }
 
     /**

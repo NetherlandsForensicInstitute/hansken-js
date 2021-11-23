@@ -17,7 +17,6 @@ class ProjectContext {
     /**
      * Update an existing project.
      *
-     * @param {string} projectId The uuid of the project to update
      * @param {object} project The new project to store for the specified project
      * @returns void
      */
@@ -32,7 +31,6 @@ class ProjectContext {
     /**
      * Get all images linked to a specific project.
      *
-     * @param {string} projectId The uuid of the project to update
      * @returns An array of images linked to this project
      */
     images = () => this.sessionManager.gatekeeper(`/projects/${this.projectId}/images`).then((response) => response.json());

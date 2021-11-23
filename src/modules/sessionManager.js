@@ -9,14 +9,14 @@ class SessionManager {
         return Promise.reject(new Error('Redirecting to login page')); // We won't get here
     }
 
-    static #fetch(base, url, req) {
+    static #fetch(base, path, req) {
         // Defaults for Cross Origin Resource Sharing
         const request = req || {};
         request.credentials = 'include';
         request.mode = 'cors';
 
         // TODO accept Request as argument
-        return window.fetch(`${base}${url}`, request)
+        return window.fetch(`${base}${path}`, request)
             .then((response) => {
                 const contentType = response.headers.get('Content-Type');
                 if (response.status === 401 || (response.status === 200 && contentType.indexOf('text/html') === 0)) {
@@ -58,7 +58,7 @@ class SessionManager {
             });
     };
 
-    gatekeeper = (url, req) => SessionManager.#fetch(this.gatekeeperUrl, url, req);
+    gatekeeper = (path, request) => SessionManager.#fetch(this.gatekeeperUrl, path, request);
 }
 
 export { SessionManager };
