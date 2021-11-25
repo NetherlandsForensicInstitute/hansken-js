@@ -1,5 +1,10 @@
 class SessionManager {
 
+    /**
+     * Creates an object that handles the authentication of SAML services.
+     *
+     * @param {String} gatekeeperUrl The url to the Hansken gatekeeper, without trailing '/'
+     */
     constructor(gatekeeperUrl) {
         this.gatekeeperUrl = gatekeeperUrl;
     }

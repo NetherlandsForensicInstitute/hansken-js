@@ -3,6 +3,11 @@ import { ProjectContext } from './modules/projectContext.js';
 
 class HanskenClient {
     
+    /**
+     * Creates a client to obtain information via the Hansken REST API. SAML session handling is done by this client.
+     *
+     * @param {String} gatekeeperUrl The url to the Hansken gatekeeper, without trailing '/'
+     */
     constructor(gatekeeperUrl) {
       this.sessionManager = new SessionManager(gatekeeperUrl);
     }
@@ -14,35 +19,13 @@ class HanskenClient {
      */
     projects = () => this.sessionManager.gatekeeper('/projects').then((response) => response.json());
 
-    project = (projectId) => new ProjectContext(this.sessionManager, projectId);
-
     /**
-     * Search for traces in a project.
-     * 
-     * @param {string} projectId 
-     * @param {string|object} query The query as an HQL query string, of a HQL JSON object
-     * @param {number} count The maximum amount of traces to return
-     * @returns 
+     * Get a context for a single project, to do project specific REST calls.
+     *
+     * @param {UUID} projectId The project id
+     * @returns A ProjectContext
      */
-/*    searchTraces = (projectId, query = '', count = 10) => {
-        const request = {
-            count
-        };
-        if (typeof query === 'string') {
-            request.query = {human: query};
-        } else {
-            request.query = query;
-        }
-
-        return HanskenClient.fetch(this.gatekeeper, `/projects/${projectId}/traces/search`, {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(request)
-        }).then((response) => response.json());
-    }; */
+    project = (projectId) => new ProjectContext(this.sessionManager, projectId);
 }
 
 export { HanskenClient };

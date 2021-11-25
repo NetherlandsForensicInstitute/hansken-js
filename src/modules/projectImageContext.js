@@ -1,5 +1,12 @@
 class ProjectImageContext {
 
+    /**
+     * Create a context for a specific project image. This can be used to update or get image metadata.
+     * 
+     * @param {SessionManager} sessionManager The session manager, used for connections to the Hansken servers
+     * @param {UUID} projectId The project id
+     * @param {UUID} imageId The project image id
+     */
     constructor(sessionManager, projectId, imageId) {
         this.sessionManager = sessionManager;
         this.projectId = projectId;
