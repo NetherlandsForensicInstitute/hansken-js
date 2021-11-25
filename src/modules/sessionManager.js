@@ -63,6 +63,13 @@ class SessionManager {
             });
     };
 
+    /**
+     * Make a REST call to the gatekeeper.
+     *
+     * @param {String} path The path to be added to the gatekeeper url
+     * @param {object} request The request object for the window.fetch API
+     * @returns A promise from the window.fetch API
+     */
     gatekeeper = (path, request) => SessionManager.#fetch(this.gatekeeperUrl, path, request);
 }
 
