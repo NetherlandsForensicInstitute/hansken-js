@@ -6,19 +6,19 @@ Install via NPM:
 
 ```bash
 npm install hansken-js
-
 ```
 
-
+## Usage
 ```javascript
-<script type="text/javascript" src="hansken.js"></script>
-<script type="text/javascript">
-    const hansken = new HanskenClient('https://gatekeeper01.hansken.org/gatekeeper');
+import {HanskenClient} from './src/hansken.js';
 
-    hansken.projects().then((projects) => {
-        projects.forEach((project) => {
-            document.write(`<li>${project.name}`);
-        });
+const hansken = new HanskenClient('/gatekeeper');
+hansken.projects().then((projects) => {
+    projects.forEach((project) => {
+        document.write(`<li><a href="project-images.html?projectId=${project.id}">${project.name}</a>`);
     });
-</script>
+});
 ```
+
+## Examples
+Start examples with `node examples/app.js`

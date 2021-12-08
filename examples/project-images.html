@@ -1,0 +1,19 @@
+<script type="module">
+    import {HanskenClient} from './src/hansken.js';
+   
+    const params = {};
+    window.location.search.substr(1).split('&').forEach((param) => {
+        const parts = param.split('=');
+        params[parts[0]] = decodeURIComponent(parts[1]);
+    });
+
+    const projectId = params.projectId;
+    if (projectId) {
+        const hansken = new HanskenClient('/gatekeeper');
+        hansken.project(projectId).images().then((images) => {
+            images.forEach((image) => {
+                document.write(`<li>${image.description}`);
+            });
+        });
+    }
+</script>

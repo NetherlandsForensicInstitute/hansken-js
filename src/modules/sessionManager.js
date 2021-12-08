@@ -1,5 +1,10 @@
 class SessionManager {
 
+    /**
+     * Creates an object that handles the authentication of SAML services.
+     *
+     * @param {string} gatekeeperUrl The url to the Hansken gatekeeper, without trailing '/'
+     */
     constructor(gatekeeperUrl) {
         this.gatekeeperUrl = gatekeeperUrl;
     }
@@ -9,14 +14,14 @@ class SessionManager {
         return Promise.reject(new Error('Redirecting to login page')); // We won't get here
     }
 
-    static #fetch(base, url, req) {
+    static #fetch(base, path, req) {
         // Defaults for Cross Origin Resource Sharing
         const request = req || {};
         request.credentials = 'include';
         request.mode = 'cors';
 
         // TODO accept Request as argument
-        return window.fetch(`${base}${url}`, request)
+        return window.fetch(`${base}${path}`, request)
             .then((response) => {
                 const contentType = response.headers.get('Content-Type');
                 if (response.status === 401 || (response.status === 200 && contentType.indexOf('text/html') === 0)) {
@@ -58,7 +63,14 @@ class SessionManager {
             });
     };
 
-    gatekeeper = (url, req) => SessionManager.#fetch(this.gatekeeperUrl, url, req);
+    /**
+     * Make a REST call to the gatekeeper.
+     *
+     * @param {string} path The path to be added to the gatekeeper url
+     * @param {object} request The request object for the window.fetch API
+     * @returns A promise from the window.fetch API
+     */
+    gatekeeper = (path, request) => SessionManager.#fetch(this.gatekeeperUrl, path, request);
 }
 
 export { SessionManager };

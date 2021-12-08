@@ -1,40 +1,31 @@
 import { SessionManager } from './modules/sessionManager.js';
-import { Projects } from './modules/projects.js';
+import { ProjectContext } from './modules/projectContext.js';
 
 class HanskenClient {
     
+    /**
+     * Creates a client to obtain information via the Hansken REST API. SAML session handling is done by this client.
+     *
+     * @param {String} gatekeeperUrl The url to the Hansken gatekeeper, without trailing '/'
+     */
     constructor(gatekeeperUrl) {
-      const sessionManager = new SessionManager(gatekeeperUrl);
-      this.projects = new Projects(sessionManager);
+      this.sessionManager = new SessionManager(gatekeeperUrl);
     }
 
     /**
-     * Search for traces in a project.
-     * 
-     * @param {string} projectId 
-     * @param {string|object} query The query as an HQL query string, of a HQL JSON object
-     * @param {number} count The maximum amount of traces to return
-     * @returns 
+     * Get all projects.
+     *
+     * @returns All projects the current user is authorized for
      */
-/*    searchTraces = (projectId, query = '', count = 10) => {
-        const request = {
-            count
-        };
-        if (typeof query === 'string') {
-            request.query = {human: query};
-        } else {
-            request.query = query;
-        }
+    projects = () => this.sessionManager.gatekeeper('/projects').then((response) => response.json());
 
-        return HanskenClient.fetch(this.gatekeeper, `/projects/${projectId}/traces/search`, {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(request)
-        }).then((response) => response.json());
-    }; */
+    /**
+     * Get a context for a single project, to do project specific REST calls.
+     *
+     * @param {UUID} projectId The project id
+     * @returns A ProjectContext
+     */
+    project = (projectId) => new ProjectContext(this.sessionManager, projectId);
 }
 
 export { HanskenClient };
