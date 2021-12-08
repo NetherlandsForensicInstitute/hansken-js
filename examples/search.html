@@ -11,7 +11,6 @@
     };
 
     hansken.project('de554b81-e4a3-4759-96ec-0abf942be72c').search().traces(request).then((result) => {
-        console.log(result.traces);
         _.map(result.traces, 'trace').forEach((trace) => {
             document.write(trace.uid + '<br>');
         });
