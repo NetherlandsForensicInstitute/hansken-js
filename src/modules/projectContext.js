@@ -19,7 +19,7 @@ class ProjectContext {
      *
      * @returns The project
      */
-    get = () => this.sessionManager.gatekeeper(`/projects/${this.projectId}`).then((response) => response.json());
+    get = () => this.sessionManager.gatekeeper(`/projects/${this.projectId}`).then(this.sessionManager.toJson);
 
     /**
      * Update an existing project.
@@ -40,7 +40,7 @@ class ProjectContext {
      *
      * @returns An array of images linked to this project
      */
-    images = () => this.sessionManager.gatekeeper(`/projects/${this.projectId}/images`).then((response) => response.json());
+    images = () => this.sessionManager.gatekeeper(`/projects/${this.projectId}/images`).then(this.sessionManager.toJson);
 
     /**
      * Create a ProjectImageContext for a single project image by id.

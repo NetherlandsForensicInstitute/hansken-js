@@ -28,7 +28,7 @@ class ProjectSearchContext {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(searchRequest)
-        }).then((response) => response.json());
+        }).then(this.sessionManager.toJson);
     };
 }
 
