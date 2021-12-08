@@ -29,7 +29,7 @@ class SessionManager {
                             if (text.indexOf('SAMLRequest') !== -1) {
                                 // This is an html form page redirecting you to the default Identity Provider.
                                 // Let's orchestrate that request ourself
-                                
+
                                 return window.fetch(`${base}/saml/idps`, {credentials: 'include', mode: 'cors'})
                                     .then((idps) => idps.json())
                                     .then((idps) => {
@@ -73,9 +73,9 @@ class SessionManager {
 
     /**
      * Convert a fetch response to json when the result was valid.
-     * 
-     * @param {*} response 
-     * @returns json as object or a rejected Promise when the response status was not 2xx and the Content-Type was not application/json
+     *
+     * @param {*} response
+     * @returns json as object or a rejected Promise when the response status was not 2xx or the Content-Type was not application/json
      */
     toJson = (response) => {
         if (response.status >= 200 && response.status < 300 && response.headers.get('Content-Type').indexOf('application/json') === 0) {
