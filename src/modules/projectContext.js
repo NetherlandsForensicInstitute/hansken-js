@@ -1,4 +1,5 @@
 import { ProjectImageContext } from './projectImageContext.js';
+import { ProjectSearchContext } from './projectSearchContext.js';
 
 class ProjectContext {
 
@@ -42,7 +43,7 @@ class ProjectContext {
     images = () => this.sessionManager.gatekeeper(`/projects/${this.projectId}/images`).then((response) => response.json());
 
     /**
-     * Create an ProjectImageContext for a single project image by id.
+     * Create a ProjectImageContext for a single project image by id.
      * 
      * @param {UUID} The image id
      * @returns A new ProjectImageContext
@@ -50,32 +51,11 @@ class ProjectContext {
     image = (imageId) => new ProjectImageContext(this.sessionManager, this.projectId, imageId);
 
     /**
-     * Search for traces in a project.
+     * Create a ProjectSearchContext to search for traces, facets, tracelets and more.
      * 
-     * @param {string} projectId 
-     * @param {string|object} query The query as an HQL query string, of a HQL JSON object
-     * @param {number} count The maximum amount of traces to return
-     * @returns 
+     * @returns A new ProjectSearchContext
      */
-    /*searchTraces = (query = '', count = 10) => {
-        const request = {
-            count
-        };
-        if (typeof query === 'string') {
-            request.query = {human: query};
-        } else {
-            request.query = query;
-        }
-
-        return this.sessionManager.gatekeeper(`/projects/${this.projectId}/traces/search`, {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(request)
-        }).then((response) => response.json());
-    }; */
+    search = () => new ProjectSearchContext(this.sessionManager, this.projectId);
 }
 
 export { ProjectContext };
