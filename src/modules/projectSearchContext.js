@@ -39,7 +39,7 @@ class ProjectSearchContext {
      */
     tracesMap = (request = '', callback) => {
         const searchRequest = typeof request === 'string' ? {query: {human: request}} : request;
-        searchRequest.facets = []; // No facets allowed in streaming
+        searchRequest.facets = []; // No facets allowed in streaming for now as the regex below doesn't understand them
 
         const searchResultRegex = /^(\{("[a-z0-9]+"\:\s?("[a-z0-9]+"|[0-9]+|\[\]),?\s?)*"traces"\:\s?\[)/i
 

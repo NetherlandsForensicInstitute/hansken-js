@@ -10,9 +10,10 @@
         count: 1000
     };
 
-    hansken.project('de554b81-e4a3-4759-96ec-0abf942be72c').search().traces(request).then((result) => {
-        _.map(result.traces, 'trace').forEach((trace) => {
-            document.write(trace.uid + '<br>');
-        });
+    let count = 0;
+    hansken.project('de554b81-e4a3-4759-96ec-0abf942be72c').search().tracesMap(request, (result) => {
+        document.write(++count + ' ' + result.trace.uid + '<br>');
+    }).then((searchResult) => {
+        document.write(JSON.stringify(searchResult));
     });
 </script>
