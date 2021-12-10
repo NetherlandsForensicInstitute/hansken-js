@@ -3,7 +3,7 @@
   "version": "0.2.0",
   "description": "The Hansken Javascript API",
   "main": "src/hansken.js",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "keywords": [
     "Hansken"
   ],
@@ -14,7 +14,7 @@
   "homepage": "https://github.com/NetherlandsForensicInstitute/hansken-js",
   "licenses": [
     {
-      "type": "MIT",
+      "type": "Apache-2.0",
       "url": "https://github.com/NetherlandsForensicInstitute/hansken-js/LICENSE"
     }
   ],
