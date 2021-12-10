@@ -55,24 +55,26 @@ class ProjectSearchContext {
             const decoder = new TextDecoder();
 
             let buffer = '';
-            let streamStarted = false;
+            let searchResult;
 
             return reader.read().then(function processData({done, value}) {
                 if (done) {
-                    // Value is undefined when stream is done
-                    return Promise.resolve();
+                    // The current buffer contains the closing json of the search result.
+                    // So let's complete this function with the json object without the trace objects
+                    return Promise.resolve(JSON.parse(searchResult + buffer));
                 }
             
                 // value for fetch streams is an Uint8Array
                 buffer += decoder.decode(value); // Note: not every byte is a single character!
 
-                if (!streamStarted) {
+                if (!searchResult) {
+                    // The root element is the trace search result
                     const result = buffer.match(searchResultRegex);
                     if (!result) {
                         return reader.read().then(processData);
                     }
                     buffer = buffer.substring(result[0].length);
-                    streamStarted = true;
+                    searchResult = result[0];
                 }
 
                 if (buffer.length === 0) {

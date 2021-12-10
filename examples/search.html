@@ -7,11 +7,13 @@
         query: {
             human: 'type:email'
         },
-        count: 100
+        count: 10
     };
 
     let count = 0;
     hansken.project('de554b81-e4a3-4759-96ec-0abf942be72c').search().tracesMap(request, (result) => {
         document.write(++count + ' ' + result.trace.uid + '<br>');
+    }).then((searchResult) => {
+        console.log(searchResult);
     });
 </script>
