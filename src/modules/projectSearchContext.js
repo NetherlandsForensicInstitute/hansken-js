@@ -103,7 +103,7 @@ class ProjectSearchContext {
                             else if (character === '}') {
                                 depth--;
                                 if (depth === 0) {
-                                    callback(JSON.parse(buffer.substring(start, i + 1))); // TODO expect Promise?
+                                    callback(JSON.parse(buffer.substring(start, i + 1)));
                                     start = i + 1;
                                 }
                             }
