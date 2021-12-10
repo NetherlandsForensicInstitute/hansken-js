@@ -14,7 +14,6 @@ class ProjectSearchContext {
     /**
      * Search for traces in a project.
      * 
-     * @param {string} projectId 
      * @param {string|object} request The query as an HQL query string, or the full REST request for the /search
      * @returns 
      */
