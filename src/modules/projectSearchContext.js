@@ -12,32 +12,13 @@ class ProjectSearchContext {
     }
 
     /**
-     * Search for traces in a project.
-     * 
-     * @param {string|object} request The query as an HQL query string, or the full REST request for the /search
-     * @returns 
-     */
-    traces = (request = '') => {
-        const searchRequest = typeof request === 'string' ? {query: {human: request}} : request;
-
-        return this.sessionManager.gatekeeper(`/projects/${this.projectId}/traces/search`, {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(searchRequest)
-        }).then(this.sessionManager.toJson);
-    };
-
-    /**
      * Search for traces in a project and map every trace to the callback.
      * 
      * @param {string|object} request The query as an HQL query string, or the full REST request for the /search
      * @param {function} callback The callback that receives a trace result object
-     * @returns 
+     * @returns A promise with the trace result without traces
      */
-    tracesMap = (request = '', callback) => {
+    #streamingTraces = (request = '', callback) => {
         const searchRequest = typeof request === 'string' ? {query: {human: request}} : request;
         searchRequest.facets = []; // No facets allowed in streaming for now as the regex below doesn't understand them
 
@@ -118,6 +99,30 @@ class ProjectSearchContext {
             });
         });
     };
+
+    /**
+     * Search for traces in a project.
+     * 
+     * @param {string|object} request The query as an HQL query string, or the full REST request for the /search
+     * @param {function} callback When provided, all trace results are fed to the callback. This can be used to process large trace results, as the JSON parsing is streaming
+     * @returns A promise with the trace result. Note that when given a callback, the traces array in the search result is empty
+     */
+     traces = (request = '', callback) => {
+        if (typeof callback === 'function') {
+            return this.#streamingTraces(request, callback);
+        }
+        const searchRequest = typeof request === 'string' ? {query: {human: request}} : request;
+
+        return this.sessionManager.gatekeeper(`/projects/${this.projectId}/traces/search`, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(searchRequest)
+        }).then(this.sessionManager.toJson);
+    };
+
 }
 
 export { ProjectSearchContext };

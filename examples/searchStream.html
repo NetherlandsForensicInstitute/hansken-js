@@ -11,7 +11,7 @@
     };
 
     let count = 0;
-    hansken.project('de554b81-e4a3-4759-96ec-0abf942be72c').search().tracesMap(request, (result) => {
+    hansken.project('de554b81-e4a3-4759-96ec-0abf942be72c').search().traces(request, (result) => {
         document.write(++count + ' ' + result.trace.uid + '<br>');
     }).then((searchResult) => {
         document.write(JSON.stringify(searchResult));
