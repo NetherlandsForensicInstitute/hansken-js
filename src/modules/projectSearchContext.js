@@ -15,13 +15,14 @@ class ProjectSearchContext {
      * Search for traces in a project and map every trace to the callback.
      * 
      * @param {string|object} request The query as an HQL query string, or the full REST request for the /search
-     * @param {function} callback The callback that receives a trace result object
+     * @param {function} callback The callback that receives a trace result object. Note: facets are not allowed when streaming (not implemented)
      * @returns A promise with the trace result without traces
      */
     #streamingTraces = (request = '', callback) => {
         const searchRequest = typeof request === 'string' ? {query: {human: request}} : request;
         searchRequest.facets = []; // No facets allowed in streaming for now as the regex below doesn't understand them
 
+        // Regex to read all search result fields until the "traces": [] field, where the array will be further processed
         const searchResultRegex = /^(\{("[a-z0-9]+"\:\s?("[a-z0-9]+"|[0-9]+|\[\]),?\s?)*"traces"\:\s?\[)/i
 
         return this.sessionManager.gatekeeper(`/projects/${this.projectId}/traces/search`, {
