@@ -1,0 +1,21 @@
+[{
+	"id": "de554b81-e4a3-4759-96ec-0abf942be72c",
+	"name": "Cold case 1994",
+	"createdBy": "john.doe@keycloak.hansken.local",
+	"description": "A case that started in the winter of 1994",
+	"type": "cybercrime",
+	"lastModifiedDate": "2021-11-10T00:00:00.000Z",
+	"createdDate": "2021-11-09T13:42:35.947Z",
+	"priority": 3
+}, {
+	"id": "1a85b2d2-972a-4131-86f7-f55b61b19158",
+	"name": "Dummy project",
+	"description": "Project with no images",
+	"createdBy": "user.name@keycloak.hansken.local",
+	"type": "other",
+	"startDate": "2021-09-01T00:00:00.000Z",
+	"lastAccessedDate": "2021-09-07T00:00:00.000Z",
+	"lastModifiedDate": "2021-09-01T00:00:00.000Z",
+	"createdDate": "2021-09-01T08:01:15.330Z",
+	"priority": 3
+}]

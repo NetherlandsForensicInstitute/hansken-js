@@ -1,0 +1,18 @@
+<script type="text/javascript" src="./node_modules/lodash/lodash.min.js"></script>
+<script type="module">
+    import {HanskenClient} from './src/hansken.js';
+   
+    const hansken = new HanskenClient('/gatekeeper');
+    const request = {
+        query: {
+            human: 'type:email'
+        },
+        count: 1000
+    };
+
+    hansken.project('de554b81-e4a3-4759-96ec-0abf942be72c').search().traces(request).then((result) => {
+        _.map(result.traces, 'trace').forEach((trace) => {
+            document.write(trace.uid + '<br>');
+        });
+    });
+</script>

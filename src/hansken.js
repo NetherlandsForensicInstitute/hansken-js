@@ -9,7 +9,7 @@ class HanskenClient {
      * @param {String} gatekeeperUrl The url to the Hansken gatekeeper, without trailing '/'
      */
     constructor(gatekeeperUrl) {
-      this.sessionManager = new SessionManager(gatekeeperUrl);
+        this.sessionManager = new SessionManager(gatekeeperUrl);
     }
 
     /**

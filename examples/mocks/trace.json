@@ -1,0 +1,222 @@
+{
+	"decoded": "preview",
+	"id": "0-0-10-3",
+	"image": "1a85b2d2-972a-4131-86f7-f55b61b19158",
+	"modelVersion": "2.0",
+	"name": "Fwd: Your reservation",
+	"parent": "1a85b2d2-972a-4131-86f7-f55b61b19158:0-0-10",
+	"path": "/1a85b2d2-972a-4131-86f7-f55b61b19158///mailbox.pst/Fwd: Your reservation",
+	"pathItems": ["1a85b2d2-972a-4131-86f7-f55b61b19158", "/", "mailbox.pst", "Fwd: Your reservation"],
+	"previews": {
+		"text/plain": "Tm90ZTogZm9yd2FyZGVkIG1lc3NhZ2UgYXR0YWNoZWQuCgo="
+	},
+	"siblingId": 3,
+	"uid": "1a85b2d2-972a-4131-86f7-f55b61b19158:0-0-10-3",
+	"system": {
+		"extracted": {
+			"carved": {},
+			"data": {
+				"preview": {
+					"entropy": 4.635315,
+					"fileType": "Text ASCII",
+					"hash": {
+						"md5": "26133de5866c22692aed9f8a32a117bc",
+						"sha1": "b912c1f8f5ec13eebe205b1d186e1e793b1cb6de",
+						"sha256": "090d9d9b52f2cba6f9e186d403f0b11476fccb36853a9b03346f01b4a2e5557f"
+					},
+					"hashMisses": ["nsrl", "hveicse", "lkpdb_kp"],
+					"mimeClass": "text",
+					"mimeType": "text/plain; charset='ascii'",
+					"size": 255
+				}
+			},
+			"email": {
+				"application": "Microsoft Outlook",
+				"createdOn": "2010-06-18T04:04:23.554Z",
+				"from": "elephant@hansken.org",
+				"hasAttachment": false,
+				"messageId": "<000000008387FFA5CCD52E46989E36B0F6DE67EB042E2000@PMZL01>",
+				"misc": {
+					"PropertyId_0x6604": "33401",
+					"PropertyId_0x6610": "448",
+					"PropertyId_0x7201": "2",
+					"PropertyId_0x7202": "2010-06-18T04:04:23.710Z",
+					"PropertyId_0x7203": "O4ODRGP01N2OKASDSPX4DOZ0SU5K4XXHB",
+					"PropertyId_0x7206": "0",
+					"PropertyId_0x801D": "multipart/mixed; boundary=\"----=_Part_273_35293.1274860318824\"; charset=\"us-ascii\"",
+					"ReplChangenum": "1036920",
+					"carved": "true",
+					"carved_offset": "234692096",
+					"carved_size": "2734",
+					"charset_name": "US-ASCII",
+					"has_attachments_flag": "true",
+					"has_read_notification_request": "false",
+					"has_resend_request": "false",
+					"identifier": "234692096",
+					"importance": "Normal",
+					"is_from_me": "false",
+					"is_sent": "true",
+					"is_submitted": "false",
+					"modified": "true",
+					"orig_headers": "Date: Mon, 12 Mar 2001 03:29:00 -0800 (PST)\r\nMessage-ID: <000000008387FFA5CCD52E46989E36B0F6DE67EB042E2000@PMZL01>\r\nMIME-Version: 1.0\r\nContent-Type: multipart/mixed; boundary=\"----=_Part_273_35293.1274860318824\"\r\nFrom: \"Hansken the elephant\" <elephant@hansken.org>\r\nTo: Hansken the elephant <don.baughman@enron.com>\r\nSubject:  Fwd: Your reservation\r\nX-Filename:  dbaughm.nsf\r\nX-Folder:  \\All documents\r\nX-SDOC:  525750\r\nX-ZLID:  zl-edrm-enron-v2-baughman-d-1412.eml\r\n\r\n",
+					"original_subject": "Your reservation",
+					"record_type": "IPM.Note",
+					"sent_representing": "[elephant@hansken.org (2)]",
+					"size": "39309",
+					"trusted": "true"
+				},
+				"modifiedOn": "2010-06-18T04:04:23.554Z",
+				"read": true,
+				"receivedOn": "2001-03-12T11:29:00.000Z",
+				"sentOn": "2001-03-12T11:29:00.000Z",
+				"subject": "Fwd: Your reservation",
+				"to": ["Hansken the elephant"]
+			},
+			"identity": [{
+				"emailAddress": "elephant@hansken.org",
+				"id": "elephant@hansken.org",
+				"screenName": "Hansken the elephant"
+			}, {
+				"emailAddress": "elephant@hansken.org",
+				"id": "elephant@hansken.org (2)",
+				"screenName": "Hansken the elephant"
+			}]
+		},
+		"processed": {
+			"origin": {
+				"createdBy": "traces/email",
+				"createdOn": "2021-11-23T07:25:54.995Z"
+			},
+			"toolrun": [{
+				"children": 2,
+				"dataType": "meta",
+				"dataTypes": ["preview"],
+				"duration": 0.000,
+				"hanskenVersion": "44.0.0",
+				"properties": ["data.descriptor", "data.size", "dataTypes", "email.application", "email.createdOn", "email.from", "email.hasAttachment", "email.messageId", "email.misc.PropertyId_0x6604", "email.misc.PropertyId_0x6610", "email.misc.PropertyId_0x7201", "email.misc.PropertyId_0x7202", "email.misc.PropertyId_0x7203", "email.misc.PropertyId_0x7206", "email.misc.PropertyId_0x801D", "email.misc.ReplChangenum", "email.misc.carved", "email.misc.carved_offset", "email.misc.carved_size", "email.misc.charset_name", "email.misc.has_attachments_flag", "email.misc.has_read_notification_request", "email.misc.has_resend_request", "email.misc.identifier", "email.misc.importance", "email.misc.is_from_me", "email.misc.is_sent", "email.misc.is_submitted", "email.misc.modified", "email.misc.orig_headers", "email.misc.original_subject", "email.misc.record_type", "email.misc.sent_representing", "email.misc.size", "email.misc.trusted", "email.modifiedOn", "email.read", "email.receivedOn", "email.sentOn", "email.subject", "email.to", "identity.emailAddress", "identity.id", "identity.screenName"],
+				"result": "success",
+				"startedOn": "2021-11-23T07:25:54.995Z",
+				"tool": "traces/email",
+				"types": ["carved", "data", "email", "identity"],
+				"version": "3.2-traces-10.3.1"
+			}, {
+				"dataType": "preview",
+				"duration": 0.717,
+				"hanskenVersion": "44.0.0",
+				"properties": ["data.fileType", "data.mimeClass", "data.mimeType"],
+				"result": "success",
+				"startedOn": "2021-11-23T07:37:27.654Z",
+				"tool": "firefli/filetype",
+				"version": "2.1-firefli-3.33.0"
+			}, {
+				"dataType": "preview",
+				"duration": 0.010,
+				"hanskenVersion": "44.0.0",
+				"result": "success",
+				"startedOn": "2021-11-23T07:37:28.393Z",
+				"tool": "crypto/decrypt-pgp",
+				"version": "2.1"
+			}, {
+				"dataType": "preview",
+				"duration": 0.011,
+				"hanskenVersion": "44.0.0",
+				"result": "success",
+				"startedOn": "2021-11-23T07:37:28.407Z",
+				"tool": "data-processor",
+				"version": "1.1"
+			}, {
+				"dataType": "preview",
+				"duration": 0.012,
+				"hanskenVersion": "44.0.0",
+				"properties": ["data.entropy"],
+				"result": "success",
+				"startedOn": "2021-11-23T07:37:28.407Z",
+				"tool": "data/digest/entropy",
+				"version": "0.1"
+			}, {
+				"dataType": "preview",
+				"duration": 0.000,
+				"hanskenVersion": "44.0.0",
+				"properties": ["data.hash.md5"],
+				"result": "success",
+				"startedOn": "2021-11-23T07:37:28.419Z",
+				"tool": "data/digest/md5",
+				"version": "0.2"
+			}, {
+				"dataType": "preview",
+				"duration": 0.000,
+				"hanskenVersion": "44.0.0",
+				"properties": ["data.hash.sha1"],
+				"result": "success",
+				"startedOn": "2021-11-23T07:37:28.419Z",
+				"tool": "data/digest/sha1",
+				"version": "0.2"
+			}, {
+				"dataType": "preview",
+				"duration": 0.000,
+				"hanskenVersion": "44.0.0",
+				"properties": ["data.hash.sha256"],
+				"result": "success",
+				"startedOn": "2021-11-23T07:37:28.419Z",
+				"tool": "data/digest/sha256",
+				"version": "0.2"
+			}, {
+				"dataType": "preview",
+				"duration": 0.003,
+				"hanskenVersion": "44.0.0",
+				"result": "success",
+				"startedOn": "2021-11-23T07:37:28.419Z",
+				"tool": "text-processor",
+				"version": "1.0"
+			}, {
+				"dataType": "preview",
+				"duration": 0.018,
+				"hanskenVersion": "44.0.0",
+				"result": "success",
+				"startedOn": "2021-11-23T07:37:28.421Z",
+				"tool": "text/term",
+				"version": "1.0"
+			}, {
+				"children": 2,
+				"dataType": "preview",
+				"duration": 0.297,
+				"hanskenVersion": "44.0.0",
+				"properties": ["entity.confidence", "entity.encoding", "entity.length", "entity.offset", "entity.source", "entity.type", "entity.value"],
+				"result": "success",
+				"startedOn": "2021-11-23T07:37:28.421Z",
+				"tool": "entity/feel",
+				"types": ["entity"],
+				"version": "1.0"
+			}, {
+				"dataType": "preview",
+				"duration": 0.016,
+				"hanskenVersion": "44.0.0",
+				"properties": ["data.hashMisses"],
+				"result": "success",
+				"startedOn": "2021-11-23T07:37:28.766Z",
+				"tool": "metadata/hashmatch",
+				"version": "3.0"
+			}, {
+				"children": 8,
+				"dataType": "meta",
+				"duration": 0.017,
+				"hanskenVersion": "44.0.0",
+				"properties": ["entity.confidence", "entity.encoding", "entity.fvt", "entity.length", "entity.offset", "entity.source", "entity.type", "entity.value"],
+				"result": "success",
+				"startedOn": "2021-11-23T07:37:28.787Z",
+				"tool": "entity/feel",
+				"types": ["entity"],
+				"version": "1.0"
+			}, {
+				"dataType": "meta",
+				"duration": 0.458,
+				"hanskenVersion": "44.0.0",
+				"properties": ["previewData.text/plain", "previewTypes"],
+				"result": "success",
+				"startedOn": "2021-11-23T07:37:28.805Z",
+				"tool": "text/decoding",
+				"version": "1.0"
+			}]
+		}
+	}
+}

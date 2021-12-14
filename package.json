@@ -23,8 +23,9 @@
     "url": "https://github.com/NetherlandsForensicInstitute/hansken-js.git"
   },
   "devDependencies": {
-    "express": "^4.17.1"
+    "express": "4.17.1"
   },
   "dependencies": {
+    "lodash": "4.17.21"
   }
 }
