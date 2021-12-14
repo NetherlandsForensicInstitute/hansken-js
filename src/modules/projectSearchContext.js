@@ -11,6 +11,41 @@ class ProjectSearchContext {
         this.projectId = projectId;
     }
 
+    static #tryObjectParse = (buffer, callback) => {
+        let start = 0;
+        let depth = 1;
+        let inEscape = false;
+        let inQuote = false;
+        for (let i = 1; i < buffer.length; i++) {
+            const character = buffer[i];
+
+            if (character === '\\') {
+                inEscape = !inEscape;
+            } else if (!inEscape) {
+                if (character === '"') {
+                    inQuote = !inQuote;
+                } else if (!inQuote) {
+                    if (character === '{') {
+                        if (depth === 0) {
+                            start = i;
+                        }
+                        depth++;
+                    }
+                    else if (character === '}') {
+                        depth--;
+                        if (depth === 0) {
+                            callback(JSON.parse(buffer.substring(start, i + 1)));
+                            start = i + 1;
+                        }
+                    }
+                }
+            } else {
+                inEscape = false;
+            }
+        }
+        return start;
+    }
+
     /**
      * Search for traces in a project and map every trace to the callback.
      * 
@@ -63,37 +98,7 @@ class ProjectSearchContext {
                     return reader.read().then(processData);    
                 }
 
-                let start = 0;
-                let depth = 1;
-                let inEscape = false;
-                let inQuote = false;
-                for (let i = 1; i < buffer.length; i++) {
-                    const character = buffer[i];
-
-                    if (character === '\\') {
-                        inEscape = !inEscape;
-                    } else if (!inEscape) {
-                        if (character === '"') {
-                            inQuote = !inQuote;
-                        } else if (!inQuote) {
-                            if (character === '{') {
-                                if (depth === 0) {
-                                    start = i;
-                                }
-                                depth++;
-                            }
-                            else if (character === '}') {
-                                depth--;
-                                if (depth === 0) {
-                                    callback(JSON.parse(buffer.substring(start, i + 1)));
-                                    start = i + 1;
-                                }
-                            }
-                        }
-                    } else {
-                        inEscape = false;
-                    }
-                }
+                const start = ProjectSearchContext.#tryObjectParse(buffer, callback);
 
                 buffer = buffer.substring(start);
                 return reader.read().then(processData);
