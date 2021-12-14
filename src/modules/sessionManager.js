@@ -1,5 +1,4 @@
 class SessionManager {
-
     /**
      * Creates an object that handles the authentication of SAML services.
      *
@@ -71,6 +70,19 @@ class SessionManager {
      * @returns A promise from the window.fetch API
      */
     gatekeeper = (path, request) => SessionManager.#fetch(this.gatekeeperUrl, path, request);
+
+    /**
+     * Convert a fetch response to json when the result was valid.
+     *
+     * @param {*} response
+     * @returns json as object or a rejected Promise when the response status was not 2xx or the Content-Type was not application/json
+     */
+    toJson = (response) => {
+        if (response.status < 200 || response.status >= 300 || response.headers.get('Content-Type').indexOf('application/json') !== 0) {
+            return Promise.reject(response);
+        }
+        return response.json();
+    };
 }
 
 export { SessionManager };

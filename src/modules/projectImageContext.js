@@ -18,7 +18,7 @@ class ProjectImageContext {
      *
      * @returns The project image
      */
-    get = () => this.sessionManager.gatekeeper(`/projects/${this.projectId}/images/${this.imageId}`).then((response) => response.json());
+    get = () => this.sessionManager.gatekeeper(`/projects/${this.projectId}/images/${this.imageId}`).then(this.sessionManager.toJson);
 
     /**
      * Update an existing project image.
