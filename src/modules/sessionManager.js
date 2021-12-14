@@ -81,7 +81,7 @@ class SessionManager {
         if (response.status < 200 || response.status >= 300 || response.headers.get('Content-Type').indexOf('application/json') !== 0) {
             return Promise.reject(response);
         }
-        return response.json();        
+        return response.json();
     };
 }
 
