@@ -78,10 +78,10 @@ class SessionManager {
      * @returns json as object or a rejected Promise when the response status was not 2xx or the Content-Type was not application/json
      */
     toJson = (response) => {
-        if (response.status >= 200 && response.status < 300 && response.headers.get('Content-Type').indexOf('application/json') === 0) {
-            return response.json();
+        if (response.status < 200 || response.status >= 300 || response.headers.get('Content-Type').indexOf('application/json') !== 0) {
+            return Promise.reject(response);
         }
-        return Promise.reject(response);
+        return response.json();
     };
 }
 
