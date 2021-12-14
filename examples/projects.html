@@ -1,6 +1,6 @@
 <script type="module">
     import {HanskenClient} from './src/hansken.js';
-   
+
     const hansken = new HanskenClient('/gatekeeper');
     hansken.projects().then((projects) => {
         projects.forEach((project) => {

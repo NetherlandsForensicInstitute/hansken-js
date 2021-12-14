@@ -30,7 +30,7 @@ class SessionManager {
                             if (text.indexOf('SAMLRequest') !== -1) {
                                 // This is an html form page redirecting you to the default Identity Provider.
                                 // Let's orchestrate that request ourself
-                                
+
                                 return window.fetch(`${base}/saml/idps`, {credentials: 'include', mode: 'cors'})
                                     .then((idps) => idps.json())
                                     .then((idps) => {

@@ -2,7 +2,7 @@ import { SessionManager } from './modules/sessionManager.js';
 import { ProjectContext } from './modules/projectContext.js';
 
 class HanskenClient {
-    
+
     /**
      * Creates a client to obtain information via the Hansken REST API. SAML session handling is done by this client.
      *

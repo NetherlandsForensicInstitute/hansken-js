@@ -2,7 +2,7 @@ class ProjectSearchContext {
 
     /**
      * Create a search context for a specific project. This can be used to search for traces.
-     * 
+     *
      * @param {SessionManager} sessionManager The session manager, used for connections to the Hansken servers
      * @param {UUID} projectId The project id
      */
@@ -13,9 +13,9 @@ class ProjectSearchContext {
 
     /**
      * Search for traces in a project.
-     * 
+     *
      * @param {string|object} request The query as an HQL query string, or the full REST request for the /search
-     * @returns 
+     * @returns
      */
     traces = (request = '') => {
         const searchRequest = typeof request === 'string' ? {query: {human: request}} : request;
