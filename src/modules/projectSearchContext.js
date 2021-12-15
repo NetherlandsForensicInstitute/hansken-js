@@ -52,7 +52,7 @@ class ProjectSearchContext {
 
     /**
      * Search for traces in a project and map every trace to the callback.
-     * 
+     *
      * @param {string|object} request The query as an HQL query string, or the full REST request for the /search
      * @param {function} callback The callback that receives a trace result object. Note: facets are not allowed when streaming (not implemented)
      * @returns A promise with the trace result without traces
@@ -84,7 +84,7 @@ class ProjectSearchContext {
                     // So let's complete this function with the json object without the trace objects
                     return Promise.resolve(JSON.parse(searchResult + buffer));
                 }
-            
+
                 // value for fetch streams is an Uint8Array
                 buffer += decoder.decode(value); // Note: not every byte is a single character!
 
@@ -99,7 +99,7 @@ class ProjectSearchContext {
                 }
 
                 if (buffer.length === 0) {
-                    return reader.read().then(processData);    
+                    return reader.read().then(processData);
                 }
 
                 const start = ProjectSearchContext.#tryObjectParse(buffer, callback);
