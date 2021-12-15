@@ -12,6 +12,10 @@ class ProjectSearchContext {
     }
 
     static #tryObjectParse = (buffer, callback) => {
+        if (buffer.length <= 1) {
+            return 0;
+        }
+
         let start = 0;
         let depth = 1;
         let inEscape = false;
