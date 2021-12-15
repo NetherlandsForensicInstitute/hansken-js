@@ -5,7 +5,7 @@ class ProjectContext {
 
     /**
      * Create a context for a specific project. This can be used to search in a project or list its images.
-     * 
+     *
      * @param {SessionManager} sessionManager The session manager, used for connections to the Hansken servers
      * @param {UUID} projectId The project id
      */
@@ -44,7 +44,7 @@ class ProjectContext {
 
     /**
      * Create a ProjectImageContext for a single project image by id.
-     * 
+     *
      * @param {UUID} The image id
      * @returns A new ProjectImageContext
      */
@@ -52,7 +52,7 @@ class ProjectContext {
 
     /**
      * Create a ProjectSearchContext to search for traces, facets, tracelets and more.
-     * 
+     *
      * @returns A new ProjectSearchContext
      */
     search = () => new ProjectSearchContext(this.sessionManager, this.projectId);

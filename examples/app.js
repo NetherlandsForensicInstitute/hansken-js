@@ -45,7 +45,7 @@ app.post('/gatekeeper/projects/de554b81-e4a3-4759-96ec-0abf942be72c/traces/searc
 
         searchResult.traces.push(traceResult);
     }
-    
+
     response.json(searchResult);
 });
 

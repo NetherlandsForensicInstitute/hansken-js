@@ -1,31 +1,31 @@
 {
-  "name": "hansken-js",
-  "version": "0.2.0",
-  "description": "The Hansken Javascript API",
-  "main": "src/hansken.js",
-  "license": "Apache-2.0",
-  "keywords": [
-    "Hansken"
-  ],
-  "author": "Netherlands Forensic Institute",
-  "engines": {
-    "node": ">4.0"
-  },
-  "homepage": "https://github.com/NetherlandsForensicInstitute/hansken-js",
-  "licenses": [
-    {
-      "type": "Apache-2.0",
-      "url": "https://github.com/NetherlandsForensicInstitute/hansken-js/LICENSE"
+    "name": "hansken-js",
+    "version": "0.2.0",
+    "description": "The Hansken Javascript API",
+    "main": "src/hansken.js",
+    "license": "Apache-2.0",
+    "keywords": [
+        "Hansken"
+    ],
+    "author": "Netherlands Forensic Institute",
+    "engines": {
+        "node": ">4.0"
+    },
+    "homepage": "https://github.com/NetherlandsForensicInstitute/hansken-js",
+    "licenses": [
+        {
+            "type": "Apache-2.0",
+            "url": "https://github.com/NetherlandsForensicInstitute/hansken-js/LICENSE"
+        }
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/NetherlandsForensicInstitute/hansken-js.git"
+    },
+    "devDependencies": {
+        "express": "4.17.1"
+    },
+    "dependencies": {
+        "lodash": "4.17.21"
     }
-  ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/NetherlandsForensicInstitute/hansken-js.git"
-  },
-  "devDependencies": {
-    "express": "4.17.1"
-  },
-  "dependencies": {
-    "lodash": "4.17.21"
-  }
 }
