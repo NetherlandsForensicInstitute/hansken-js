@@ -5,7 +5,7 @@ class SessionManager {
      * @param {string} gatekeeperUrl The url to the Hansken gatekeeper, without trailing '/'
      */
     constructor(gatekeeperUrl) {
-        this.gatekeeperUrl = gatekeeperUrl;
+        this.gatekeeperUrl = gatekeeperUrl.replace(/\/+$/, '');
     }
 
     static #login(base, entityID) {
