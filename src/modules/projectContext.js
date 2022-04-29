@@ -10,7 +10,7 @@ class ProjectContext {
      * @param {UUID} id The project id or single file id
      * @param {'projects' | 'singlefiles'} collection 'projects' or 'singlefiles'
      */
-    constructor(sessionManager, projectId, collection) {
+    constructor(sessionManager, id, collection) {
         this.sessionManager = sessionManager;
         this.id = id;
         this.collection = collection;
