@@ -51,7 +51,8 @@ class ProjectContext {
      *
      * @returns An array of images linked to this project
      */
-    images = () => this.sessionManager.gatekeeper(`/${this.collection}/${this.id}/images`).then(this.sessionManager.toJson);
+    // NOTE: /singlefiles/{singlefileId}/images does not exist, but one can use /projects/{singlefileId}/images
+    images = () => this.sessionManager.gatekeeper(`/projects/${this.id}/images`).then(this.sessionManager.toJson);
 
     /**
      * Create a ProjectImageContext for a single project or singlefile image by id.
