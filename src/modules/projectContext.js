@@ -15,6 +15,15 @@ class ProjectContext {
     }
 
     /**
+     * Delete the project.
+     *
+     * @returns A promise
+     */
+    delete = () => this.sessionManager.gatekeeper(`/projects/${this.projectId}`, {
+        method: 'DELETE'
+    });
+
+    /**
      * Get the project.
      *
      * @returns The project

@@ -20,6 +20,13 @@ class HanskenClient {
     projects = () => this.sessionManager.gatekeeper('/projects').then((response) => response.json());
 
     /**
+     * Get all single files.
+     *
+     * @returns All single files the current user is authorized for
+     */
+    singlefiles = () => this.sessionManager.gatekeeper('/projects?hidden=true').then((response) => response.json());
+
+    /**
      * Get a context for a single project, to do project specific REST calls.
      *
      * @param {UUID} projectId The project id
