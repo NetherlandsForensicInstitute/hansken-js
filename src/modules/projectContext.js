@@ -8,7 +8,7 @@ class ProjectContext {
      *
      * @param {SessionManager} sessionManager The session manager, used for connections to the Hansken servers
      * @param {UUID} id The project id or single file id
-     * @param {String} collection 'projects' or 'singlefiles'
+     * @param {'projects' | 'singlefiles'} collection 'projects' or 'singlefiles'
      */
     constructor(sessionManager, projectId, collection) {
         this.sessionManager = sessionManager;
@@ -62,7 +62,7 @@ class ProjectContext {
     image = (imageId) => new ProjectImageContext(this.sessionManager, this.id, imageId);
 
     /**
-     * Create a SearchContext to search for traces, facets, tracelets and more.
+     * Create a ProjectSearchContext to search for traces, facets, tracelets and more.
      *
      * @returns A new ProjectSearchContext
      */

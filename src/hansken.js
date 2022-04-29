@@ -40,7 +40,7 @@ class HanskenClient {
      * @param {UUID} singlefileId The single file id
      * @returns A ProjectContext for a single file
      */
-     singlefile = (singlefileId) => new ProjectContext(this.sessionManager, singlefileId, 'singlefiles');
+    singlefile = (singlefileId) => new ProjectContext(this.sessionManager, singlefileId, 'singlefiles');
 }
 
 export { HanskenClient };
