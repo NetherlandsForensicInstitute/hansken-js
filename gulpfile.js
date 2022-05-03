@@ -1,0 +1,65 @@
+var babel = require('gulp-babel'),
+    browserify = require('browserify'),
+    source = require('vinyl-source-stream'),
+    buffer = require('vinyl-buffer'),
+    gulp = require('gulp'),
+    rename = require('gulp-rename'),
+    uglify = require('gulp-uglify'),
+    del = require('del'),
+    requirejs = require('gulp-requirejs');
+
+
+gulp.task('clean-build', function () {
+    return del(['build']);
+});
+
+gulp.task('es6-commonjs', gulp.series('clean-build', function () {
+    return gulp.src(['src/*.js', 'src/**/*.js'])
+        .pipe(babel({
+            presets: [
+                ['@babel/preset-env', {
+                    modules: 'commonjs'
+                }]
+            ]
+        }))
+        .pipe(gulp.dest('build/commonjs'));
+}));
+gulp.task('es6-amd', gulp.series('clean-build', function () {
+    return gulp.src(['src/*.js', 'src/**/*.js'])
+        .pipe(babel({
+            presets: [
+                ['@babel/preset-env', {
+                    modules: 'amd'
+                }]
+            ]
+        }))
+        .pipe(gulp.dest('build/amd'));
+
+}));
+
+gulp.task('clean-dist-commonjs', function () {
+    return del(['dist/commonjs']);
+});
+gulp.task('clean-dist-amd', function () {
+    return del(['dist/amd']);
+});
+
+gulp.task('bundle-commonjs', gulp.series('clean-dist-commonjs', 'es6-commonjs', function () {
+    return browserify('build/commonjs/hansken-js.js')
+        .bundle()
+        .pipe(source('hansken-js.js'))
+        .pipe(buffer())
+        //.pipe(uglify())
+        .pipe(gulp.dest('dist/commonjs'));
+}));
+gulp.task('bundle-amd', gulp.series('clean-dist-amd', 'es6-amd', function () {
+    return requirejs({
+        name: 'hansken-js',
+        baseUrl: 'build/amd',
+        out: 'hansken-js.js'
+    })
+        //.pipe(uglify())
+        .pipe(gulp.dest('dist/amd'));
+}));
+
+gulp.task('default', gulp.series('bundle-commonjs', 'bundle-amd'));

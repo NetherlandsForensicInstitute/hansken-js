@@ -23,7 +23,21 @@
         "url": "https://github.com/NetherlandsForensicInstitute/hansken-js.git"
     },
     "devDependencies": {
-        "express": "4.17.1"
+        "@babel/core": "7.17.10",
+        "@babel/preset-env": "^7.17.10",
+        "browserify": "^17.0.0",
+        "del": "^6.0.0",
+        "express": "4.17.1",
+        "gulp": "^4.0.2",
+        "gulp-babel": "^8.0.0",
+        "gulp-browserify": "^0.5.1",
+        "gulp-rename": "^2.0.0",
+        "gulp-requirejs": "^1.4.0",
+        "gulp-uglify": "^3.0.2",
+        "micromatch": "^4.0.5",
+        "requirejs": "^2.3.6",
+        "vinyl-buffer": "^1.0.1",
+        "vinyl-source-stream": "^2.0.0"
     },
     "dependencies": {
         "lodash": "4.17.21"
