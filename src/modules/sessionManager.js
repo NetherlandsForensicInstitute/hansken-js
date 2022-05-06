@@ -1,11 +1,18 @@
+import { KeyManager } from './keyManager.js';
+
 class SessionManager {
+
+    #keyManager;
+
     /**
      * Creates an object that handles the authentication of SAML services.
      *
-     * @param {string} gatekeeperUrl The url to the Hansken gatekeeper, without trailing '/'
+     * @param {string} gatekeeperUrl The url to the Hansken gatekeeper
+     * @param {string} keystoreUrl The url to the Hansken keystore
      */
-    constructor(gatekeeperUrl) {
+    constructor(gatekeeperUrl, keystoreUrl) {
         this.gatekeeperUrl = gatekeeperUrl.replace(/\/+$/, '');
+        this.keystoreUrl = keystoreUrl;
     }
 
     static #login(base, entityID) {
@@ -70,6 +77,26 @@ class SessionManager {
      * @returns A promise from the window.fetch API
      */
     gatekeeper = (path, request) => SessionManager.#fetch(this.gatekeeperUrl, path, request);
+
+    /**
+     * Make a REST call to the keystore.
+     *
+     * @param {string} path The path to be added to the keystore url
+     * @param {object} request The request object for the window.fetch API
+     * @returns A promise from the window.fetch API
+     */
+    keystore = (path, request) => SessionManager.#fetch(this.keystoreUrl, path, request);
+
+    /**
+     * Retrieve and store keys from the Hansken keystore.
+     * @returns The keystore manager
+     */
+    keyManager = () => {
+        if (!this.#keyManager) {
+            this.#keyManager = new KeyManager(this);
+        }
+        return this.#keyManager;
+    }
 
     /**
      * Convert a fetch response to json when the result was valid.

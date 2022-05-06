@@ -6,10 +6,11 @@ class HanskenClient {
     /**
      * Creates a client to obtain information via the Hansken REST API. SAML session handling is done by this client.
      *
-     * @param {String} gatekeeperUrl The url to the Hansken gatekeeper, without trailing '/'
+     * @param {String} gatekeeperUrl The url to the Hansken gatekeeper
+     * * @param {String} keystoreUrl The url to the Hansken keystore
      */
-    constructor(gatekeeperUrl) {
-        this.sessionManager = new SessionManager(gatekeeperUrl);
+    constructor(gatekeeperUrl, keystoreUrl) {
+        this.sessionManager = new SessionManager(gatekeeperUrl, keystoreUrl);
     }
 
     /**
