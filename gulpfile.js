@@ -4,7 +4,6 @@ var babel = require('gulp-babel'),
     source = require('vinyl-source-stream'),
     buffer = require('vinyl-buffer'),
     gulp = require('gulp')
-    del = require('del'),
     requirejs = require('gulp-requirejs');
 
 gulp.task('clean-build', function () {
