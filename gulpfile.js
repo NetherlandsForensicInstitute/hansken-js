@@ -1,4 +1,4 @@
-var babel = require('gulp-babel'),
+const babel = require('gulp-babel'),
     browserify = require('browserify'),
     clean = require('gulp-dest-clean'),
     source = require('vinyl-source-stream'),
