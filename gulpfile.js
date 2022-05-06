@@ -1,16 +1,14 @@
 var babel = require('gulp-babel'),
     browserify = require('browserify'),
+    clean = require('gulp-dest-clean'),
     source = require('vinyl-source-stream'),
     buffer = require('vinyl-buffer'),
-    gulp = require('gulp'),
-    rename = require('gulp-rename'),
-    uglify = require('gulp-uglify'),
-    del = require('del'),
+    gulp = require('gulp')
     requirejs = require('gulp-requirejs');
 
-
 gulp.task('clean-build', function () {
-    return del(['build']);
+    return gulp.src('src/*.js', {read: false})
+        .pipe(clean('build'));
 });
 
 gulp.task('es6-commonjs', gulp.series('clean-build', function () {
@@ -24,6 +22,7 @@ gulp.task('es6-commonjs', gulp.series('clean-build', function () {
         }))
         .pipe(gulp.dest('build/commonjs'));
 }));
+
 gulp.task('es6-amd', gulp.series('clean-build', function () {
     return gulp.src(['src/*.js', 'src/**/*.js'])
         .pipe(babel({
@@ -38,10 +37,13 @@ gulp.task('es6-amd', gulp.series('clean-build', function () {
 }));
 
 gulp.task('clean-dist-commonjs', function () {
-    return del(['dist/commonjs']);
+    return gulp.src('src/*.js', {read: false})
+        .pipe(clean('dist/commonjs'));
 });
 gulp.task('clean-dist-amd', function () {
-    return del(['dist/amd']);
+    return gulp.src('src/*.js', {read: false})
+        .pipe(clean('dist/amd'));
+
 });
 
 gulp.task('bundle-commonjs', gulp.series('clean-dist-commonjs', 'es6-commonjs', function () {
@@ -49,16 +51,14 @@ gulp.task('bundle-commonjs', gulp.series('clean-dist-commonjs', 'es6-commonjs', 
         .bundle()
         .pipe(source('hansken-js.js'))
         .pipe(buffer())
-        //.pipe(uglify())
         .pipe(gulp.dest('dist/commonjs'));
 }));
 gulp.task('bundle-amd', gulp.series('clean-dist-amd', 'es6-amd', function () {
     return requirejs({
-        name: 'hansken-js',
-        baseUrl: 'build/amd',
-        out: 'hansken-js.js'
-    })
-        //.pipe(uglify())
+            name: 'hansken-js',
+            baseUrl: 'build/amd',
+            out: 'hansken-js.js'
+        })
         .pipe(gulp.dest('dist/amd'));
 }));
 
