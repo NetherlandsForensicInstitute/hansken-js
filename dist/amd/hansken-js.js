@@ -287,68 +287,13 @@ define('modules/projectImageContext.js',["exports"], function (_exports) {
 
   _exports.ProjectImageContext = ProjectImageContext;
 });
-define('modules/traceUid.js',["exports"], function (_exports) {
-  "use strict";
-
-  Object.defineProperty(_exports, "__esModule", {
-    value: true
-  });
-  _exports.TraceUid = void 0;
-
-  function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-  function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
-
-  function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-  function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-  var TraceUid = /*#__PURE__*/_createClass(
-  /**
-   * Create a TraceUid object from imageId and traceId.
-   *
-   * @param {string} imageId The imageId of the trace, e.g. '093da8cb-77f8-46df-ac99-ea93aeede0be'
-   * @param {string} traceId The traceId of the trace, e.g. '0-1-1-a3f'
-   */
-  function TraceUid(imageId, traceId) {
-    _classCallCheck(this, TraceUid);
-
-    this.imageId = imageId;
-    this.traceId = traceId;
-    this.traceUid = "".concat(this.imageId, ":").concat(this.traceId);
-    Object.freeze(this); // Makes properties immutable
-  }
-  /**
-   * Parse a traceUid string to a TraceUid object.
-   *
-   * @param {string} traceUid The traceUid of the trace, format 'imageId:traceId', e.g. '093da8cb-77f8-46df-ac99-ea93aeede0be:0-1-1-a3f'
-   * @returns A TraceUid object or undefined
-   */
-  );
-
-  _exports.TraceUid = TraceUid;
-
-  _defineProperty(TraceUid, "fromString", function (traceUid) {
-    var semicolon = traceUid.indexOf(':');
-
-    if (semicolon != 36 || traceUid.length < 37) {
-      return;
-    }
-
-    return new TraceUid(traceUid.substring(0, semicolon), traceUid.substring(semicolon + 1));
-  });
-});
-define('modules/projectSearchContext.js',["exports", "./traceUid.js", "./keyManager.js"], function (_exports, _traceUid, _keyManager) {
+define('modules/projectSearchContext.js',["exports"], function (_exports) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
   _exports.ProjectSearchContext = void 0;
-
-  function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
-
-  function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 
   function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
@@ -475,24 +420,6 @@ define('modules/projectSearchContext.js',["exports", "./traceUid.js", "./keyMana
       }).then(_this.sessionManager.toJson);
     });
 
-    _defineProperty(this, "data", function (traceUid, dataType) {
-      var start = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
-      var end = arguments.length > 3 ? arguments[3] : undefined;
-
-      var uid = _traceUid.TraceUid.fromString(traceUid);
-
-      return _this.sessionManager.keyManager().getKeyHeaders(uid.imageId).then(function (headers) {
-        return _this.sessionManager.gatekeeper("/projects/".concat(_this.projectId, "/traces/").concat(uid.traceUid, "/data?dataType=").concat(dataType), {
-          method: 'GET',
-          headers: _objectSpread(_objectSpread({}, headers), {}, {
-            Range: "bytes=".concat(start, "-").concat(end || '')
-          })
-        }).then(function (response) {
-          return response.arrayBuffer();
-        });
-      });
-    });
-
     this.sessionManager = sessionManager;
     this.projectId = projectId;
   });
@@ -543,13 +470,68 @@ define('modules/projectSearchContext.js',["exports", "./traceUid.js", "./keyMana
     }
   };
 });
-define('modules/projectContext.js',["exports", "./projectImageContext.js", "./projectSearchContext.js"], function (_exports, _projectImageContext, _projectSearchContext) {
+define('modules/traceUid.js',["exports"], function (_exports) {
+  "use strict";
+
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.TraceUid = void 0;
+
+  function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+  function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+
+  function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+  function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+  var TraceUid = /*#__PURE__*/_createClass(
+  /**
+   * Create a TraceUid object from imageId and traceId.
+   *
+   * @param {string} imageId The imageId of the trace, e.g. '093da8cb-77f8-46df-ac99-ea93aeede0be'
+   * @param {string} traceId The traceId of the trace, e.g. '0-1-1-a3f'
+   */
+  function TraceUid(imageId, traceId) {
+    _classCallCheck(this, TraceUid);
+
+    this.imageId = imageId;
+    this.traceId = traceId;
+    this.traceUid = "".concat(this.imageId, ":").concat(this.traceId);
+    Object.freeze(this); // Makes properties immutable
+  }
+  /**
+   * Parse a traceUid string to a TraceUid object.
+   *
+   * @param {string} traceUid The traceUid of the trace, format 'imageId:traceId', e.g. '093da8cb-77f8-46df-ac99-ea93aeede0be:0-1-1-a3f'
+   * @returns A TraceUid object or undefined
+   */
+  );
+
+  _exports.TraceUid = TraceUid;
+
+  _defineProperty(TraceUid, "fromString", function (traceUid) {
+    var semicolon = traceUid.indexOf(':');
+
+    if (semicolon != 36 || traceUid.length < 37) {
+      return;
+    }
+
+    return new TraceUid(traceUid.substring(0, semicolon), traceUid.substring(semicolon + 1));
+  });
+});
+define('modules/projectContext.js',["exports", "./projectImageContext.js", "./projectSearchContext.js", "./traceUid.js"], function (_exports, _projectImageContext, _projectSearchContext, _traceUid) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
   _exports.ProjectContext = void 0;
+
+  function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+  function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 
   function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
@@ -602,6 +584,24 @@ define('modules/projectContext.js',["exports", "./projectImageContext.js", "./pr
 
     _defineProperty(this, "search", function () {
       return new _projectSearchContext.ProjectSearchContext(_this.sessionManager, _this.id);
+    });
+
+    _defineProperty(this, "data", function (traceUid, dataType) {
+      var start = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+      var end = arguments.length > 3 ? arguments[3] : undefined;
+
+      var uid = _traceUid.TraceUid.fromString(traceUid);
+
+      return _this.sessionManager.keyManager().getKeyHeaders(uid.imageId).then(function (headers) {
+        return _this.sessionManager.gatekeeper("/projects/".concat(_this.id, "/traces/").concat(uid.traceUid, "/data?dataType=").concat(dataType), {
+          method: 'GET',
+          headers: _objectSpread(_objectSpread({}, headers), {}, {
+            Range: "bytes=".concat(start, "-").concat(end || '')
+          })
+        }).then(function (response) {
+          return response.arrayBuffer();
+        });
+      });
     });
 
     this.sessionManager = sessionManager;
