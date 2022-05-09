@@ -2,7 +2,7 @@ const babel = require('gulp-babel'),
     browserify = require('browserify'),
     buffer = require('vinyl-buffer'),
     clean = require('gulp-dest-clean'),
-    gulp = require('gulp')
+    gulp = require('gulp'),
     requirejs = require('gulp-requirejs'),
     source = require('vinyl-source-stream');
 
