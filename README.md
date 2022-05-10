@@ -1,6 +1,24 @@
-Setup:
+# Hansken Javascript Client
+Work in progress
 
-`sudo npm config set strict-ssl false`
-`sudo npm install --global gulp-cli`
+## Installation
+Install via NPM:
 
-`gulp`
+```bash
+npm install hansken-js
+```
+
+## Usage
+```javascript
+import {HanskenClient} from './src/hansken.js';
+
+const hansken = new HanskenClient('/gatekeeper');
+hansken.projects().then((projects) => {
+    projects.forEach((project) => {
+        document.write(`<li><a href="project-images.html?projectId=${project.id}">${project.name}</a>`);
+    });
+});
+```
+
+## Examples
+Start examples with `node examples/app.js`
