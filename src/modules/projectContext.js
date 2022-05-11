@@ -1,5 +1,6 @@
 import { ProjectImageContext } from './projectImageContext.js';
 import { ProjectSearchContext } from './projectSearchContext.js';
+import { TraceContext } from './traceContext.js';
 
 class ProjectContext {
 
@@ -7,13 +8,13 @@ class ProjectContext {
      * Create a context for a specific project. This can be used to search in a project or list its images.
      *
      * @param {SessionManager} sessionManager The session manager, used for connections to the Hansken servers
-     * @param {UUID} id The project id or single file id
      * @param {'projects' | 'singlefiles'} collection 'projects' or 'singlefiles'
+     * @param {UUID} collectionId The project id or single file id
      */
-    constructor(sessionManager, id, collection) {
+    constructor(sessionManager, collection, collectionId) {
         this.sessionManager = sessionManager;
-        this.id = id;
         this.collection = collection;
+        this.collectionId = collectionId;
     }
 
     /**
@@ -21,7 +22,7 @@ class ProjectContext {
      *
      * @returns A promise
      */
-    delete = () => this.sessionManager.gatekeeper(`/${this.collection}/${this.id}`, {
+    delete = () => this.sessionManager.gatekeeper(`/${this.collection}/${this.collectionId}`, {
         method: 'DELETE'
     });
 
@@ -30,7 +31,7 @@ class ProjectContext {
      *
      * @returns The project
      */
-    get = () => this.sessionManager.gatekeeper(`/${this.collection}/${this.id}`).then(this.sessionManager.toJson);
+    get = () => this.sessionManager.gatekeeper(`/${this.collection}/${this.collectionId}`).then(this.sessionManager.toJson);
 
     /**
      * Update an existing project or singlefile.
@@ -38,7 +39,7 @@ class ProjectContext {
      * @param {object} project The new project to store for the specified project
      * @returns A promise
      */
-    update = (project) => this.sessionManager.gatekeeper(`/${this.collection}/${this.id}`, {
+    update = (project) => this.sessionManager.gatekeeper(`/${this.collection}/${this.collectionId}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'
@@ -52,7 +53,7 @@ class ProjectContext {
      * @returns An array of images linked to this project
      */
     // NOTE: /singlefiles/{singlefileId}/images does not exist, but one can use /projects/{singlefileId}/images
-    images = () => this.sessionManager.gatekeeper(`/projects/${this.id}/images`).then(this.sessionManager.toJson);
+    images = () => this.sessionManager.gatekeeper(`/projects/${this.collectionId}/images`).then(this.sessionManager.toJson);
 
     /**
      * Create a ProjectImageContext for a single project or singlefile image by id.
@@ -60,14 +61,22 @@ class ProjectContext {
      * @param {UUID} The image id
      * @returns A new ProjectImageContext
      */
-    image = (imageId) => new ProjectImageContext(this.sessionManager, this.id, imageId);
+    image = (imageId) => new ProjectImageContext(this.sessionManager, this.collectionId, imageId);
 
     /**
      * Create a ProjectSearchContext to search for traces, facets, tracelets and more.
      *
      * @returns A new ProjectSearchContext
      */
-    search = () => new ProjectSearchContext(this.sessionManager, this.id);
+    search = () => new ProjectSearchContext(this.sessionManager, this.collection, this.collectionId);
+
+    /**
+     * Create a TraceContext to retrieve a trace, its data and more.
+     *
+     * @param {string | TraceUid} traceUid The traceUid of the trace, format 'imageId:traceId', e.g. '093da8cb-77f8-46df-ac99-ea93aeede0be:0-1-1-a3f'
+     * @returns A new TraceContext
+     */
+    trace = (traceUid) => new TraceContext(this.sessionManager, this.collection, this.collectionId, traceUid);
 }
 
 export { ProjectContext };

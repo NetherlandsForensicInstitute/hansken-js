@@ -22,9 +22,10 @@ var HanskenClient = /*#__PURE__*/_createClass(
 /**
  * Creates a client to obtain information via the Hansken REST API. SAML session handling is done by this client.
  *
- * @param {String} gatekeeperUrl The url to the Hansken gatekeeper, without trailing '/'
+ * @param {String} gatekeeperUrl The url to the Hansken gatekeeper
+ * @param {String} keystoreUrl The url to the Hansken keystore
  */
-function HanskenClient(gatekeeperUrl) {
+function HanskenClient(gatekeeperUrl, keystoreUrl) {
   var _this = this;
 
   _classCallCheck(this, HanskenClient);
@@ -42,14 +43,14 @@ function HanskenClient(gatekeeperUrl) {
   });
 
   _defineProperty(this, "project", function (projectId) {
-    return new _projectContext.ProjectContext(_this.sessionManager, projectId, 'projects');
+    return new _projectContext.ProjectContext(_this.sessionManager, 'projects', projectId);
   });
 
   _defineProperty(this, "singlefile", function (singlefileId) {
-    return new _projectContext.ProjectContext(_this.sessionManager, singlefileId, 'singlefiles');
+    return new _projectContext.ProjectContext(_this.sessionManager, 'singlefiles', singlefileId);
   });
 
-  this.sessionManager = new _sessionManager.SessionManager(gatekeeperUrl);
+  this.sessionManager = new _sessionManager.SessionManager(gatekeeperUrl, keystoreUrl);
 }
 /**
  * Get all projects.
@@ -59,7 +60,97 @@ function HanskenClient(gatekeeperUrl) {
 );
 
 exports.HanskenClient = HanskenClient;
-},{"./modules/projectContext.js":2,"./modules/sessionManager.js":5}],2:[function(require,module,exports){
+},{"./modules/projectContext.js":3,"./modules/sessionManager.js":6}],2:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.KeyManager = void 0;
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function _classPrivateFieldInitSpec(obj, privateMap, value) { _checkPrivateRedeclaration(obj, privateMap); privateMap.set(obj, value); }
+
+function _checkPrivateRedeclaration(obj, privateCollection) { if (privateCollection.has(obj)) { throw new TypeError("Cannot initialize the same private elements twice on an object"); } }
+
+function _classPrivateFieldGet(receiver, privateMap) { var descriptor = _classExtractFieldDescriptor(receiver, privateMap, "get"); return _classApplyDescriptorGet(receiver, descriptor); }
+
+function _classExtractFieldDescriptor(receiver, privateMap, action) { if (!privateMap.has(receiver)) { throw new TypeError("attempted to " + action + " private field on non-instance"); } return privateMap.get(receiver); }
+
+function _classApplyDescriptorGet(receiver, descriptor) { if (descriptor.get) { return descriptor.get.call(receiver); } return descriptor.value; }
+
+var _cache = /*#__PURE__*/new WeakMap();
+
+var KeyManager = /*#__PURE__*/_createClass(
+/**
+ * Create a keystore to retrieve and store keys for encrypted images.
+ *
+ * @param {SessionManager} sessionManager The session manager, used for connections to the Hansken servers
+ */
+function KeyManager(sessionManager) {
+  var _this = this;
+
+  _classCallCheck(this, KeyManager);
+
+  _classPrivateFieldInitSpec(this, _cache, {
+    writable: true,
+    value: {}
+  });
+
+  _defineProperty(this, "get", function (imageId) {
+    if (_classPrivateFieldGet(_this, _cache)[imageId]) {
+      // Return key from cache
+      return Promise.resolve(_classPrivateFieldGet(_this, _cache)[imageId]);
+    }
+
+    return _this.sessionManager.keystore('/session/whoami').then(_this.sessionManager.toJson).then(function (whoami) {
+      return _this.sessionManager.keystore("/entries/".concat(imageId, "/").concat(whoami.uid), {
+        method: 'GET'
+      });
+    }).then(function (response) {
+      if (response.status !== 200 || response.headers.get('Content-Type') !== 'text/plain') {
+        // Key not found or other error, reject
+        return Promise.reject();
+      }
+
+      return response.text();
+    }).then(function (key) {
+      // Store the key in the cache for any future requests
+      _classPrivateFieldGet(_this, _cache)[imageId] = key;
+      return key;
+    });
+  });
+
+  _defineProperty(this, "getKeyHeaders", function (imageId) {
+    return _this.get(imageId).then(function (key) {
+      return {
+        'Hansken-Image-Key': key
+      };
+    }, function () {
+      // Key was not available, return an empty headers object
+      return {};
+    });
+  });
+
+  this.sessionManager = sessionManager;
+}
+/**
+ * Retrieve a key.
+ *
+ * @param {string} imageId The image id for the image key
+ * @returns The key or rejected promise
+ */
+);
+
+exports.KeyManager = KeyManager;
+},{}],3:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -70,6 +161,8 @@ exports.ProjectContext = void 0;
 var _projectImageContext = require("./projectImageContext.js");
 
 var _projectSearchContext = require("./projectSearchContext.js");
+
+var _traceContext = require("./traceContext.js");
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
@@ -84,26 +177,26 @@ var ProjectContext = /*#__PURE__*/_createClass(
  * Create a context for a specific project. This can be used to search in a project or list its images.
  *
  * @param {SessionManager} sessionManager The session manager, used for connections to the Hansken servers
- * @param {UUID} id The project id or single file id
  * @param {'projects' | 'singlefiles'} collection 'projects' or 'singlefiles'
+ * @param {UUID} collectionId The project id or single file id
  */
-function ProjectContext(sessionManager, id, collection) {
+function ProjectContext(sessionManager, collection, collectionId) {
   var _this = this;
 
   _classCallCheck(this, ProjectContext);
 
   _defineProperty(this, "delete", function () {
-    return _this.sessionManager.gatekeeper("/".concat(_this.collection, "/").concat(_this.id), {
+    return _this.sessionManager.gatekeeper("/".concat(_this.collection, "/").concat(_this.collectionId), {
       method: 'DELETE'
     });
   });
 
   _defineProperty(this, "get", function () {
-    return _this.sessionManager.gatekeeper("/".concat(_this.collection, "/").concat(_this.id)).then(_this.sessionManager.toJson);
+    return _this.sessionManager.gatekeeper("/".concat(_this.collection, "/").concat(_this.collectionId)).then(_this.sessionManager.toJson);
   });
 
   _defineProperty(this, "update", function (project) {
-    return _this.sessionManager.gatekeeper("/".concat(_this.collection, "/").concat(_this.id), {
+    return _this.sessionManager.gatekeeper("/".concat(_this.collection, "/").concat(_this.collectionId), {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
@@ -113,20 +206,24 @@ function ProjectContext(sessionManager, id, collection) {
   });
 
   _defineProperty(this, "images", function () {
-    return _this.sessionManager.gatekeeper("/projects/".concat(_this.id, "/images")).then(_this.sessionManager.toJson);
+    return _this.sessionManager.gatekeeper("/projects/".concat(_this.collectionId, "/images")).then(_this.sessionManager.toJson);
   });
 
   _defineProperty(this, "image", function (imageId) {
-    return new _projectImageContext.ProjectImageContext(_this.sessionManager, _this.id, imageId);
+    return new _projectImageContext.ProjectImageContext(_this.sessionManager, _this.collectionId, imageId);
   });
 
   _defineProperty(this, "search", function () {
-    return new _projectSearchContext.ProjectSearchContext(_this.sessionManager, _this.id);
+    return new _projectSearchContext.ProjectSearchContext(_this.sessionManager, _this.collection, _this.collectionId);
+  });
+
+  _defineProperty(this, "trace", function (traceUid) {
+    return new _traceContext.TraceContext(_this.sessionManager, _this.collection, _this.collectionId, traceUid);
   });
 
   this.sessionManager = sessionManager;
-  this.id = id;
   this.collection = collection;
+  this.collectionId = collectionId;
 }
 /**
  * Delete the project or singlefile.
@@ -136,7 +233,7 @@ function ProjectContext(sessionManager, id, collection) {
 );
 
 exports.ProjectContext = ProjectContext;
-},{"./projectImageContext.js":3,"./projectSearchContext.js":4}],3:[function(require,module,exports){
+},{"./projectImageContext.js":4,"./projectSearchContext.js":5,"./traceContext.js":7}],4:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -191,7 +288,7 @@ function ProjectImageContext(sessionManager, projectId, imageId) {
 );
 
 exports.ProjectImageContext = ProjectImageContext;
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -230,9 +327,10 @@ var ProjectSearchContext = /*#__PURE__*/_createClass(
  * Create a search context for a specific project. This can be used to search for traces.
  *
  * @param {SessionManager} sessionManager The session manager, used for connections to the Hansken servers
- * @param {UUID} projectId The project id
+ * @param {'projects' | 'singlefiles'} collection 'projects' or 'singlefiles'
+ * @param {UUID} collectionId The project id
  */
-function ProjectSearchContext(sessionManager, projectId) {
+function ProjectSearchContext(sessionManager, collection, collectionId) {
   var _this = this;
 
   _classCallCheck(this, ProjectSearchContext);
@@ -251,7 +349,7 @@ function ProjectSearchContext(sessionManager, projectId) {
       // Regex to read all search result fields until the "traces": [] field, where the array will be further processed
 
       var searchResultRegex = /^(\{("[a-z0-9]+"\:\s?("[a-z0-9]+"|[0-9]+|\[\]),?\s?)*"traces"\:\s?\[)/i;
-      return _this.sessionManager.gatekeeper("/projects/".concat(_this.projectId, "/traces/search"), {
+      return _this.sessionManager.gatekeeper("/".concat(_this.collection, "/").concat(_this.collectionId, "/traces/search"), {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
@@ -314,7 +412,7 @@ function ProjectSearchContext(sessionManager, projectId) {
         human: request
       }
     } : request;
-    return _this.sessionManager.gatekeeper("/projects/".concat(_this.projectId, "/traces/search"), {
+    return _this.sessionManager.gatekeeper("/".concat(_this.collection, "/").concat(_this.collectionId, "/traces/search"), {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -325,7 +423,8 @@ function ProjectSearchContext(sessionManager, projectId) {
   });
 
   this.sessionManager = sessionManager;
-  this.projectId = projectId;
+  this.collection = collection;
+  this.collectionId = collectionId;
 });
 
 exports.ProjectSearchContext = ProjectSearchContext;
@@ -373,13 +472,15 @@ var _tryObjectParse = {
     return start;
   }
 };
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.SessionManager = void 0;
+
+var _keyManager2 = require("./keyManager.js");
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
@@ -389,23 +490,57 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
+function _classPrivateFieldInitSpec(obj, privateMap, value) { _checkPrivateRedeclaration(obj, privateMap); privateMap.set(obj, value); }
+
+function _checkPrivateRedeclaration(obj, privateCollection) { if (privateCollection.has(obj)) { throw new TypeError("Cannot initialize the same private elements twice on an object"); } }
+
+function _classPrivateFieldSet(receiver, privateMap, value) { var descriptor = _classExtractFieldDescriptor(receiver, privateMap, "set"); _classApplyDescriptorSet(receiver, descriptor, value); return value; }
+
+function _classApplyDescriptorSet(receiver, descriptor, value) { if (descriptor.set) { descriptor.set.call(receiver, value); } else { if (!descriptor.writable) { throw new TypeError("attempted to set read only private field"); } descriptor.value = value; } }
+
+function _classPrivateFieldGet(receiver, privateMap) { var descriptor = _classExtractFieldDescriptor(receiver, privateMap, "get"); return _classApplyDescriptorGet(receiver, descriptor); }
+
+function _classExtractFieldDescriptor(receiver, privateMap, action) { if (!privateMap.has(receiver)) { throw new TypeError("attempted to " + action + " private field on non-instance"); } return privateMap.get(receiver); }
+
+function _classApplyDescriptorGet(receiver, descriptor) { if (descriptor.get) { return descriptor.get.call(receiver); } return descriptor.value; }
+
 function _classStaticPrivateMethodGet(receiver, classConstructor, method) { _classCheckPrivateStaticAccess(receiver, classConstructor); return method; }
 
 function _classCheckPrivateStaticAccess(receiver, classConstructor) { if (receiver !== classConstructor) { throw new TypeError("Private static access of wrong provenance"); } }
+
+var _keyManager = /*#__PURE__*/new WeakMap();
 
 var SessionManager = /*#__PURE__*/_createClass(
 /**
  * Creates an object that handles the authentication of SAML services.
  *
- * @param {string} gatekeeperUrl The url to the Hansken gatekeeper, without trailing '/'
+ * @param {string} gatekeeperUrl The url to the Hansken gatekeeper
+ * @param {string} keystoreUrl The url to the Hansken keystore
  */
-function SessionManager(gatekeeperUrl) {
+function SessionManager(gatekeeperUrl, keystoreUrl) {
   var _this = this;
 
   _classCallCheck(this, SessionManager);
 
+  _classPrivateFieldInitSpec(this, _keyManager, {
+    writable: true,
+    value: void 0
+  });
+
   _defineProperty(this, "gatekeeper", function (path, request) {
     return _classStaticPrivateMethodGet(SessionManager, SessionManager, _fetch).call(SessionManager, _this.gatekeeperUrl, path, request);
+  });
+
+  _defineProperty(this, "keystore", function (path, request) {
+    return _classStaticPrivateMethodGet(SessionManager, SessionManager, _fetch).call(SessionManager, _this.keystoreUrl, path, request);
+  });
+
+  _defineProperty(this, "keyManager", function () {
+    if (!_classPrivateFieldGet(_this, _keyManager)) {
+      _classPrivateFieldSet(_this, _keyManager, new _keyManager2.KeyManager(_this));
+    }
+
+    return _classPrivateFieldGet(_this, _keyManager);
   });
 
   _defineProperty(this, "toJson", function (response) {
@@ -417,6 +552,7 @@ function SessionManager(gatekeeperUrl) {
   });
 
   this.gatekeeperUrl = gatekeeperUrl.replace(/\/+$/, '');
+  this.keystoreUrl = keystoreUrl;
 });
 
 exports.SessionManager = SessionManager;
@@ -481,4 +617,120 @@ function _fetch(base, path, req) {
     return response;
   });
 }
+},{"./keyManager.js":2}],7:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.TraceContext = void 0;
+
+var _traceUid = require("./traceUid.js");
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+var TraceContext = /*#__PURE__*/_createClass(
+/**
+ * Creates a context for a specific trace.
+ *
+ * @param {SessionManager} sessionManager The session manager, used for connections to the Hansken servers
+ * @param {'projects' | 'singlefiles'} collection 'projects' or 'singlefiles'
+ * @param {UUID} collectionId The project id or single file id
+ * @param {string | TraceUid} traceUid The traceUid of the trace, format 'imageId:traceId', e.g. '093da8cb-77f8-46df-ac99-ea93aeede0be:0-1-1-a3f'
+ */
+function TraceContext(sessionManager, collection, collectionId, traceUid) {
+  var _this = this;
+
+  _classCallCheck(this, TraceContext);
+
+  _defineProperty(this, "data", function (dataType) {
+    var start = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+    var end = arguments.length > 2 ? arguments[2] : undefined;
+    return _this.sessionManager.keyManager().getKeyHeaders(_this.traceUid.imageId).then(function (headers) {
+      return _this.sessionManager.gatekeeper("/".concat(_this.collection, "/").concat(_this.collectionId, "/traces/").concat(_this.traceUid.traceUid, "/data?dataType=").concat(dataType), {
+        method: 'GET',
+        headers: _objectSpread(_objectSpread({}, headers), {}, {
+          Range: "bytes=".concat(start, "-").concat(end || '')
+        })
+      }).then(function (response) {
+        return response.arrayBuffer();
+      });
+    });
+  });
+
+  this.sessionManager = sessionManager;
+  this.collection = collection;
+  this.collectionId = collectionId;
+  this.traceUid = typeof traceUid === 'string' ? _traceUid.TraceUid.fromString(traceUid) : traceUid;
+}
+/**
+ * Get the data from a trace as array buffer.
+ *
+ * @param {string} dataType The name of the data stream, as described in the trace, e.g. 'raw', 'text', 'ocr'
+ * @param {number} start Optional: The start of a subrange, inclusive. See spec https://tools.ietf.org/html/rfc7233#section-2.1
+ * @param {number} end Optional: The end of a subrange, inclusive. See spec https://tools.ietf.org/html/rfc7233#section-2.1
+ */
+);
+
+exports.TraceContext = TraceContext;
+},{"./traceUid.js":8}],8:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.TraceUid = void 0;
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+var TraceUid = /*#__PURE__*/_createClass(
+/**
+ * Create a TraceUid object from imageId and traceId.
+ *
+ * @param {string} imageId The imageId of the trace, e.g. '093da8cb-77f8-46df-ac99-ea93aeede0be'
+ * @param {string} traceId The traceId of the trace, e.g. '0-1-1-a3f'
+ */
+function TraceUid(imageId, traceId) {
+  _classCallCheck(this, TraceUid);
+
+  this.imageId = imageId;
+  this.traceId = traceId;
+  this.traceUid = "".concat(this.imageId, ":").concat(this.traceId);
+  Object.freeze(this); // Makes properties immutable
+}
+/**
+ * Parse a traceUid string to a TraceUid object.
+ *
+ * @param {string} traceUid The traceUid of the trace, format 'imageId:traceId', e.g. '093da8cb-77f8-46df-ac99-ea93aeede0be:0-1-1-a3f'
+ * @returns A TraceUid object or undefined
+ */
+);
+
+exports.TraceUid = TraceUid;
+
+_defineProperty(TraceUid, "fromString", function (traceUid) {
+  var semicolon = traceUid.indexOf(':');
+
+  if (semicolon != 36 || traceUid.length < 37) {
+    return;
+  }
+
+  return new TraceUid(traceUid.substring(0, semicolon), traceUid.substring(semicolon + 1));
+});
 },{}]},{},[1]);
