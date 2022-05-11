@@ -33,7 +33,7 @@ class HanskenClient {
      * @param {UUID} projectId The project id
      * @returns A ProjectContext for a project
      */
-    project = (projectId) => new ProjectContext(this.sessionManager, projectId, 'projects');
+    project = (projectId) => new ProjectContext(this.sessionManager, 'projects', projectId);
 
     /**
      * Get a context for a single file, to do project specific REST calls.
@@ -41,7 +41,7 @@ class HanskenClient {
      * @param {UUID} singlefileId The single file id
      * @returns A ProjectContext for a single file
      */
-    singlefile = (singlefileId) => new ProjectContext(this.sessionManager, singlefileId, 'singlefiles');
+    singlefile = (singlefileId) => new ProjectContext(this.sessionManager, 'singlefiles', singlefileId);
 }
 
 export { HanskenClient };

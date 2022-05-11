@@ -4,11 +4,13 @@ class ProjectSearchContext {
      * Create a search context for a specific project. This can be used to search for traces.
      *
      * @param {SessionManager} sessionManager The session manager, used for connections to the Hansken servers
-     * @param {UUID} projectId The project id
+     * @param {'projects' | 'singlefiles'} collection 'projects' or 'singlefiles'
+     * @param {UUID} collectionId The project id
      */
-    constructor(sessionManager, projectId) {
+    constructor(sessionManager, collection, collectionId) {
         this.sessionManager = sessionManager;
-        this.projectId = projectId;
+        this.collection = collection;
+        this.collectionId = collectionId;
     }
 
     static #tryObjectParse = (buffer, callback) => {
@@ -64,7 +66,7 @@ class ProjectSearchContext {
         // Regex to read all search result fields until the "traces": [] field, where the array will be further processed
         const searchResultRegex = /^(\{("[a-z0-9]+"\:\s?("[a-z0-9]+"|[0-9]+|\[\]),?\s?)*"traces"\:\s?\[)/i
 
-        return this.sessionManager.gatekeeper(`/projects/${this.projectId}/traces/search`, {
+        return this.sessionManager.gatekeeper(`/${this.collection}/${this.collectionId}/traces/search`, {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
@@ -123,7 +125,7 @@ class ProjectSearchContext {
         }
         const searchRequest = typeof request === 'string' ? {query: {human: request}} : request;
 
-        return this.sessionManager.gatekeeper(`/projects/${this.projectId}/traces/search`, {
+        return this.sessionManager.gatekeeper(`/${this.collection}/${this.collectionId}/traces/search`, {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',

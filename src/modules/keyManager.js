@@ -25,13 +25,16 @@ class KeyManager {
         return this.sessionManager.keystore('/session/whoami')
             .then(this.sessionManager.toJson)
             .then((whoami) => this.sessionManager.keystore(`/entries/${imageId}/${whoami.uid}`, {
-                    method: 'GET'
-                }), () => {
-                    // Key not found, reject
+                method: 'GET'
+            }))
+            .then((response) => {
+                if (response.status !== 200 || response.headers.get('Content-Type') !== 'text/plain') {
+                    // Key not found or other error, reject
                     return Promise.reject();
-                })
-            .then((response) => response.text())
-            .then(key => {
+                }
+                return response.text();
+            })
+            .then((key) => {
                 // Store the key in the cache for any future requests
                 this.#cache[imageId] = key;
                 return key;
