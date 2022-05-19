@@ -12,7 +12,7 @@ class SessionManager {
      */
     constructor(gatekeeperUrl, keystoreUrl) {
         this.gatekeeperUrl = gatekeeperUrl.replace(/\/+$/, '');
-        this.keystoreUrl = keystoreUrl;
+        this.keystoreUrl = keystoreUrl.replace(/\/+$/, '');
     }
 
     static #login(base, entityID) {
