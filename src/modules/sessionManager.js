@@ -89,6 +89,7 @@ class SessionManager {
 
     /**
      * Retrieve and store keys from the Hansken keystore.
+     *
      * @returns The keystore manager
      */
     keyManager = () => {
@@ -104,11 +105,30 @@ class SessionManager {
      * @param {*} response
      * @returns json as object or a rejected Promise when the response status was not 2xx or the Content-Type was not application/json
      */
-    toJson = (response) => {
+    static toJson = (response) => {
         if (response.status < 200 || response.status >= 300 || response.headers.get('Content-Type').indexOf('application/json') !== 0) {
             return Promise.reject(response);
         }
         return response.json();
+    };
+
+    /**
+     * Parse the UUID from the Location header after an object is successfully created (project, singlefile, task).
+     *
+     * @param {Response} response The window.fetch response
+     * @returns A promise with the id
+     */
+    static parseLocationId = (response) => {
+        if (response.status === 201) {
+            const location = response.headers.get('Location');
+            if (location) {
+                const id = location.match(/^\/[a-z]+\/([a-z0-9-]+)$/);
+                if (id && id.length === 2) {
+                    return Promise.resolve(id[1]);
+                }
+            }
+        }
+        return Promise.reject(response);
     };
 }
 

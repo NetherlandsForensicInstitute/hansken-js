@@ -1,3 +1,5 @@
+import { SessionManager } from './sessionManager.js';
+
 class ProjectImageContext {
 
     /**
@@ -18,7 +20,7 @@ class ProjectImageContext {
      *
      * @returns The project image
      */
-    get = () => this.sessionManager.gatekeeper(`/projects/${this.projectId}/images/${this.imageId}`).then(this.sessionManager.toJson);
+    get = () => this.sessionManager.gatekeeper(`/projects/${this.projectId}/images/${this.imageId}`).then(SessionManager.toJson);
 
     /**
      * Update an existing project image.
