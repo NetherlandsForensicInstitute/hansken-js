@@ -1,7 +1,7 @@
-import { ProjectSinglefileContext } from './projectSinglefileContext.js';
+import { AbstractProjectContext } from './abstractProjectContext.js';
 import { SessionManager } from './sessionManager.js';
 
-class ProjectContext extends ProjectSinglefileContext {
+class ProjectContext extends AbstractProjectContext {
 
     /**
      * Create a context for a specific project. This can be used to search in a project or list its images.
