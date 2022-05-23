@@ -102,7 +102,7 @@ class SessionManager {
     /**
      * Convert a fetch response to json when the result was valid.
      *
-     * @param {*} response
+     * @param {Response} response
      * @returns json as object or a rejected Promise when the response status was not 2xx or the Content-Type was not application/json
      */
     static toJson = (response) => {

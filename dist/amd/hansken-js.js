@@ -977,8 +977,8 @@ define('hansken-js',["exports", "./modules/projectContext.js", "./modules/singef
   /**
    * Creates a client to obtain information via the Hansken REST API. SAML session handling is done by this client.
    *
-   * @param {String} gatekeeperUrl The url to the Hansken gatekeeper
-   * @param {String} keystoreUrl The url to the Hansken keystore
+   * @param {string} gatekeeperUrl The url to the Hansken gatekeeper
+   * @param {string} keystoreUrl The url to the Hansken keystore
    */
   function HanskenClient(gatekeeperUrl, keystoreUrl) {
     var _this = this;

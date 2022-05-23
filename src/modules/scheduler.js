@@ -51,7 +51,7 @@ class Scheduler {
      *
      * @param {UUID} projectId The project id
      * @param {UUID} imageId The image id, which is added to the request
-     * @param {String} imageKey The base64 image key or undefined
+     * @param {string} imageKey The base64 image key or undefined
      * @param {object} request The extraction request
      * @returns The task id
      */
@@ -90,7 +90,7 @@ class Scheduler {
      * Wait for the completion of a scheduled task.
      *
      * @param {UUID} taskId The task id
-     * @param {*} interval Milliseconds to wait when polling for task status
+     * @param {number} interval Milliseconds to wait when polling for task status
      * @returns The scheduledTask when completed
      */
     waitForCompletion = (taskId, interval = 5000) => {

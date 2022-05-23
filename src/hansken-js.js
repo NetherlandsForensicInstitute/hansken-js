@@ -10,8 +10,8 @@ class HanskenClient {
     /**
      * Creates a client to obtain information via the Hansken REST API. SAML session handling is done by this client.
      *
-     * @param {String} gatekeeperUrl The url to the Hansken gatekeeper
-     * @param {String} keystoreUrl The url to the Hansken keystore
+     * @param {string} gatekeeperUrl The url to the Hansken gatekeeper
+     * @param {string} keystoreUrl The url to the Hansken keystore
      */
     constructor(gatekeeperUrl, keystoreUrl) {
         this.sessionManager = new SessionManager(gatekeeperUrl, keystoreUrl);
@@ -50,7 +50,7 @@ class HanskenClient {
     /**
      * Create a new singlefile.
      *
-     * @param {String} name The name for the singlefile
+     * @param {string} name The name for the singlefile
      * @param {Blob | BufferSource | ReadableStream} data The data of the singlefile
      * @returns The singlefile id
      */
