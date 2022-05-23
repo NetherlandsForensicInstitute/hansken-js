@@ -21,7 +21,7 @@ class HanskenClient {
      * Create a new project.
      *
      * @param {object} project The project as specified in the REST API docs.
-     * @returns
+     * @returns A ProjectContext for the new project
      */
     createProject = (project) => this.sessionManager.gatekeeper(`/projects`, {
         method: 'POST',
