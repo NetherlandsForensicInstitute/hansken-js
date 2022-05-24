@@ -109,12 +109,97 @@ function HanskenClient(gatekeeperUrl, keystoreUrl) {
  * Create a new project.
  *
  * @param {object} project The project as specified in the REST API docs.
- * @returns
+ * @returns A ProjectContext for the new project
  */
 );
 
 exports.HanskenClient = HanskenClient;
-},{"./modules/projectContext.js":3,"./modules/scheduler.js":7,"./modules/sessionManager.js":8,"./modules/singefileContext.js":9}],2:[function(require,module,exports){
+},{"./modules/projectContext.js":4,"./modules/scheduler.js":7,"./modules/sessionManager.js":8,"./modules/singefileContext.js":9}],2:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.AbstractProjectContext = void 0;
+
+var _projectImageContext = require("./projectImageContext.js");
+
+var _projectSearchContext = require("./projectSearchContext.js");
+
+var _sessionManager = require("./sessionManager.js");
+
+var _traceContext = require("./traceContext.js");
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+var AbstractProjectContext = /*#__PURE__*/_createClass(
+/**
+ * Create a context for a specific project. This can be used to search in a project or list its images.
+ *
+ * @param {SessionManager} sessionManager The session manager, used for connections to the Hansken servers
+ * @param {'projects' | 'singlefiles'} collection 'projects' or 'singlefiles'
+ * @param {UUID} collectionId The project id or single file id
+ */
+function AbstractProjectContext(sessionManager, collection, collectionId) {
+  var _this = this;
+
+  _classCallCheck(this, AbstractProjectContext);
+
+  _defineProperty(this, "delete", function () {
+    return _this.sessionManager.gatekeeper("/".concat(_this.collection, "/").concat(_this.collectionId), {
+      method: 'DELETE'
+    });
+  });
+
+  _defineProperty(this, "get", function () {
+    return _this.sessionManager.gatekeeper("/".concat(_this.collection, "/").concat(_this.collectionId)).then(_sessionManager.SessionManager.toJson);
+  });
+
+  _defineProperty(this, "update", function (project) {
+    return _this.sessionManager.gatekeeper("/".concat(_this.collection, "/").concat(_this.collectionId), {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(project)
+    });
+  });
+
+  _defineProperty(this, "image", function (imageId) {
+    return new _projectImageContext.ProjectImageContext(_this.sessionManager, _this.collectionId, imageId);
+  });
+
+  _defineProperty(this, "images", function () {
+    return _this.sessionManager.gatekeeper("/projects/".concat(_this.collectionId, "/images")).then(_sessionManager.SessionManager.toJson);
+  });
+
+  _defineProperty(this, "search", function () {
+    return new _projectSearchContext.ProjectSearchContext(_this.sessionManager, _this.collectionId);
+  });
+
+  _defineProperty(this, "trace", function (traceUid) {
+    return new _traceContext.TraceContext(_this.sessionManager, _this.collectionId, traceUid);
+  });
+
+  this.sessionManager = sessionManager;
+  this.collection = collection;
+  this.collectionId = collectionId;
+}
+/**
+ * Delete the project or singlefile.
+ *
+ * @returns A promise
+ */
+);
+
+exports.AbstractProjectContext = AbstractProjectContext;
+},{"./projectImageContext.js":5,"./projectSearchContext.js":6,"./sessionManager.js":8,"./traceContext.js":10}],3:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -206,7 +291,7 @@ function KeyManager(sessionManager) {
 );
 
 exports.KeyManager = KeyManager;
-},{"./sessionManager.js":8}],3:[function(require,module,exports){
+},{"./sessionManager.js":8}],4:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
@@ -216,7 +301,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.ProjectContext = void 0;
 
-var _projectSinglefileContext = require("./projectSinglefileContext.js");
+var _abstractProjectContext = require("./abstractProjectContext.js");
 
 var _sessionManager = require("./sessionManager.js");
 
@@ -242,8 +327,8 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-var ProjectContext = /*#__PURE__*/function (_ProjectSinglefileCon) {
-  _inherits(ProjectContext, _ProjectSinglefileCon);
+var ProjectContext = /*#__PURE__*/function (_AbstractProjectConte) {
+  _inherits(ProjectContext, _AbstractProjectConte);
 
   var _super = _createSuper(ProjectContext);
 
@@ -296,10 +381,10 @@ var ProjectContext = /*#__PURE__*/function (_ProjectSinglefileCon) {
 
 
   return _createClass(ProjectContext);
-}(_projectSinglefileContext.ProjectSinglefileContext);
+}(_abstractProjectContext.AbstractProjectContext);
 
 exports.ProjectContext = ProjectContext;
-},{"./projectSinglefileContext.js":6,"./sessionManager.js":8}],4:[function(require,module,exports){
+},{"./abstractProjectContext.js":2,"./sessionManager.js":8}],5:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -356,7 +441,7 @@ function ProjectImageContext(sessionManager, projectId, imageId) {
 );
 
 exports.ProjectImageContext = ProjectImageContext;
-},{"./sessionManager.js":8}],5:[function(require,module,exports){
+},{"./sessionManager.js":8}],6:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -540,92 +625,7 @@ var _tryObjectParse = {
     return start;
   }
 };
-},{"./sessionManager.js":8}],6:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.ProjectSinglefileContext = void 0;
-
-var _projectImageContext = require("./projectImageContext.js");
-
-var _projectSearchContext = require("./projectSearchContext.js");
-
-var _sessionManager = require("./sessionManager.js");
-
-var _traceContext = require("./traceContext.js");
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-var ProjectSinglefileContext = /*#__PURE__*/_createClass(
-/**
- * Create a context for a specific project. This can be used to search in a project or list its images.
- *
- * @param {SessionManager} sessionManager The session manager, used for connections to the Hansken servers
- * @param {'projects' | 'singlefiles'} collection 'projects' or 'singlefiles'
- * @param {UUID} collectionId The project id or single file id
- */
-function ProjectSinglefileContext(sessionManager, collection, collectionId) {
-  var _this = this;
-
-  _classCallCheck(this, ProjectSinglefileContext);
-
-  _defineProperty(this, "delete", function () {
-    return _this.sessionManager.gatekeeper("/".concat(_this.collection, "/").concat(_this.collectionId), {
-      method: 'DELETE'
-    });
-  });
-
-  _defineProperty(this, "get", function () {
-    return _this.sessionManager.gatekeeper("/".concat(_this.collection, "/").concat(_this.collectionId)).then(_sessionManager.SessionManager.toJson);
-  });
-
-  _defineProperty(this, "update", function (project) {
-    return _this.sessionManager.gatekeeper("/".concat(_this.collection, "/").concat(_this.collectionId), {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(project)
-    });
-  });
-
-  _defineProperty(this, "image", function (imageId) {
-    return new _projectImageContext.ProjectImageContext(_this.sessionManager, _this.collectionId, imageId);
-  });
-
-  _defineProperty(this, "images", function () {
-    return _this.sessionManager.gatekeeper("/projects/".concat(_this.collectionId, "/images")).then(_sessionManager.SessionManager.toJson);
-  });
-
-  _defineProperty(this, "search", function () {
-    return new _projectSearchContext.ProjectSearchContext(_this.sessionManager, _this.collectionId);
-  });
-
-  _defineProperty(this, "trace", function (traceUid) {
-    return new _traceContext.TraceContext(_this.sessionManager, _this.collectionId, traceUid);
-  });
-
-  this.sessionManager = sessionManager;
-  this.collection = collection;
-  this.collectionId = collectionId;
-}
-/**
- * Delete the project or singlefile.
- *
- * @returns A promise
- */
-);
-
-exports.ProjectSinglefileContext = ProjectSinglefileContext;
-},{"./projectImageContext.js":4,"./projectSearchContext.js":5,"./sessionManager.js":8,"./traceContext.js":10}],7:[function(require,module,exports){
+},{"./sessionManager.js":8}],7:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -906,7 +906,7 @@ _defineProperty(SessionManager, "parseLocationId", function (response) {
 
   return Promise.reject(response);
 });
-},{"./keyManager.js":2}],9:[function(require,module,exports){
+},{"./keyManager.js":3}],9:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
@@ -916,7 +916,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.SinglefileContext = void 0;
 
-var _projectSinglefileContext = require("./projectSinglefileContext.js");
+var _abstractProjectContext = require("./abstractProjectContext.js");
 
 var _sessionManager = require("./sessionManager.js");
 
@@ -940,8 +940,8 @@ function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Re
 
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
-var SinglefileContext = /*#__PURE__*/function (_ProjectSinglefileCon) {
-  _inherits(SinglefileContext, _ProjectSinglefileCon);
+var SinglefileContext = /*#__PURE__*/function (_AbstractProjectConte) {
+  _inherits(SinglefileContext, _AbstractProjectConte);
 
   var _super = _createSuper(SinglefileContext);
 
@@ -958,10 +958,10 @@ var SinglefileContext = /*#__PURE__*/function (_ProjectSinglefileCon) {
   }
 
   return _createClass(SinglefileContext);
-}(_projectSinglefileContext.ProjectSinglefileContext);
+}(_abstractProjectContext.AbstractProjectContext);
 
 exports.SinglefileContext = SinglefileContext;
-},{"./projectSinglefileContext.js":6,"./sessionManager.js":8}],10:[function(require,module,exports){
+},{"./abstractProjectContext.js":2,"./sessionManager.js":8}],10:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {

@@ -602,13 +602,13 @@ define('modules/traceContext.js',["exports", "./traceUid.js"], function (_export
 
   _exports.TraceContext = TraceContext;
 });
-define('modules/projectSinglefileContext.js',["exports", "./projectImageContext.js", "./projectSearchContext.js", "./sessionManager.js", "./traceContext.js"], function (_exports, _projectImageContext, _projectSearchContext, _sessionManager, _traceContext) {
+define('modules/abstractProjectContext.js',["exports", "./projectImageContext.js", "./projectSearchContext.js", "./sessionManager.js", "./traceContext.js"], function (_exports, _projectImageContext, _projectSearchContext, _sessionManager, _traceContext) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
-  _exports.ProjectSinglefileContext = void 0;
+  _exports.AbstractProjectContext = void 0;
 
   function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
@@ -618,7 +618,7 @@ define('modules/projectSinglefileContext.js',["exports", "./projectImageContext.
 
   function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-  var ProjectSinglefileContext = /*#__PURE__*/_createClass(
+  var AbstractProjectContext = /*#__PURE__*/_createClass(
   /**
    * Create a context for a specific project. This can be used to search in a project or list its images.
    *
@@ -626,10 +626,10 @@ define('modules/projectSinglefileContext.js',["exports", "./projectImageContext.
    * @param {'projects' | 'singlefiles'} collection 'projects' or 'singlefiles'
    * @param {UUID} collectionId The project id or single file id
    */
-  function ProjectSinglefileContext(sessionManager, collection, collectionId) {
+  function AbstractProjectContext(sessionManager, collection, collectionId) {
     var _this = this;
 
-    _classCallCheck(this, ProjectSinglefileContext);
+    _classCallCheck(this, AbstractProjectContext);
 
     _defineProperty(this, "delete", function () {
       return _this.sessionManager.gatekeeper("/".concat(_this.collection, "/").concat(_this.collectionId), {
@@ -678,11 +678,11 @@ define('modules/projectSinglefileContext.js',["exports", "./projectImageContext.
    */
   );
 
-  _exports.ProjectSinglefileContext = ProjectSinglefileContext;
+  _exports.AbstractProjectContext = AbstractProjectContext;
 });
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 
-define('modules/projectContext.js',["exports", "./projectSinglefileContext.js", "./sessionManager.js"], function (_exports, _projectSinglefileContext, _sessionManager) {
+define('modules/projectContext.js',["exports", "./abstractProjectContext.js", "./sessionManager.js"], function (_exports, _abstractProjectContext, _sessionManager) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -712,8 +712,8 @@ define('modules/projectContext.js',["exports", "./projectSinglefileContext.js", 
 
   function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-  var ProjectContext = /*#__PURE__*/function (_ProjectSinglefileCon) {
-    _inherits(ProjectContext, _ProjectSinglefileCon);
+  var ProjectContext = /*#__PURE__*/function (_AbstractProjectConte) {
+    _inherits(ProjectContext, _AbstractProjectConte);
 
     var _super = _createSuper(ProjectContext);
 
@@ -766,13 +766,13 @@ define('modules/projectContext.js',["exports", "./projectSinglefileContext.js", 
 
 
     return _createClass(ProjectContext);
-  }(_projectSinglefileContext.ProjectSinglefileContext);
+  }(_abstractProjectContext.AbstractProjectContext);
 
   _exports.ProjectContext = ProjectContext;
 });
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 
-define('modules/singefileContext.js',["exports", "./projectSinglefileContext.js", "./sessionManager.js"], function (_exports, _projectSinglefileContext, _sessionManager) {
+define('modules/singefileContext.js',["exports", "./abstractProjectContext.js", "./sessionManager.js"], function (_exports, _abstractProjectContext, _sessionManager) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -800,8 +800,8 @@ define('modules/singefileContext.js',["exports", "./projectSinglefileContext.js"
 
   function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
-  var SinglefileContext = /*#__PURE__*/function (_ProjectSinglefileCon) {
-    _inherits(SinglefileContext, _ProjectSinglefileCon);
+  var SinglefileContext = /*#__PURE__*/function (_AbstractProjectConte) {
+    _inherits(SinglefileContext, _AbstractProjectConte);
 
     var _super = _createSuper(SinglefileContext);
 
@@ -818,7 +818,7 @@ define('modules/singefileContext.js',["exports", "./projectSinglefileContext.js"
     }
 
     return _createClass(SinglefileContext);
-  }(_projectSinglefileContext.ProjectSinglefileContext);
+  }(_abstractProjectContext.AbstractProjectContext);
 
   _exports.SinglefileContext = SinglefileContext;
 });
@@ -1044,7 +1044,7 @@ define('hansken-js',["exports", "./modules/projectContext.js", "./modules/singef
    * Create a new project.
    *
    * @param {object} project The project as specified in the REST API docs.
-   * @returns
+   * @returns A ProjectContext for the new project
    */
   );
 
