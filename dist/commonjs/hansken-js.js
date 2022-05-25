@@ -6,9 +6,13 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.HanskenClient = void 0;
 
-var _sessionManager = require("./modules/sessionManager.js");
-
 var _projectContext = require("./modules/projectContext.js");
+
+var _singefileContext = require("./modules/singefileContext.js");
+
+var _scheduler2 = require("./modules/scheduler.js");
+
+var _sessionManager = require("./modules/sessionManager.js");
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
@@ -18,55 +22,192 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
+function _classPrivateFieldInitSpec(obj, privateMap, value) { _checkPrivateRedeclaration(obj, privateMap); privateMap.set(obj, value); }
+
+function _checkPrivateRedeclaration(obj, privateCollection) { if (privateCollection.has(obj)) { throw new TypeError("Cannot initialize the same private elements twice on an object"); } }
+
+function _classPrivateFieldSet(receiver, privateMap, value) { var descriptor = _classExtractFieldDescriptor(receiver, privateMap, "set"); _classApplyDescriptorSet(receiver, descriptor, value); return value; }
+
+function _classApplyDescriptorSet(receiver, descriptor, value) { if (descriptor.set) { descriptor.set.call(receiver, value); } else { if (!descriptor.writable) { throw new TypeError("attempted to set read only private field"); } descriptor.value = value; } }
+
+function _classPrivateFieldGet(receiver, privateMap) { var descriptor = _classExtractFieldDescriptor(receiver, privateMap, "get"); return _classApplyDescriptorGet(receiver, descriptor); }
+
+function _classExtractFieldDescriptor(receiver, privateMap, action) { if (!privateMap.has(receiver)) { throw new TypeError("attempted to " + action + " private field on non-instance"); } return privateMap.get(receiver); }
+
+function _classApplyDescriptorGet(receiver, descriptor) { if (descriptor.get) { return descriptor.get.call(receiver); } return descriptor.value; }
+
+var _scheduler = /*#__PURE__*/new WeakMap();
+
 var HanskenClient = /*#__PURE__*/_createClass(
 /**
  * Creates a client to obtain information via the Hansken REST API. SAML session handling is done by this client.
  *
- * @param {String} gatekeeperUrl The url to the Hansken gatekeeper
- * @param {String} keystoreUrl The url to the Hansken keystore
+ * @param {string} gatekeeperUrl The url to the Hansken gatekeeper
+ * @param {string} keystoreUrl The url to the Hansken keystore
  */
 function HanskenClient(gatekeeperUrl, keystoreUrl) {
   var _this = this;
 
   _classCallCheck(this, HanskenClient);
 
-  _defineProperty(this, "projects", function () {
-    return _this.sessionManager.gatekeeper('/projects').then(function (response) {
-      return response.json();
-    });
+  _classPrivateFieldInitSpec(this, _scheduler, {
+    writable: true,
+    value: void 0
   });
 
-  _defineProperty(this, "singlefiles", function () {
-    return _this.sessionManager.gatekeeper('/singlefiles').then(function (response) {
-      return response.json();
-    });
+  _defineProperty(this, "createProject", function (project) {
+    return _this.sessionManager.gatekeeper("/projects", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(project)
+    }).then(_sessionManager.SessionManager.parseLocationId).then(_this.project);
   });
 
   _defineProperty(this, "project", function (projectId) {
-    return new _projectContext.ProjectContext(_this.sessionManager, 'projects', projectId);
+    return new _projectContext.ProjectContext(_this.sessionManager, projectId);
+  });
+
+  _defineProperty(this, "projects", function () {
+    return _this.sessionManager.gatekeeper("/projects").then(function (response) {
+      return response.json();
+    });
+  });
+
+  _defineProperty(this, "createSinglefile", function (name, data) {
+    return _this.sessionManager.gatekeeper("/singlefiles/upload/".concat(name), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/octet-stream'
+      },
+      body: data
+    }).then(_sessionManager.SessionManager.parseLocationId);
   });
 
   _defineProperty(this, "singlefile", function (singlefileId) {
-    return new _projectContext.ProjectContext(_this.sessionManager, 'singlefiles', singlefileId);
+    return new _singefileContext.SinglefileContext(_this.sessionManager, singlefileId);
+  });
+
+  _defineProperty(this, "singlefiles", function () {
+    return _this.sessionManager.gatekeeper("/singlefiles").then(function (response) {
+      return response.json();
+    });
+  });
+
+  _defineProperty(this, "scheduler", function () {
+    if (!_classPrivateFieldGet(_this, _scheduler)) {
+      _classPrivateFieldSet(_this, _scheduler, new _scheduler2.Scheduler(_this.sessionManager));
+    }
+
+    return _classPrivateFieldGet(_this, _scheduler);
   });
 
   this.sessionManager = new _sessionManager.SessionManager(gatekeeperUrl, keystoreUrl);
 }
 /**
- * Get all projects.
+ * Create a new project.
  *
- * @returns All projects the current user is authorized for
+ * @param {object} project The project as specified in the REST API docs.
+ * @returns A ProjectContext for the new project
  */
 );
 
 exports.HanskenClient = HanskenClient;
-},{"./modules/projectContext.js":3,"./modules/sessionManager.js":6}],2:[function(require,module,exports){
+},{"./modules/projectContext.js":4,"./modules/scheduler.js":7,"./modules/sessionManager.js":8,"./modules/singefileContext.js":9}],2:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.AbstractProjectContext = void 0;
+
+var _projectImageContext = require("./projectImageContext.js");
+
+var _projectSearchContext = require("./projectSearchContext.js");
+
+var _sessionManager = require("./sessionManager.js");
+
+var _traceContext = require("./traceContext.js");
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+var AbstractProjectContext = /*#__PURE__*/_createClass(
+/**
+ * Create a context for a specific project. This can be used to search in a project or list its images.
+ *
+ * @param {SessionManager} sessionManager The session manager, used for connections to the Hansken servers
+ * @param {'projects' | 'singlefiles'} collection 'projects' or 'singlefiles'
+ * @param {UUID} collectionId The project id or single file id
+ */
+function AbstractProjectContext(sessionManager, collection, collectionId) {
+  var _this = this;
+
+  _classCallCheck(this, AbstractProjectContext);
+
+  _defineProperty(this, "delete", function () {
+    return _this.sessionManager.gatekeeper("/".concat(_this.collection, "/").concat(_this.collectionId), {
+      method: 'DELETE'
+    });
+  });
+
+  _defineProperty(this, "get", function () {
+    return _this.sessionManager.gatekeeper("/".concat(_this.collection, "/").concat(_this.collectionId)).then(_sessionManager.SessionManager.toJson);
+  });
+
+  _defineProperty(this, "update", function (project) {
+    return _this.sessionManager.gatekeeper("/".concat(_this.collection, "/").concat(_this.collectionId), {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(project)
+    });
+  });
+
+  _defineProperty(this, "image", function (imageId) {
+    return new _projectImageContext.ProjectImageContext(_this.sessionManager, _this.collectionId, imageId);
+  });
+
+  _defineProperty(this, "images", function () {
+    return _this.sessionManager.gatekeeper("/projects/".concat(_this.collectionId, "/images")).then(_sessionManager.SessionManager.toJson);
+  });
+
+  _defineProperty(this, "search", function () {
+    return new _projectSearchContext.ProjectSearchContext(_this.sessionManager, _this.collectionId);
+  });
+
+  _defineProperty(this, "trace", function (traceUid) {
+    return new _traceContext.TraceContext(_this.sessionManager, _this.collectionId, traceUid);
+  });
+
+  this.sessionManager = sessionManager;
+  this.collection = collection;
+  this.collectionId = collectionId;
+}
+/**
+ * Delete the project or singlefile.
+ *
+ * @returns A promise
+ */
+);
+
+exports.AbstractProjectContext = AbstractProjectContext;
+},{"./projectImageContext.js":5,"./projectSearchContext.js":6,"./sessionManager.js":8,"./traceContext.js":10}],3:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.KeyManager = void 0;
+
+var _sessionManager = require("./sessionManager.js");
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
@@ -110,7 +251,7 @@ function KeyManager(sessionManager) {
       return Promise.resolve(_classPrivateFieldGet(_this, _cache)[imageId]);
     }
 
-    return _this.sessionManager.keystore('/session/whoami').then(_this.sessionManager.toJson).then(function (whoami) {
+    return _this.sessionManager.keystore('/session/whoami').then(_sessionManager.SessionManager.toJson).then(function (whoami) {
       return _this.sessionManager.keystore("/entries/".concat(imageId, "/").concat(whoami.uid), {
         method: 'GET'
       });
@@ -150,19 +291,19 @@ function KeyManager(sessionManager) {
 );
 
 exports.KeyManager = KeyManager;
-},{}],3:[function(require,module,exports){
+},{"./sessionManager.js":8}],4:[function(require,module,exports){
 "use strict";
+
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.ProjectContext = void 0;
 
-var _projectImageContext = require("./projectImageContext.js");
+var _abstractProjectContext = require("./abstractProjectContext.js");
 
-var _projectSearchContext = require("./projectSearchContext.js");
-
-var _traceContext = require("./traceContext.js");
+var _sessionManager = require("./sessionManager.js");
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
@@ -170,76 +311,88 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); Object.defineProperty(subClass, "prototype", { writable: false }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-var ProjectContext = /*#__PURE__*/_createClass(
-/**
- * Create a context for a specific project. This can be used to search in a project or list its images.
- *
- * @param {SessionManager} sessionManager The session manager, used for connections to the Hansken servers
- * @param {'projects' | 'singlefiles'} collection 'projects' or 'singlefiles'
- * @param {UUID} collectionId The project id or single file id
- */
-function ProjectContext(sessionManager, collection, collectionId) {
-  var _this = this;
+var ProjectContext = /*#__PURE__*/function (_AbstractProjectConte) {
+  _inherits(ProjectContext, _AbstractProjectConte);
 
-  _classCallCheck(this, ProjectContext);
+  var _super = _createSuper(ProjectContext);
 
-  _defineProperty(this, "delete", function () {
-    return _this.sessionManager.gatekeeper("/".concat(_this.collection, "/").concat(_this.collectionId), {
-      method: 'DELETE'
+  /**
+   * Create a context for a specific project. This can be used to search in a project or list its images.
+   *
+   * @param {SessionManager} sessionManager The session manager, used for connections to the Hansken servers
+   * @param {UUID} collectionId The project id or single file id
+   */
+  function ProjectContext(sessionManager, collectionId) {
+    var _this;
+
+    _classCallCheck(this, ProjectContext);
+
+    _this = _super.call(this, sessionManager, 'projects', collectionId);
+
+    _defineProperty(_assertThisInitialized(_this), "createImage", function (image) {
+      return _this.sessionManager.gatekeeper('/images', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(image)
+      }).then(_sessionManager.SessionManager.parseLocationId).then(_this.linkImage);
     });
-  });
 
-  _defineProperty(this, "get", function () {
-    return _this.sessionManager.gatekeeper("/".concat(_this.collection, "/").concat(_this.collectionId)).then(_this.sessionManager.toJson);
-  });
-
-  _defineProperty(this, "update", function (project) {
-    return _this.sessionManager.gatekeeper("/".concat(_this.collection, "/").concat(_this.collectionId), {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(project)
+    _defineProperty(_assertThisInitialized(_this), "linkImage", function (imageId) {
+      return _this.sessionManager.gatekeeper("/projects/".concat(_this.collectionId, "/images/").concat(imageId), {
+        method: 'PUT'
+      }).then(function () {
+        return _this.image(imageId);
+      });
     });
-  });
 
-  _defineProperty(this, "images", function () {
-    return _this.sessionManager.gatekeeper("/projects/".concat(_this.collectionId, "/images")).then(_this.sessionManager.toJson);
-  });
+    _defineProperty(_assertThisInitialized(_this), "unlinkImage", function (imageId) {
+      return _this.sessionManager.gatekeeper("/projects/".concat(_this.collectionId, "/images/").concat(imageId), {
+        method: 'DELETE'
+      });
+    });
 
-  _defineProperty(this, "image", function (imageId) {
-    return new _projectImageContext.ProjectImageContext(_this.sessionManager, _this.collectionId, imageId);
-  });
+    return _this;
+  }
+  /**
+   * Create an image and link it to the project.
+   * This method should not be used with singlefiles.
+   *
+   * @param {object} image The image as specified in the REST API docs.
+   * @returns The image id
+   */
 
-  _defineProperty(this, "search", function () {
-    return new _projectSearchContext.ProjectSearchContext(_this.sessionManager, _this.collection, _this.collectionId);
-  });
 
-  _defineProperty(this, "trace", function (traceUid) {
-    return new _traceContext.TraceContext(_this.sessionManager, _this.collection, _this.collectionId, traceUid);
-  });
-
-  this.sessionManager = sessionManager;
-  this.collection = collection;
-  this.collectionId = collectionId;
-}
-/**
- * Delete the project or singlefile.
- *
- * @returns A promise
- */
-);
+  return _createClass(ProjectContext);
+}(_abstractProjectContext.AbstractProjectContext);
 
 exports.ProjectContext = ProjectContext;
-},{"./projectImageContext.js":4,"./projectSearchContext.js":5,"./traceContext.js":7}],4:[function(require,module,exports){
+},{"./abstractProjectContext.js":2,"./sessionManager.js":8}],5:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.ProjectImageContext = void 0;
+
+var _sessionManager = require("./sessionManager.js");
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
@@ -263,7 +416,7 @@ function ProjectImageContext(sessionManager, projectId, imageId) {
   _classCallCheck(this, ProjectImageContext);
 
   _defineProperty(this, "get", function () {
-    return _this.sessionManager.gatekeeper("/projects/".concat(_this.projectId, "/images/").concat(_this.imageId)).then(_this.sessionManager.toJson);
+    return _this.sessionManager.gatekeeper("/projects/".concat(_this.projectId, "/images/").concat(_this.imageId)).then(_sessionManager.SessionManager.toJson);
   });
 
   _defineProperty(this, "update", function (image) {
@@ -288,13 +441,15 @@ function ProjectImageContext(sessionManager, projectId, imageId) {
 );
 
 exports.ProjectImageContext = ProjectImageContext;
-},{}],5:[function(require,module,exports){
+},{"./sessionManager.js":8}],6:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.ProjectSearchContext = void 0;
+
+var _sessionManager = require("./sessionManager.js");
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
@@ -327,10 +482,9 @@ var ProjectSearchContext = /*#__PURE__*/_createClass(
  * Create a search context for a specific project. This can be used to search for traces.
  *
  * @param {SessionManager} sessionManager The session manager, used for connections to the Hansken servers
- * @param {'projects' | 'singlefiles'} collection 'projects' or 'singlefiles'
  * @param {UUID} collectionId The project id
  */
-function ProjectSearchContext(sessionManager, collection, collectionId) {
+function ProjectSearchContext(sessionManager, collectionId) {
   var _this = this;
 
   _classCallCheck(this, ProjectSearchContext);
@@ -349,7 +503,7 @@ function ProjectSearchContext(sessionManager, collection, collectionId) {
       // Regex to read all search result fields until the "traces": [] field, where the array will be further processed
 
       var searchResultRegex = /^(\{("[a-z0-9]+"\:\s?("[a-z0-9]+"|[0-9]+|\[\]),?\s?)*"traces"\:\s?\[)/i;
-      return _this.sessionManager.gatekeeper("/".concat(_this.collection, "/").concat(_this.collectionId, "/traces/search"), {
+      return _this.sessionManager.gatekeeper("/projects/".concat(_this.collectionId, "/traces/search"), {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
@@ -412,18 +566,17 @@ function ProjectSearchContext(sessionManager, collection, collectionId) {
         human: request
       }
     } : request;
-    return _this.sessionManager.gatekeeper("/".concat(_this.collection, "/").concat(_this.collectionId, "/traces/search"), {
+    return _this.sessionManager.gatekeeper("/projects/".concat(_this.collectionId, "/traces/search"), {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(searchRequest)
-    }).then(_this.sessionManager.toJson);
+    }).then(_sessionManager.SessionManager.toJson);
   });
 
   this.sessionManager = sessionManager;
-  this.collection = collection;
   this.collectionId = collectionId;
 });
 
@@ -472,7 +625,127 @@ var _tryObjectParse = {
     return start;
   }
 };
-},{}],6:[function(require,module,exports){
+},{"./sessionManager.js":8}],7:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Scheduler = void 0;
+
+var _sessionManager = require("./sessionManager.js");
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function _classPrivateFieldInitSpec(obj, privateMap, value) { _checkPrivateRedeclaration(obj, privateMap); privateMap.set(obj, value); }
+
+function _checkPrivateRedeclaration(obj, privateCollection) { if (privateCollection.has(obj)) { throw new TypeError("Cannot initialize the same private elements twice on an object"); } }
+
+function _classPrivateFieldGet(receiver, privateMap) { var descriptor = _classExtractFieldDescriptor(receiver, privateMap, "get"); return _classApplyDescriptorGet(receiver, descriptor); }
+
+function _classApplyDescriptorGet(receiver, descriptor) { if (descriptor.get) { return descriptor.get.call(receiver); } return descriptor.value; }
+
+function _classPrivateFieldSet(receiver, privateMap, value) { var descriptor = _classExtractFieldDescriptor(receiver, privateMap, "set"); _classApplyDescriptorSet(receiver, descriptor, value); return value; }
+
+function _classExtractFieldDescriptor(receiver, privateMap, action) { if (!privateMap.has(receiver)) { throw new TypeError("attempted to " + action + " private field on non-instance"); } return privateMap.get(receiver); }
+
+function _classApplyDescriptorSet(receiver, descriptor, value) { if (descriptor.set) { descriptor.set.call(receiver, value); } else { if (!descriptor.writable) { throw new TypeError("attempted to set read only private field"); } descriptor.value = value; } }
+
+var _pollTaskStatus = /*#__PURE__*/new WeakMap();
+
+var Scheduler = /*#__PURE__*/_createClass(
+/**
+ * Create scheduler to start tasks.
+ *
+ * @param {SessionManager} sessionManager The session manager, used for connections to the Hansken servers
+ */
+function Scheduler(sessionManager) {
+  var _this = this;
+
+  _classCallCheck(this, Scheduler);
+
+  _classPrivateFieldInitSpec(this, _pollTaskStatus, {
+    writable: true,
+    value: void 0
+  });
+
+  _defineProperty(this, "openTasks", function () {
+    return _this.sessionManager.gatekeeper("/tasks/open").then(_sessionManager.SessionManager.toJson);
+  });
+
+  _defineProperty(this, "closedTasks", function () {
+    return _this.sessionManager.gatekeeper("/tasks/closed").then(_sessionManager.SessionManager.toJson);
+  });
+
+  _defineProperty(this, "task", function (taskId) {
+    return _this.sessionManager.gatekeeper("/tasks/".concat(taskId)).then(_sessionManager.SessionManager.toJson);
+  });
+
+  _defineProperty(this, "extractProjectImage", function (projectId, imageId, imageKey) {
+    var request = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+    var headers = {
+      'Content-Type': 'application/json'
+    };
+
+    if (imageKey) {
+      headers['Hansken-Image-Key'] = imageKey;
+    }
+
+    request.image = imageId;
+    return _this.sessionManager.gatekeeper("/projects/".concat(projectId, "/extractions"), {
+      method: 'POST',
+      headers: headers,
+      body: JSON.stringify(request)
+    }).then(_sessionManager.SessionManager.parseLocationId);
+  });
+
+  _defineProperty(this, "extractSinglefile", function (singleFileId) {
+    var request = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    return _this.sessionManager.gatekeeper("/singlefiles/".concat(singleFileId, "/extract"), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(request)
+    }).then(_sessionManager.SessionManager.parseLocationId);
+  });
+
+  _defineProperty(this, "waitForCompletion", function (taskId) {
+    var interval = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 5000;
+    return new Promise(function (resolve) {
+      _classPrivateFieldGet(_this, _pollTaskStatus).call(_this, taskId, interval, resolve);
+    });
+  });
+
+  this.sessionManager = sessionManager;
+  var scheduler = this;
+
+  _classPrivateFieldSet(this, _pollTaskStatus, function (taskId, interval, resolve) {
+    scheduler.task(taskId).then(function (schedulerTask) {
+      if (schedulerTask && schedulerTask.task && schedulerTask.task.endedOn) {
+        resolve(schedulerTask);
+        return;
+      }
+
+      window.setTimeout(_classPrivateFieldGet(scheduler, _pollTaskStatus), interval, taskId, interval, resolve);
+    });
+  });
+}
+/**
+ * Get all open scheduler tasks.
+ *
+ * @returns An array of scheduler tasks
+ */
+);
+
+exports.Scheduler = Scheduler;
+},{"./sessionManager.js":8}],8:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -543,16 +816,8 @@ function SessionManager(gatekeeperUrl, keystoreUrl) {
     return _classPrivateFieldGet(_this, _keyManager);
   });
 
-  _defineProperty(this, "toJson", function (response) {
-    if (response.status < 200 || response.status >= 300 || response.headers.get('Content-Type').indexOf('application/json') !== 0) {
-      return Promise.reject(response);
-    }
-
-    return response.json();
-  });
-
   this.gatekeeperUrl = gatekeeperUrl.replace(/\/+$/, '');
-  this.keystoreUrl = keystoreUrl;
+  this.keystoreUrl = keystoreUrl.replace(/\/+$/, '');
 });
 
 exports.SessionManager = SessionManager;
@@ -617,7 +882,86 @@ function _fetch(base, path, req) {
     return response;
   });
 }
-},{"./keyManager.js":2}],7:[function(require,module,exports){
+
+_defineProperty(SessionManager, "toJson", function (response) {
+  if (response.status < 200 || response.status >= 300 || response.headers.get('Content-Type').indexOf('application/json') !== 0) {
+    return Promise.reject(response);
+  }
+
+  return response.json();
+});
+
+_defineProperty(SessionManager, "parseLocationId", function (response) {
+  if (response.status === 201) {
+    var location = response.headers.get('Location');
+
+    if (location) {
+      var id = location.match(/^\/[a-z]+\/([a-z0-9-]+)$/);
+
+      if (id && id.length === 2) {
+        return Promise.resolve(id[1]);
+      }
+    }
+  }
+
+  return Promise.reject(response);
+});
+},{"./keyManager.js":3}],9:[function(require,module,exports){
+"use strict";
+
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.SinglefileContext = void 0;
+
+var _abstractProjectContext = require("./abstractProjectContext.js");
+
+var _sessionManager = require("./sessionManager.js");
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); Object.defineProperty(subClass, "prototype", { writable: false }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+var SinglefileContext = /*#__PURE__*/function (_AbstractProjectConte) {
+  _inherits(SinglefileContext, _AbstractProjectConte);
+
+  var _super = _createSuper(SinglefileContext);
+
+  /**
+   * Create a context for a specific project. This can be used to search in a project or list its images.
+   *
+   * @param {SessionManager} sessionManager The session manager, used for connections to the Hansken servers
+   * @param {UUID} collectionId The project id or single file id
+   */
+  function SinglefileContext(sessionManager, collectionId) {
+    _classCallCheck(this, SinglefileContext);
+
+    return _super.call(this, sessionManager, 'singlefiles', collectionId);
+  }
+
+  return _createClass(SinglefileContext);
+}(_abstractProjectContext.AbstractProjectContext);
+
+exports.SinglefileContext = SinglefileContext;
+},{"./abstractProjectContext.js":2,"./sessionManager.js":8}],10:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -644,11 +988,10 @@ var TraceContext = /*#__PURE__*/_createClass(
  * Creates a context for a specific trace.
  *
  * @param {SessionManager} sessionManager The session manager, used for connections to the Hansken servers
- * @param {'projects' | 'singlefiles'} collection 'projects' or 'singlefiles'
  * @param {UUID} collectionId The project id or single file id
  * @param {string | TraceUid} traceUid The traceUid of the trace, format 'imageId:traceId', e.g. '093da8cb-77f8-46df-ac99-ea93aeede0be:0-1-1-a3f'
  */
-function TraceContext(sessionManager, collection, collectionId, traceUid) {
+function TraceContext(sessionManager, collectionId, traceUid) {
   var _this = this;
 
   _classCallCheck(this, TraceContext);
@@ -657,7 +1000,7 @@ function TraceContext(sessionManager, collection, collectionId, traceUid) {
     var start = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
     var end = arguments.length > 2 ? arguments[2] : undefined;
     return _this.sessionManager.keyManager().getKeyHeaders(_this.traceUid.imageId).then(function (headers) {
-      return _this.sessionManager.gatekeeper("/".concat(_this.collection, "/").concat(_this.collectionId, "/traces/").concat(_this.traceUid.traceUid, "/data?dataType=").concat(dataType), {
+      return _this.sessionManager.gatekeeper("/projects/".concat(_this.collectionId, "/traces/").concat(_this.traceUid.traceUid, "/data?dataType=").concat(dataType), {
         method: 'GET',
         headers: _objectSpread(_objectSpread({}, headers), {}, {
           Range: "bytes=".concat(start, "-").concat(end || '')
@@ -669,7 +1012,6 @@ function TraceContext(sessionManager, collection, collectionId, traceUid) {
   });
 
   this.sessionManager = sessionManager;
-  this.collection = collection;
   this.collectionId = collectionId;
   this.traceUid = typeof traceUid === 'string' ? _traceUid.TraceUid.fromString(traceUid) : traceUid;
 }
@@ -683,7 +1025,7 @@ function TraceContext(sessionManager, collection, collectionId, traceUid) {
 );
 
 exports.TraceContext = TraceContext;
-},{"./traceUid.js":8}],8:[function(require,module,exports){
+},{"./traceUid.js":11}],11:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {

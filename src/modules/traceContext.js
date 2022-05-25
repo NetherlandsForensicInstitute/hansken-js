@@ -6,13 +6,11 @@ class TraceContext {
      * Creates a context for a specific trace.
      *
      * @param {SessionManager} sessionManager The session manager, used for connections to the Hansken servers
-     * @param {'projects' | 'singlefiles'} collection 'projects' or 'singlefiles'
      * @param {UUID} collectionId The project id or single file id
      * @param {string | TraceUid} traceUid The traceUid of the trace, format 'imageId:traceId', e.g. '093da8cb-77f8-46df-ac99-ea93aeede0be:0-1-1-a3f'
      */
-     constructor(sessionManager, collection, collectionId, traceUid) {
+     constructor(sessionManager, collectionId, traceUid) {
         this.sessionManager = sessionManager;
-        this.collection = collection;
         this.collectionId = collectionId;
         this.traceUid = typeof traceUid === 'string' ? TraceUid.fromString(traceUid) : traceUid;
     }
@@ -26,7 +24,7 @@ class TraceContext {
      */
      data = (dataType, start = 0, end) => {
         return this.sessionManager.keyManager().getKeyHeaders(this.traceUid.imageId).then((headers) =>
-            this.sessionManager.gatekeeper(`/${this.collection}/${this.collectionId}/traces/${this.traceUid.traceUid}/data?dataType=${dataType}`, {
+            this.sessionManager.gatekeeper(`/projects/${this.collectionId}/traces/${this.traceUid.traceUid}/data?dataType=${dataType}`, {
                 method: 'GET',
                 headers: {
                     ...headers,
