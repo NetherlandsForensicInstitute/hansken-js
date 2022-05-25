@@ -806,7 +806,7 @@ define('modules/singefileContext.js',["exports", "./abstractProjectContext.js", 
     var _super = _createSuper(SinglefileContext);
 
     /**
-     * Create a context for a specific project. This can be used to search in a project or list its images.
+     * Create a context for a singlefile. This can be used to search in it.
      *
      * @param {SessionManager} sessionManager The session manager, used for connections to the Hansken servers
      * @param {UUID} collectionId The project id or single file id
