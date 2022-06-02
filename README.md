@@ -10,7 +10,7 @@ npm install hansken-js
 
 ## Usage
 ```javascript
-import {HanskenClient} from './src/hansken.js';
+import {HanskenClient} from './src/hansken-js.js';
 
 const hansken = new HanskenClient('/gatekeeper', '/keystore');
 hansken.projects().then((projects) => {
