@@ -7,7 +7,7 @@ import { TraceModelContext } from './modules/traceModelContext.js';
 class HanskenClient {
 
     #scheduler;
-    #traceModelContexts = {};
+    #traceModelContexts = {}; // {projectId, traceModelContext}
 
     /**
      * Creates a client to obtain information via the Hansken REST API. SAML session handling is done by this client.
@@ -94,7 +94,7 @@ class HanskenClient {
     /**
      * Get the default trace model or a project trace model.
      *
-     * @param {UUID} projectId The projectId to get the traceModel from, or undefined when accessing the default trace model.
+     * @param {UUID} projectId The projectId to get the traceModel from, or don't provide one to use the default trace model.
      * @returns A traceModel context
      */
     traceModel = (projectId) => {

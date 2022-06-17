@@ -18,7 +18,7 @@ class TraceModelContext {
     /**
      * Get the trace model.
      *
-     * @returns The trace model
+     * @returns Promise for the trace model
      */
     get = () => {
         if (!this.#traceModel) {
@@ -31,13 +31,38 @@ class TraceModelContext {
      * Get a trace model property by its dotted notation, as used in the queries.
      *
      * @param {string} property A dotted trace model property, e.g. `picture.width` or `email.misc.any`
-     * @returns An property model with description, type and unit
+     * @returns A promise for the property model with description, type and unit
      */
     property = (property) => {
         return this.get().then((model) => {
+            /*
+            Simplified trace model to understand the code below:
+
+            uid,
+            name,
+            siblingId,
+            origins:
+                categories:
+                    annotated:
+                        properties:
+                            tags: ?
+                            privileged: ?
+                    extracted:
+                        types:
+                            data:
+                                keys: [raw, text, ...]
+                                properties:
+                                    size: ?
+                                    hash: {md5: ?}
+                            email:
+                                misc: {headerField: ?}
+                            picture:
+                                width: ?
+            */
+
             const split = property.split('\.');
             if (split.length === 1) {
-                // For example: uid, name, siblingId
+                // For example: uid, name, siblingId (intrinsics)
                 if (model.properties[property]) {
                     return model.properties[property];
                 }
@@ -76,10 +101,10 @@ class TraceModelContext {
     };
 
     /**
-     * Get the model part describing the a trace type.
+     * Get the model part describing a trace type.
      *
      * @param {string} type The name of the type, without origin or category.
-     * @returns The model of the type
+     * @returns A promise for the model of the type
      */
     type = (type) => {
         return this.get().then((model) => {
