@@ -22,12 +22,9 @@ class TraceModelContext {
      */
     get = () => {
         if (!this.#traceModel) {
-            return this.sessionManager.gatekeeper(this.url).then(SessionManager.json).then((traceModel) => {
-                this.#traceModel = traceModel;
-                return traceModel;
-            });
+            this.#traceModel = this.sessionManager.gatekeeper(this.url).then(SessionManager.json);
         }
-        return Promise.resolve(this.#traceModel);
+        return this.#traceModel;
     };
 
     /**
@@ -74,7 +71,7 @@ class TraceModelContext {
                     }
                 }
             }
-            return Promise.reject('Property ${property} not found in trace model');
+            return Promise.reject(`Property ${property} not found in trace model`);
         });
     };
 

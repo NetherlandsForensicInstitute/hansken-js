@@ -2,7 +2,7 @@
     import {HanskenClient} from './src/hansken-js.js';
     const hansken = new HanskenClient('/gatekeeper', '/keystore');
 
-    const properties = ['uid', 'privileged', 'picture.width', 'email.misc.flag0x0392', 'data.raw.size', 'data.raw.hash.md5', '#note.modifiedOn'];
+    const properties = ['uid', 'privileged', 'does.not.exist', 'picture.width', 'email.misc.flag0x0392', 'data.raw.size', 'data.raw.hash.md5', '#note.modifiedOn'];
 
     let findProperty;
     findProperty = function(index = 0) {
@@ -18,8 +18,8 @@
             document.write(`<li>Description: ${model.description}`);
             document.write(`<li>Type: ${model.type}`);
             document.write(`<li>Unit: ${model.unit || 'n/a'}`);
-            findProperty(++index);
-        });
+                findProperty(++index);
+        }, () => findProperty(++index));
     }
 
     findProperty();
