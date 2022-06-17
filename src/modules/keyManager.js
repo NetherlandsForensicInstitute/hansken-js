@@ -25,7 +25,7 @@ class KeyManager {
             return Promise.resolve(this.#cache[imageId]);
         }
         return this.sessionManager.keystore('/session/whoami')
-            .then(SessionManager.toJson)
+            .then(SessionManager.json)
             .then((whoami) => this.sessionManager.keystore(`/entries/${imageId}/${whoami.uid}`, {
                 method: 'GET'
             }))

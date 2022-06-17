@@ -1,0 +1,26 @@
+<script type="module">
+    import {HanskenClient} from './src/hansken-js.js';
+    const hansken = new HanskenClient('/gatekeeper', '/keystore');
+
+    const properties = ['uid', 'privileged', 'picture.width', 'email.misc.flag0x0392', 'data.raw.size', 'data.raw.hash.md5', '#note.modifiedOn'];
+
+    let findProperty;
+    findProperty = function(index = 0) {
+        if (index >= properties.length) {
+            hansken.traceModel().type('email').then((model) => {
+                document.write(`<br><br>${JSON.stringify(model)}`);
+            });
+            return;
+        }
+        const property = properties[index];
+        hansken.traceModel().property(property).then((model) => {
+            document.write(`<h4>Property ${property}</h4>`);
+            document.write(`<li>Description: ${model.description}`);
+            document.write(`<li>Type: ${model.type}`);
+            document.write(`<li>Unit: ${model.unit || 'n/a'}`);
+            findProperty(++index);
+        });
+    }
+
+    findProperty();
+</script>

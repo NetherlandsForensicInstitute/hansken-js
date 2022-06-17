@@ -105,7 +105,7 @@ class SessionManager {
      * @param {Response} response
      * @returns json as object or a rejected Promise when the response status was not 2xx or the Content-Type was not application/json
      */
-    static toJson = (response) => {
+    static json = (response) => {
         if (response.status < 200 || response.status >= 300 || response.headers.get('Content-Type').indexOf('application/json') !== 0) {
             return Promise.reject(response);
         }

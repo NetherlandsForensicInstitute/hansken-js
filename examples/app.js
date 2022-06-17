@@ -22,6 +22,10 @@ app.get('/gatekeeper/projects', (request, response) => {
     response.json(require('./mocks/projects.json'));
 });
 
+app.get('/gatekeeper/tracemodel', (request, response) => {
+    response.json(require('./mocks/traceModel.json'));
+});
+
 app.get('/gatekeeper/projects/de554b81-e4a3-4759-96ec-0abf942be72c/images', (request, response) => {
     response.json(require('./mocks/projectImagesColdCase.json'));
 });

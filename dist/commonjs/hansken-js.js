@@ -158,7 +158,7 @@ function AbstractProjectContext(sessionManager, collection, collectionId) {
   });
 
   _defineProperty(this, "get", function () {
-    return _this.sessionManager.gatekeeper("/".concat(_this.collection, "/").concat(_this.collectionId)).then(_sessionManager.SessionManager.toJson);
+    return _this.sessionManager.gatekeeper("/".concat(_this.collection, "/").concat(_this.collectionId)).then(_sessionManager.SessionManager.json);
   });
 
   _defineProperty(this, "update", function (project) {
@@ -176,7 +176,7 @@ function AbstractProjectContext(sessionManager, collection, collectionId) {
   });
 
   _defineProperty(this, "images", function () {
-    return _this.sessionManager.gatekeeper("/projects/".concat(_this.collectionId, "/images")).then(_sessionManager.SessionManager.toJson);
+    return _this.sessionManager.gatekeeper("/projects/".concat(_this.collectionId, "/images")).then(_sessionManager.SessionManager.json);
   });
 
   _defineProperty(this, "search", function () {
@@ -251,7 +251,7 @@ function KeyManager(sessionManager) {
       return Promise.resolve(_classPrivateFieldGet(_this, _cache)[imageId]);
     }
 
-    return _this.sessionManager.keystore('/session/whoami').then(_sessionManager.SessionManager.toJson).then(function (whoami) {
+    return _this.sessionManager.keystore('/session/whoami').then(_sessionManager.SessionManager.json).then(function (whoami) {
       return _this.sessionManager.keystore("/entries/".concat(imageId, "/").concat(whoami.uid), {
         method: 'GET'
       });
@@ -416,7 +416,7 @@ function ProjectImageContext(sessionManager, projectId, imageId) {
   _classCallCheck(this, ProjectImageContext);
 
   _defineProperty(this, "get", function () {
-    return _this.sessionManager.gatekeeper("/projects/".concat(_this.projectId, "/images/").concat(_this.imageId)).then(_sessionManager.SessionManager.toJson);
+    return _this.sessionManager.gatekeeper("/projects/".concat(_this.projectId, "/images/").concat(_this.imageId)).then(_sessionManager.SessionManager.json);
   });
 
   _defineProperty(this, "update", function (image) {
@@ -573,7 +573,7 @@ function ProjectSearchContext(sessionManager, collectionId) {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(searchRequest)
-    }).then(_sessionManager.SessionManager.toJson);
+    }).then(_sessionManager.SessionManager.json);
   });
 
   this.sessionManager = sessionManager;
@@ -676,15 +676,15 @@ function Scheduler(sessionManager) {
   });
 
   _defineProperty(this, "openTasks", function () {
-    return _this.sessionManager.gatekeeper("/tasks/open").then(_sessionManager.SessionManager.toJson);
+    return _this.sessionManager.gatekeeper("/tasks/open").then(_sessionManager.SessionManager.json);
   });
 
   _defineProperty(this, "closedTasks", function () {
-    return _this.sessionManager.gatekeeper("/tasks/closed").then(_sessionManager.SessionManager.toJson);
+    return _this.sessionManager.gatekeeper("/tasks/closed").then(_sessionManager.SessionManager.json);
   });
 
   _defineProperty(this, "task", function (taskId) {
-    return _this.sessionManager.gatekeeper("/tasks/".concat(taskId)).then(_sessionManager.SessionManager.toJson);
+    return _this.sessionManager.gatekeeper("/tasks/".concat(taskId)).then(_sessionManager.SessionManager.json);
   });
 
   _defineProperty(this, "extractProjectImage", function (projectId, imageId, imageKey) {
@@ -883,7 +883,7 @@ function _fetch(base, path, req) {
   });
 }
 
-_defineProperty(SessionManager, "toJson", function (response) {
+_defineProperty(SessionManager, "json", function (response) {
   if (response.status < 200 || response.status >= 300 || response.headers.get('Content-Type').indexOf('application/json') !== 0) {
     return Promise.reject(response);
   }

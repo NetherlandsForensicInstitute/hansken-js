@@ -9,7 +9,7 @@
 
     const projectId = params.projectId;
     if (projectId) {
-        const hansken = new HanskenClient('/gatekeeper');
+        const hansken = new HanskenClient('/gatekeeper', '/keystore');
         hansken.project(projectId).images().then((images) => {
             images.forEach((image) => {
                 document.write(`<li>${image.description}`);

@@ -2,10 +2,12 @@ import { ProjectContext } from './modules/projectContext.js';
 import { SinglefileContext } from './modules/singefileContext.js';
 import { Scheduler } from './modules/scheduler.js';
 import { SessionManager } from './modules/sessionManager.js';
+import { TraceModelContext } from './modules/traceModelContext.js';
 
 class HanskenClient {
 
     #scheduler;
+    #traceModelContexts = {};
 
     /**
      * Creates a client to obtain information via the Hansken REST API. SAML session handling is done by this client.
@@ -87,6 +89,20 @@ class HanskenClient {
             this.#scheduler = new Scheduler(this.sessionManager);
         }
         return this.#scheduler;
+    };
+
+    /**
+     * Get the default trace model or a project trace model.
+     *
+     * @param {UUID} projectId The projectId to get the traceModel from, or undefined when accessing the default trace model.
+     * @returns A traceModel context
+     */
+    traceModel = (projectId) => {
+        // Uses 'undefined' as string for the default model
+        if (!this.#traceModelContexts[`${projectId}`]) {
+            this.#traceModelContexts[`${projectId}`] = new TraceModelContext(this.sessionManager, projectId);
+        }
+        return this.#traceModelContexts[`${projectId}`];
     }
 }
 

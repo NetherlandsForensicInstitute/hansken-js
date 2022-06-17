@@ -48,7 +48,7 @@ define('modules/keyManager.js',["exports", "./sessionManager.js"], function (_ex
         return Promise.resolve(_classPrivateFieldGet(_this, _cache)[imageId]);
       }
 
-      return _this.sessionManager.keystore('/session/whoami').then(_sessionManager.SessionManager.toJson).then(function (whoami) {
+      return _this.sessionManager.keystore('/session/whoami').then(_sessionManager.SessionManager.json).then(function (whoami) {
         return _this.sessionManager.keystore("/entries/".concat(imageId, "/").concat(whoami.uid), {
           method: 'GET'
         });
@@ -225,7 +225,7 @@ define('modules/sessionManager.js',["exports", "./keyManager.js"], function (_ex
     });
   }
 
-  _defineProperty(SessionManager, "toJson", function (response) {
+  _defineProperty(SessionManager, "json", function (response) {
     if (response.status < 200 || response.status >= 300 || response.headers.get('Content-Type').indexOf('application/json') !== 0) {
       return Promise.reject(response);
     }
@@ -279,7 +279,7 @@ define('modules/projectImageContext.js',["exports", "./sessionManager.js"], func
     _classCallCheck(this, ProjectImageContext);
 
     _defineProperty(this, "get", function () {
-      return _this.sessionManager.gatekeeper("/projects/".concat(_this.projectId, "/images/").concat(_this.imageId)).then(_sessionManager.SessionManager.toJson);
+      return _this.sessionManager.gatekeeper("/projects/".concat(_this.projectId, "/images/").concat(_this.imageId)).then(_sessionManager.SessionManager.json);
     });
 
     _defineProperty(this, "update", function (image) {
@@ -435,7 +435,7 @@ define('modules/projectSearchContext.js',["exports", "./sessionManager.js"], fun
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(searchRequest)
-      }).then(_sessionManager.SessionManager.toJson);
+      }).then(_sessionManager.SessionManager.json);
     });
 
     this.sessionManager = sessionManager;
@@ -638,7 +638,7 @@ define('modules/abstractProjectContext.js',["exports", "./projectImageContext.js
     });
 
     _defineProperty(this, "get", function () {
-      return _this.sessionManager.gatekeeper("/".concat(_this.collection, "/").concat(_this.collectionId)).then(_sessionManager.SessionManager.toJson);
+      return _this.sessionManager.gatekeeper("/".concat(_this.collection, "/").concat(_this.collectionId)).then(_sessionManager.SessionManager.json);
     });
 
     _defineProperty(this, "update", function (project) {
@@ -656,7 +656,7 @@ define('modules/abstractProjectContext.js',["exports", "./projectImageContext.js
     });
 
     _defineProperty(this, "images", function () {
-      return _this.sessionManager.gatekeeper("/projects/".concat(_this.collectionId, "/images")).then(_sessionManager.SessionManager.toJson);
+      return _this.sessionManager.gatekeeper("/projects/".concat(_this.collectionId, "/images")).then(_sessionManager.SessionManager.json);
     });
 
     _defineProperty(this, "search", function () {
@@ -871,15 +871,15 @@ define('modules/scheduler.js',["exports", "./sessionManager.js"], function (_exp
     });
 
     _defineProperty(this, "openTasks", function () {
-      return _this.sessionManager.gatekeeper("/tasks/open").then(_sessionManager.SessionManager.toJson);
+      return _this.sessionManager.gatekeeper("/tasks/open").then(_sessionManager.SessionManager.json);
     });
 
     _defineProperty(this, "closedTasks", function () {
-      return _this.sessionManager.gatekeeper("/tasks/closed").then(_sessionManager.SessionManager.toJson);
+      return _this.sessionManager.gatekeeper("/tasks/closed").then(_sessionManager.SessionManager.json);
     });
 
     _defineProperty(this, "task", function (taskId) {
-      return _this.sessionManager.gatekeeper("/tasks/".concat(taskId)).then(_sessionManager.SessionManager.toJson);
+      return _this.sessionManager.gatekeeper("/tasks/".concat(taskId)).then(_sessionManager.SessionManager.json);
     });
 
     _defineProperty(this, "extractProjectImage", function (projectId, imageId, imageKey) {
