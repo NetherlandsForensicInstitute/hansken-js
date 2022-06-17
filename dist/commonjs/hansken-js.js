@@ -14,6 +14,8 @@ var _scheduler2 = require("./modules/scheduler.js");
 
 var _sessionManager = require("./modules/sessionManager.js");
 
+var _traceModelContext = require("./modules/traceModelContext.js");
+
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
@@ -38,6 +40,8 @@ function _classApplyDescriptorGet(receiver, descriptor) { if (descriptor.get) { 
 
 var _scheduler = /*#__PURE__*/new WeakMap();
 
+var _traceModelContexts = /*#__PURE__*/new WeakMap();
+
 var HanskenClient = /*#__PURE__*/_createClass(
 /**
  * Creates a client to obtain information via the Hansken REST API. SAML session handling is done by this client.
@@ -53,6 +57,11 @@ function HanskenClient(gatekeeperUrl, keystoreUrl) {
   _classPrivateFieldInitSpec(this, _scheduler, {
     writable: true,
     value: void 0
+  });
+
+  _classPrivateFieldInitSpec(this, _traceModelContexts, {
+    writable: true,
+    value: {}
   });
 
   _defineProperty(this, "createProject", function (project) {
@@ -103,6 +112,15 @@ function HanskenClient(gatekeeperUrl, keystoreUrl) {
     return _classPrivateFieldGet(_this, _scheduler);
   });
 
+  _defineProperty(this, "traceModel", function (projectId) {
+    // Uses 'undefined' as string for the default model
+    if (!_classPrivateFieldGet(_this, _traceModelContexts)["".concat(projectId)]) {
+      _classPrivateFieldGet(_this, _traceModelContexts)["".concat(projectId)] = new _traceModelContext.TraceModelContext(_this.sessionManager, projectId);
+    }
+
+    return _classPrivateFieldGet(_this, _traceModelContexts)["".concat(projectId)];
+  });
+
   this.sessionManager = new _sessionManager.SessionManager(gatekeeperUrl, keystoreUrl);
 }
 /**
@@ -114,7 +132,7 @@ function HanskenClient(gatekeeperUrl, keystoreUrl) {
 );
 
 exports.HanskenClient = HanskenClient;
-},{"./modules/projectContext.js":4,"./modules/scheduler.js":7,"./modules/sessionManager.js":8,"./modules/singefileContext.js":9}],2:[function(require,module,exports){
+},{"./modules/projectContext.js":4,"./modules/scheduler.js":7,"./modules/sessionManager.js":8,"./modules/singefileContext.js":9,"./modules/traceModelContext.js":11}],2:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1025,7 +1043,143 @@ function TraceContext(sessionManager, collectionId, traceUid) {
 );
 
 exports.TraceContext = TraceContext;
-},{"./traceUid.js":11}],11:[function(require,module,exports){
+},{"./traceUid.js":12}],11:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.TraceModelContext = void 0;
+
+var _sessionManager = require("./sessionManager.js");
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function _classPrivateFieldInitSpec(obj, privateMap, value) { _checkPrivateRedeclaration(obj, privateMap); privateMap.set(obj, value); }
+
+function _checkPrivateRedeclaration(obj, privateCollection) { if (privateCollection.has(obj)) { throw new TypeError("Cannot initialize the same private elements twice on an object"); } }
+
+function _classPrivateFieldSet(receiver, privateMap, value) { var descriptor = _classExtractFieldDescriptor(receiver, privateMap, "set"); _classApplyDescriptorSet(receiver, descriptor, value); return value; }
+
+function _classApplyDescriptorSet(receiver, descriptor, value) { if (descriptor.set) { descriptor.set.call(receiver, value); } else { if (!descriptor.writable) { throw new TypeError("attempted to set read only private field"); } descriptor.value = value; } }
+
+function _classPrivateFieldGet(receiver, privateMap) { var descriptor = _classExtractFieldDescriptor(receiver, privateMap, "get"); return _classApplyDescriptorGet(receiver, descriptor); }
+
+function _classExtractFieldDescriptor(receiver, privateMap, action) { if (!privateMap.has(receiver)) { throw new TypeError("attempted to " + action + " private field on non-instance"); } return privateMap.get(receiver); }
+
+function _classApplyDescriptorGet(receiver, descriptor) { if (descriptor.get) { return descriptor.get.call(receiver); } return descriptor.value; }
+
+var _traceModel = /*#__PURE__*/new WeakMap();
+
+var TraceModelContext = /*#__PURE__*/_createClass(
+/**
+ * Get the default trace model or a project trace model.
+ *
+ * @param {SessionManager} sessionManager The session manager, used for connections to the Hansken servers
+ * @param {UUID} projectId The projectId to get the traceModel from, or undefined when accessing the default trace model.
+ */
+function TraceModelContext(sessionManager, projectId) {
+  var _this = this;
+
+  _classCallCheck(this, TraceModelContext);
+
+  _classPrivateFieldInitSpec(this, _traceModel, {
+    writable: true,
+    value: void 0
+  });
+
+  _defineProperty(this, "get", function () {
+    if (!_classPrivateFieldGet(_this, _traceModel)) {
+      return _this.sessionManager.gatekeeper(_this.url).then(_sessionManager.SessionManager.json).then(function (traceModel) {
+        _classPrivateFieldSet(_this, _traceModel, traceModel);
+
+        return traceModel;
+      });
+    }
+
+    return Promise.resolve(_classPrivateFieldGet(_this, _traceModel));
+  });
+
+  _defineProperty(this, "property", function (property) {
+    return _this.get().then(function (model) {
+      var split = property.split('\.');
+
+      if (split.length === 1) {
+        // For example: uid, name, siblingId
+        if (model.properties[property]) {
+          return model.properties[property];
+        } // For example: tags, privileged
+
+
+        for (var _i = 0, _Object$keys = Object.keys(model.origins.categories); _i < _Object$keys.length; _i++) {
+          var category = _Object$keys[_i];
+          var modelCategory = model.origins.categories[category];
+
+          if (modelCategory.properties && modelCategory.properties[property]) {
+            return modelCategory.properties[property];
+          }
+        }
+      } else {
+        for (var _i2 = 0, _Object$keys2 = Object.keys(model.origins.categories); _i2 < _Object$keys2.length; _i2++) {
+          var _category = _Object$keys2[_i2];
+          var _modelCategory = model.origins.categories[_category];
+
+          if (_modelCategory.types && _modelCategory.types[split[0]] && _modelCategory.types[split[0]].properties) {
+            var modelType = _modelCategory.types[split[0]];
+
+            if (split.length === 2) {
+              // For example: picture.width
+              return modelType.properties[split[1]];
+            }
+
+            if (modelType.keys && (split.length === 3 || split.length === 4)) {
+              // For example: data.raw.size or data.raw.hash.md5
+              return modelType.properties[split[2]];
+            }
+
+            if (split.length == 3) {
+              // For example: email.misc.headerField
+              return modelType.properties[split[1]];
+            }
+          }
+        }
+      }
+
+      return Promise.reject('Property ${property} not found in trace model');
+    });
+  });
+
+  _defineProperty(this, "type", function (type) {
+    return _this.get().then(function (model) {
+      for (var _i3 = 0, _Object$keys3 = Object.keys(model.origins.categories); _i3 < _Object$keys3.length; _i3++) {
+        var category = _Object$keys3[_i3];
+        var modelCategory = model.origins.categories[category];
+
+        if (modelCategory.types && modelCategory.types[type]) {
+          return modelCategory.types[type];
+        }
+      }
+    });
+  });
+
+  this.sessionManager = sessionManager;
+  this.url = projectId ? "/projects/".concat(projectId, "/tracemodel") : "/tracemodel";
+}
+/**
+ * Get the trace model.
+ *
+ * @returns The trace model
+ */
+);
+
+exports.TraceModelContext = TraceModelContext;
+},{"./sessionManager.js":8}],12:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
