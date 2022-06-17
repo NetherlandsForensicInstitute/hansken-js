@@ -992,22 +992,41 @@ define('modules/traceModelContext.js',["exports", "./sessionManager.js"], functi
 
     _defineProperty(this, "get", function () {
       if (!_classPrivateFieldGet(_this, _traceModel)) {
-        return _this.sessionManager.gatekeeper(_this.url).then(_sessionManager.SessionManager.json).then(function (traceModel) {
-          _classPrivateFieldSet(_this, _traceModel, traceModel);
-
-          return traceModel;
-        });
+        _classPrivateFieldSet(_this, _traceModel, _this.sessionManager.gatekeeper(_this.url).then(_sessionManager.SessionManager.json));
       }
 
-      return Promise.resolve(_classPrivateFieldGet(_this, _traceModel));
+      return _classPrivateFieldGet(_this, _traceModel);
     });
 
     _defineProperty(this, "property", function (property) {
       return _this.get().then(function (model) {
+        /*
+        Simplified trace model to understand the code below:
+         uid,
+        name,
+        siblingId,
+        origins:
+            categories:
+                annotated:
+                    properties:
+                        tags: ?
+                        privileged: ?
+                extracted:
+                    types:
+                        data:
+                            keys: [raw, text, ...]
+                            properties:
+                                size: ?
+                                hash: {md5: ?}
+                        email:
+                            misc: {headerField: ?}
+                        picture:
+                            width: ?
+        */
         var split = property.split('\.');
 
         if (split.length === 1) {
-          // For example: uid, name, siblingId
+          // For example: uid, name, siblingId (intrinsics)
           if (model.properties[property]) {
             return model.properties[property];
           } // For example: tags, privileged
@@ -1047,7 +1066,7 @@ define('modules/traceModelContext.js',["exports", "./sessionManager.js"], functi
           }
         }
 
-        return Promise.reject('Property ${property} not found in trace model');
+        return Promise.reject("Property ".concat(property, " not found in trace model"));
       });
     });
 
@@ -1070,7 +1089,7 @@ define('modules/traceModelContext.js',["exports", "./sessionManager.js"], functi
   /**
    * Get the trace model.
    *
-   * @returns The trace model
+   * @returns Promise for the trace model
    */
   );
 
@@ -1110,7 +1129,8 @@ define('hansken-js',["exports", "./modules/projectContext.js", "./modules/singef
 
   var _traceModelContexts = /*#__PURE__*/new WeakMap();
 
-  var HanskenClient = /*#__PURE__*/_createClass(
+  var HanskenClient = /*#__PURE__*/_createClass( // {projectId, traceModelContext}
+
   /**
    * Creates a client to obtain information via the Hansken REST API. SAML session handling is done by this client.
    *
