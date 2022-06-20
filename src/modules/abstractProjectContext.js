@@ -32,7 +32,7 @@ class AbstractProjectContext {
      *
      * @returns The project
      */
-    get = () => this.sessionManager.gatekeeper(`/${this.collection}/${this.collectionId}`).then(SessionManager.toJson);
+    get = () => this.sessionManager.gatekeeper(`/${this.collection}/${this.collectionId}`).then(SessionManager.json);
 
     /**
      * Update an existing project or singlefile.
@@ -62,7 +62,7 @@ class AbstractProjectContext {
      * @returns An array of images linked to this project
      */
     // NOTE: /singlefiles/{singlefileId}/images does not exist, but one can use /projects/{singlefileId}/images
-    images = () => this.sessionManager.gatekeeper(`/projects/${this.collectionId}/images`).then(SessionManager.toJson);
+    images = () => this.sessionManager.gatekeeper(`/projects/${this.collectionId}/images`).then(SessionManager.json);
 
     /**
      * Create a ProjectSearchContext to search for traces, facets, tracelets and more.

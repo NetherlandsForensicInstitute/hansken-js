@@ -1,0 +1,3118 @@
+{
+	"description": "Describes all trace types with their properties.",
+	"name": "Hansken Trace Model",
+	"version": "2.0",
+	"properties": {
+		"id": {
+			"description": "Unique identifier of the trace within an image.",
+			"type": "string"
+		},
+		"image": {
+			"description": "Unique identifier of the trace's image.",
+			"type": "string"
+		},
+		"modelVersion": {
+			"description": "Version of the model used for the trace.",
+			"type": "string"
+		},
+		"name": {
+			"description": "A name for the trace.",
+			"type": "string"
+		},
+		"parent": {
+			"description": "Unique identifier of the parent trace.",
+			"type": "string"
+		},
+		"pathItems": {
+			"description": "The individual items that make up the path property.",
+			"isList": true,
+			"type": "string"
+		},
+		"path": {
+			"description": "The logical path where the trace is located on the image, including the name of the trace itself.",
+			"type": "string"
+		},
+		"previews": {
+			"description": "Map of previews by mime type.",
+			"isMap": true,
+			"type": "binary"
+		},
+		"siblingId": {
+			"description": "Unique identifier of the trace among its siblings.",
+			"type": "integer"
+		},
+		"uid": {
+			"description": "Unique identifier of the trace.",
+			"type": "string"
+		}
+	},
+	"origins": {
+		"description": "Designates where the trace was produced (\"what was the origin of this trace\"). Origins support all categories.",
+		"keys": {
+			"system": {
+				"description": "Categories added by the extraction system"
+			},
+			"user": {
+				"description": "Categories added manually by a user"
+			}
+		},
+		"categories": {
+			"annotated": {
+				"properties": {
+					"privileged": {
+						"description": "Whether the trace has privileged access: suspected, confirmed or rejected.",
+						"type": "string"
+					},
+					"tags": {
+						"description": "User defined tags for this trace.",
+						"isList": true,
+						"type": "string"
+					}
+				},
+				"types": {
+					"#note": {
+						"cardinality": "few",
+						"isList": true,
+						"description": "A user defined note.",
+						"properties": {
+							"createdOn": {
+								"description": "The date and time at which the note was created.",
+								"type": "date"
+							},
+							"id": {
+								"description": "The identifier of the note.",
+								"type": "string"
+							},
+							"modifiedOn": {
+								"description": "The date and time at which the note was last modified.",
+								"type": "date"
+							},
+							"text": {
+								"description": "The body text of the note.",
+								"type": "string"
+							},
+							"user": {
+								"description": "The user who created the note.",
+								"type": "string"
+							}
+						}
+					}
+				}
+			},
+			"extracted": {
+				"types": {
+					"account": {
+						"description": "A user account.",
+						"properties": {
+							"accessedOn": {
+								"description": "The date and time of the last usage of the account.",
+								"type": "date"
+							},
+							"active": {
+								"description": "Can the user account be used or is the account disabled or locked.",
+								"type": "boolean"
+							},
+							"application": {
+								"description": "The application using the account.",
+								"type": "string"
+							},
+							"createdOn": {
+								"description": "The date and time of account creation.",
+								"type": "date"
+							},
+							"description": {
+								"description": "A description.",
+								"type": "string"
+							},
+							"expiresOn": {
+								"description": "The date and time of expiration of the account.",
+								"type": "date"
+							},
+							"misc": {
+								"description": "Additional information about the account.",
+								"isMap": true,
+								"type": "string"
+							},
+							"modifiedOn": {
+								"description": "The date and time of the last modification of the account.",
+								"type": "date"
+							},
+							"name": {
+								"description": "The account login name or another identifier that describes the account e.g. email address.",
+								"type": "string"
+							},
+							"owner": {
+								"description": "The owner of this account.",
+								"type": "string"
+							},
+							"password": {
+								"description": "The stored password, might be encrypted.",
+								"type": "string"
+							},
+							"passwordType": {
+								"description": "The type of password, for instance plain-text or encrypted.",
+								"type": "string"
+							},
+							"timestamps": {
+								"description": "Additional timestamps found for account e.g. timestamps.firstUsedOn.",
+								"isMap": true,
+								"type": "date"
+							},
+							"type": {
+								"description": "The type of account, for instance OS, website, email.",
+								"type": "string"
+							}
+						}
+					},
+					"accountArchive": {
+						"description": "A list of accounts.",
+						"properties": {
+							"misc": {
+								"description": "Additional information about the account archive.",
+								"isMap": true,
+								"type": "string"
+							}
+						}
+					},
+					"address": {
+						"description": "A physical location in the world.",
+						"properties": {
+							"application": {
+								"description": "The application using the address.",
+								"type": "string"
+							},
+							"city": {
+								"description": "The name of the city.",
+								"type": "string"
+							},
+							"country": {
+								"description": "The name of the country.",
+								"type": "string"
+							},
+							"misc": {
+								"description": "Additional information about the location.",
+								"isMap": true,
+								"type": "string"
+							},
+							"street": {
+								"description": "The name of the street.",
+								"type": "string"
+							},
+							"type": {
+								"description": "The type of the address, for instance home or work.",
+								"type": "string"
+							},
+							"zipCode": {
+								"description": "The zip-code.",
+								"type": "string"
+							}
+						}
+					},
+					"addressBook": {
+						"description": "A collection of contacts.",
+						"properties": {
+							"application": {
+								"description": "The application for which this trace is an addressbook.",
+								"type": "string"
+							},
+							"misc": {
+								"description": "Additional information about the address book.",
+								"isMap": true,
+								"type": "string"
+							}
+						}
+					},
+					"application": {
+						"description": "A software application.",
+						"properties": {
+							"id": {
+								"description": "The unique identifier of the application.",
+								"type": "string"
+							},
+							"installedOn": {
+								"description": "The installation date of the application.",
+								"type": "date"
+							},
+							"misc": {
+								"description": "Additional information about the application.",
+								"isMap": true,
+								"type": "string"
+							},
+							"name": {
+								"description": "The name of the application.",
+								"type": "string"
+							},
+							"package": {
+								"description": "The package of the application, e.g. com.example.ExampleMessenger.",
+								"type": "string"
+							},
+							"permissions": {
+								"description": "The permissions requested by the application.",
+								"isList": true,
+								"type": "string"
+							},
+							"purchasedOn": {
+								"description": "The purchase date of the application.",
+								"type": "date"
+							},
+							"version": {
+								"description": "The registered version of the application.",
+								"type": "string"
+							}
+						}
+					},
+					"applicationArchive": {
+						"description": "A list of applications.",
+						"properties": {
+							"misc": {
+								"description": "Additional information about the application archive.",
+								"isMap": true,
+								"type": "string"
+							}
+						}
+					},
+					"attachment": {
+						"description": "An attached block of data.",
+						"properties": {
+							"application": {
+								"description": "The name of the application from which the attachment originates.",
+								"type": "string"
+							},
+							"encoding": {
+								"description": "The encoding that is used for sending the attachment, e.g. BASE64, BITS_7.",
+								"type": "string"
+							},
+							"misc": {
+								"description": "Additional information about the attachment.",
+								"isMap": true,
+								"type": "string"
+							},
+							"name": {
+								"description": "The name of the attachment.",
+								"type": "string"
+							},
+							"type": {
+								"description": "The type of attachment.",
+								"type": "string"
+							}
+						}
+					},
+					"audio": {
+						"description": "A media trace that contains audio.",
+						"properties": {
+							"bitrate": {
+								"description": "The bitrate of the audio in bits per second.",
+								"type": "integer",
+								"unit": "b/s"
+							},
+							"duration": {
+								"description": "The duration of the audio in seconds.",
+								"type": "integer",
+								"unit": "s"
+							},
+							"format": {
+								"description": "The format of the audio. For example: mp3 or flac.",
+								"type": "string"
+							},
+							"metadata": {
+								"description": "Audio metadata, e.g. title, genre, artist.",
+								"isMap": true,
+								"type": "string"
+							},
+							"misc": {
+								"description": "Additional information about the audio.",
+								"isMap": true,
+								"type": "string"
+							}
+						}
+					},
+					"bookmark": {
+						"description": "A bookmark to a web pages or files using a web browser.",
+						"properties": {
+							"accessedOn": {
+								"description": "The date and time at which the web page or file was last opened.",
+								"type": "date"
+							},
+							"application": {
+								"description": "The name of the web browser from which the bookmarks originates.",
+								"type": "string"
+							},
+							"createdOn": {
+								"description": "The date and time at which this bookmark was created.",
+								"type": "date"
+							},
+							"misc": {
+								"description": "Additional information about the bookmark.",
+								"isMap": true,
+								"type": "string"
+							},
+							"modifiedOn": {
+								"description": "The date and time at which this bookmark was last modified.",
+								"type": "date"
+							},
+							"name": {
+								"description": "The name of the bookmark.",
+								"type": "string"
+							},
+							"path": {
+								"description": "The folder containing the bookmark.",
+								"type": "string"
+							},
+							"url": {
+								"description": "The target of the bookmark.",
+								"type": "string"
+							},
+							"visitCount": {
+								"description": "The minimal number of times this bookmark has been visited by this web browser.",
+								"type": "integer",
+								"unit": "n"
+							}
+						}
+					},
+					"bookmarkArchive": {
+						"description": "A list of bookmarks to web pages and files using a web browser.",
+						"properties": {
+							"application": {
+								"description": "The name of the web browser from which the bookmarks originates.",
+								"type": "string"
+							},
+							"misc": {
+								"description": "Additional information about the bookmarkArchive.",
+								"isMap": true,
+								"type": "string"
+							}
+						}
+					},
+					"browserHistory": {
+						"description": "Information on a web page or file that has been visited with a web browser.",
+						"properties": {
+							"accessedOn": {
+								"description": "The date and time at which the web page or file was last visited.",
+								"type": "date"
+							},
+							"application": {
+								"description": "The name of the web browser that was used to visit the web page or file.",
+								"type": "string"
+							},
+							"createdOn": {
+								"description": "The date and time at which this log entry was created.",
+								"type": "date"
+							},
+							"misc": {
+								"description": "Additional information on this browser history.",
+								"isMap": true,
+								"type": "string"
+							},
+							"modifiedOn": {
+								"description": "The date and time at which this visited web page or file was last modified. This timestamp is provided by the web site's server.",
+								"type": "date"
+							},
+							"pageTitle": {
+								"description": "The title of the visited web page or file.",
+								"type": "string"
+							},
+							"type": {
+								"description": "The type of page or file that has been visited, typically this property has value \"URL\".",
+								"type": "string"
+							},
+							"url": {
+								"description": "The address of the visited web page or file.",
+								"type": "string"
+							},
+							"user": {
+								"description": "The user that visited this web page or file.",
+								"type": "string"
+							},
+							"visitCount": {
+								"description": "The minimal number of times this web page or file has been visited by this web browser.",
+								"type": "integer",
+								"unit": "n"
+							}
+						}
+					},
+					"browserHistoryLog": {
+						"description": "Log containing the history of visited web pages and files with a web browser.",
+						"properties": {
+							"application": {
+								"description": "The name of the web browser from which the log originates.",
+								"type": "string"
+							},
+							"misc": {
+								"description": "Additional information about the browserHistoryLog.",
+								"isMap": true,
+								"type": "string"
+							}
+						}
+					},
+					"calendar": {
+						"description": "A collection of appointments and meetings.",
+						"properties": {
+							"application": {
+								"description": "The application for which this a calendar.",
+								"type": "string"
+							},
+							"misc": {
+								"description": "Additional information about the calendar.",
+								"isMap": true,
+								"type": "string"
+							},
+							"owner": {
+								"description": "The owner of the calendar.",
+								"type": "string"
+							}
+						}
+					},
+					"calendarEntry": {
+						"description": "An entry in a calendar, for instance an appointment or a meeting.",
+						"properties": {
+							"application": {
+								"description": "The application for which this a calendar entry.",
+								"type": "string"
+							},
+							"attendees": {
+								"description": "The attendees of the event.",
+								"isList": true,
+								"type": "string"
+							},
+							"categories": {
+								"description": "Categories applied to the event.",
+								"isList": true,
+								"type": "string"
+							},
+							"createdOn": {
+								"description": "The date and time at which the calendar entry was created.",
+								"type": "date"
+							},
+							"duration": {
+								"description": "The duration of the event.",
+								"type": "integer",
+								"unit": "s"
+							},
+							"endsOn": {
+								"description": "The date and time at which the event ends.",
+								"type": "date"
+							},
+							"importance": {
+								"description": "The importance of the calendar entry.",
+								"type": "string"
+							},
+							"labels": {
+								"description": "Named and colored label.",
+								"isMap": true,
+								"type": "string"
+							},
+							"location": {
+								"description": "The location of the event.",
+								"type": "string"
+							},
+							"misc": {
+								"description": "Additional information on the calendar entry.",
+								"isMap": true,
+								"type": "string"
+							},
+							"modifiedOn": {
+								"description": "The date and time at which the calendar entry was last modified.",
+								"type": "date"
+							},
+							"owner": {
+								"description": "The organizer of the calendar event.",
+								"type": "string"
+							},
+							"private": {
+								"description": "Is the event marked as private?",
+								"type": "boolean"
+							},
+							"recurrence": {
+								"description": "Recurrence of the event.",
+								"type": "string"
+							},
+							"remindOn": {
+								"description": "The date and time at which a reminder is given about the calendar entry.",
+								"type": "date"
+							},
+							"startsOn": {
+								"description": "The date and time at which the event starts.",
+								"type": "date"
+							},
+							"status": {
+								"description": "The status of the event, for instance accepted, pending or cancelled.",
+								"type": "string"
+							},
+							"subject": {
+								"description": "The subject of the event.",
+								"type": "string"
+							},
+							"timestamps": {
+								"description": "Additional timestamps for an event.",
+								"isMap": true,
+								"type": "date"
+							},
+							"type": {
+								"description": "A free format text identifier, used for identifying type of calendar entry, for instance meeting or event.",
+								"type": "string"
+							}
+						}
+					},
+					"carved": {
+						"description": "A carved trace is not available in the file system, but is found in the (unallocated) binary data in the image.",
+						"properties": {
+							"partial": {
+								"description": "Partial is set to true if the carved trace is only partially recovered.",
+								"type": "boolean"
+							}
+						}
+					},
+					"certificate": {
+						"description": "A certificate.",
+						"properties": {
+							"beginsOn": {
+								"description": "The certificate is not valid before this date.",
+								"type": "date"
+							},
+							"expiresOn": {
+								"description": "The certificate is not valid after this date.",
+								"type": "date"
+							},
+							"issuer": {
+								"description": "The issuer of the certificate.",
+								"type": "string"
+							},
+							"misc": {
+								"description": "Additional information.",
+								"isMap": true,
+								"type": "string"
+							},
+							"serialNumber": {
+								"description": "The serial number of the certificate.",
+								"type": "string"
+							},
+							"subject": {
+								"description": "The subject of the certificate.",
+								"type": "string"
+							},
+							"version": {
+								"description": "The version of the certificate.",
+								"type": "string"
+							}
+						}
+					},
+					"chatConversation": {
+						"description": "A set of messages from one chat conversation.",
+						"properties": {
+							"administrators": {
+								"description": "A list of administrators in this chat conversation.",
+								"isList": true,
+								"type": "string"
+							},
+							"application": {
+								"description": "The application for which this is a chat conversation, e.g. \"Skype\" or \"MSN\".",
+								"type": "string"
+							},
+							"createdOn": {
+								"description": "The date and time at which the conversation was created.",
+								"type": "date"
+							},
+							"misc": {
+								"description": "Additional information about the chat conversation.",
+								"isMap": true,
+								"type": "string"
+							},
+							"participants": {
+								"description": "A list of members in this chat conversation.",
+								"isList": true,
+								"type": "string"
+							},
+							"sessionId": {
+								"description": "An unique identifier for the chat conversation, corresponding with the sessionId of underlying chat events.",
+								"type": "string"
+							},
+							"subject": {
+								"description": "The subject of the chat conversation.",
+								"type": "string"
+							}
+						}
+					},
+					"chatEvent": {
+						"description": "Log containing a chat event, e.g. the transfer of a file or the opening of a webcam session.",
+						"properties": {
+							"application": {
+								"description": "The application for which this is a log file, e.g. \"Skype\" or \"MSN\".",
+								"type": "string"
+							},
+							"from": {
+								"description": "The sending user.",
+								"type": "string"
+							},
+							"message": {
+								"description": "Message attached to the event.",
+								"type": "string"
+							},
+							"messageId": {
+								"description": "An identifier for the chat event.",
+								"type": "string"
+							},
+							"misc": {
+								"description": "Additional information about the chat event.",
+								"isMap": true,
+								"type": "string"
+							},
+							"sentOn": {
+								"description": "The time at which the chat entry was sent.",
+								"type": "date"
+							},
+							"sessionId": {
+								"description": "An identifier for the chat session in which the chat log entry took place.",
+								"type": "string"
+							},
+							"timestamps": {
+								"description": "Additional timestamps for the chat event.",
+								"isMap": true,
+								"type": "date"
+							},
+							"to": {
+								"description": "The receiving users.",
+								"isList": true,
+								"type": "string"
+							},
+							"type": {
+								"description": "The type of chat log entry, e.g. invitation, join, leave.",
+								"type": "string"
+							}
+						}
+					},
+					"chatLog": {
+						"description": "Log containing chat history.",
+						"properties": {
+							"application": {
+								"description": "The application for which this is a log file, e.g. \"Skype\" or \"MSN\".",
+								"type": "string"
+							},
+							"misc": {
+								"description": "Additional information about the chatLog.",
+								"isMap": true,
+								"type": "string"
+							}
+						}
+					},
+					"chatMessage": {
+						"description": "A single message sent in a chat.",
+						"properties": {
+							"application": {
+								"description": "The application for which this is a chat message, e.g. \"Skype\" or \"MSN\".",
+								"type": "string"
+							},
+							"deliveredOn": {
+								"description": "The time at which the chat message was delivered.",
+								"type": "date"
+							},
+							"from": {
+								"description": "The sending user.",
+								"type": "string"
+							},
+							"message": {
+								"description": "The contents of the message.",
+								"type": "string"
+							},
+							"messageId": {
+								"description": "An identifier for the chat message.",
+								"type": "string"
+							},
+							"misc": {
+								"description": "Additional information about the chat message.",
+								"isMap": true,
+								"type": "string"
+							},
+							"readOn": {
+								"description": "The time at which the chat message was read.",
+								"type": "date"
+							},
+							"sentOn": {
+								"description": "The time at which the chat message was sent.",
+								"type": "date"
+							},
+							"sessionId": {
+								"description": "An identifier for the chat session from which the chat message originates.",
+								"type": "string"
+							},
+							"timestamps": {
+								"description": "Additional timestamps for the chat message.",
+								"isMap": true,
+								"type": "date"
+							},
+							"to": {
+								"description": "The receiving users.",
+								"isList": true,
+								"type": "string"
+							}
+						}
+					},
+					"compressed": {
+						"description": "Compressed data, e.g. zip",
+						"properties": {
+							"algorithm": {
+								"description": "The algorithm used to compress the trace.",
+								"type": "string"
+							},
+							"compressedSize": {
+								"description": "The number of bytes of the compressed data.",
+								"type": "integer",
+								"unit": "B"
+							},
+							"compressionRatio": {
+								"description": "The compression ratio of the compressed data.",
+								"type": "real",
+								"scale": 6
+							},
+							"misc": {
+								"description": "Additional information about the compression.",
+								"isMap": true,
+								"type": "string"
+							},
+							"modifiedOn": {
+								"description": "The last time the compressed content was changed.",
+								"type": "date"
+							},
+							"originalName": {
+								"description": "The name of the original file.",
+								"type": "string"
+							},
+							"originalOperatingSystem": {
+								"description": "The original operating system that created the file.",
+								"type": "string"
+							}
+						}
+					},
+					"connection": {
+						"description": "Connection to a network.",
+						"properties": {
+							"accessedOn": {
+								"description": "The time the connection was last accessed.",
+								"type": "date"
+							},
+							"baseStation": {
+								"description": "The base station.",
+								"type": "string"
+							},
+							"createdOn": {
+								"description": "The time the connection was initiated for the first time.",
+								"type": "date"
+							},
+							"description": {
+								"description": "Description.",
+								"type": "string"
+							},
+							"encryptionKey": {
+								"description": "The encryption key.",
+								"type": "string"
+							},
+							"expiresOn": {
+								"description": "The time the connection is going to expire.",
+								"type": "date"
+							},
+							"misc": {
+								"description": "Additional information on the connection.",
+								"isMap": true,
+								"type": "string"
+							},
+							"ssid": {
+								"description": "Network identifier.",
+								"type": "string"
+							},
+							"timestamps": {
+								"description": "Additional timestamps for the connection.",
+								"isMap": true,
+								"type": "date"
+							},
+							"type": {
+								"description": "The type of the connection.",
+								"type": "string"
+							}
+						}
+					},
+					"connectionArchive": {
+						"description": "A list of connections.",
+						"properties": {
+							"misc": {
+								"description": "Additional information about the connection archive.",
+								"isMap": true,
+								"type": "string"
+							}
+						}
+					},
+					"contact": {
+						"description": "Contact found in an application, for example an entry in an address book.",
+						"properties": {
+							"application": {
+								"description": "The application for which this contact is used, for example Skype or MSN.",
+								"type": "string"
+							},
+							"emailAddresses": {
+								"description": "The email addresses of the contact.",
+								"isMap": true,
+								"type": "string"
+							},
+							"firstName": {
+								"description": "The first name of the contact.",
+								"type": "string"
+							},
+							"id": {
+								"description": "An identifier for the contact.",
+								"type": "string"
+							},
+							"lastName": {
+								"description": "The last name of the contact.",
+								"type": "string"
+							},
+							"middleName": {
+								"description": "The middle name of the contact.",
+								"type": "string"
+							},
+							"misc": {
+								"description": "Additional information about the contact.",
+								"isMap": true,
+								"type": "string"
+							},
+							"name": {
+								"description": "The name of the contact (firstName + lastName).",
+								"type": "string"
+							},
+							"phoneNumbers": {
+								"description": "The phone numbers of the contact.",
+								"isMap": true,
+								"type": "string"
+							},
+							"screenName": {
+								"description": "The display name of the contact.",
+								"type": "string"
+							},
+							"timestamps": {
+								"description": "Timestamps that relate to the contact.",
+								"isMap": true,
+								"type": "date"
+							},
+							"type": {
+								"description": "The type of the contact, for example friend, work.",
+								"type": "string"
+							}
+						}
+					},
+					"cookie": {
+						"description": "A piece of data used by a (remote) web page, stored on the local machine.",
+						"properties": {
+							"accessedOn": {
+								"description": "The last time at which the cookie was accessed.",
+								"type": "date"
+							},
+							"application": {
+								"description": "The name/identifier of the web browser from which cookies is extracted.",
+								"type": "string"
+							},
+							"createdOn": {
+								"description": "The date and time at which the cookie was created.",
+								"type": "date"
+							},
+							"domain": {
+								"description": "The domain for which the cookie is stored, for example nfi.minjus.nl.",
+								"type": "string"
+							},
+							"expiresOn": {
+								"description": "The expiration time of the cookie.",
+								"type": "date"
+							},
+							"misc": {
+								"description": "Additional information about the cookie.",
+								"isMap": true,
+								"type": "string"
+							},
+							"name": {
+								"description": "The name of the cookie.",
+								"type": "string"
+							},
+							"path": {
+								"description": "String representation of the path of the cookie.",
+								"type": "string"
+							},
+							"secure": {
+								"description": "If the cookie is secure it cannot be delivered over an unencrypted session such as http.",
+								"type": "boolean"
+							}
+						}
+					},
+					"cookieArchive": {
+						"description": "A collection of cookies.",
+						"properties": {
+							"application": {
+								"description": "The application for which this trace is a cookieArchive for example FireFox or IE.",
+								"type": "string"
+							},
+							"misc": {
+								"description": "Additional information about the cookieArchive.",
+								"isMap": true,
+								"type": "string"
+							}
+						}
+					},
+					"cryptoKey": {
+						"description": "A encryption/decryption key.",
+						"properties": {
+							"algorithm": {
+								"description": "The algorithm for which the key is used.",
+								"type": "string"
+							},
+							"base64": {
+								"description": "The contents of the key represented as base64.",
+								"type": "string"
+							},
+							"createdOn": {
+								"description": "The date this key is created.",
+								"type": "date"
+							},
+							"encoded": {
+								"description": "The contents of the key encoded in the given format.",
+								"type": "binary"
+							},
+							"format": {
+								"description": "The format used to encode the key.",
+								"type": "string"
+							},
+							"hasPrivate": {
+								"description": "Whether the key contains a private key.",
+								"type": "boolean"
+							},
+							"isMaster": {
+								"description": "Whether the key is a master key.",
+								"type": "boolean"
+							},
+							"misc": {
+								"description": "Additional information.",
+								"isMap": true,
+								"type": "string"
+							},
+							"serialNumber": {
+								"description": "The id of the key.",
+								"type": "string"
+							},
+							"type": {
+								"description": "The type of key, for example private, public or secret.",
+								"type": "string"
+							},
+							"userIds": {
+								"description": "The user IDs associated with the key.",
+								"isList": true,
+								"type": "string"
+							}
+						}
+					},
+					"cryptoKeyPair": {
+						"description": "Two crypto keys of types public and private.",
+						"properties": {
+							"application": {
+								"description": "The name of the application used for this key pair.",
+								"type": "string"
+							},
+							"misc": {
+								"description": "Additional information about the cryptoKeyPair.",
+								"isMap": true,
+								"type": "string"
+							}
+						}
+					},
+					"cryptocurrencyWallet": {
+						"description": "A collection of crypto keys and contacts of a cryptocurrency wallet.",
+						"properties": {
+							"misc": {
+								"description": "Additional information about the cryptocurrency wallet.",
+								"isMap": true,
+								"type": "string"
+							},
+							"type": {
+								"description": "The type of the cryptocurrency wallet, for example Bitcoin, Litecoin or Ethereum.",
+								"type": "string"
+							}
+						}
+					},
+					"data": {
+						"keys": ["decoded", "decrypted", "encrypted", "html", "htmlText", "ocr", "packets", "plain", "preview", "raw", "rtf", "signed", "text", "transcoded", "translated", "unsigned", "uplink"],
+						"description": "The data (content) of the trace, indexed by data type. For example data.raw.size, data.text.size",
+						"properties": {
+							"descriptor": {
+								"description": "An opaque reference to the actual bytes that make up the data.",
+								"type": "binary"
+							},
+							"entropy": {
+								"description": "Shannon entropy (a measure of randomness) of the data.",
+								"type": "real",
+								"scale": 6
+							},
+							"fileType": {
+								"description": "File type of the data. For example 'Adobe Pdf'.",
+								"type": "string"
+							},
+							"hash": {
+								"description": "Hash values of the data, keyed by algorithm. For example: hash.md5='d41d8cd98f00b204e9800998ecf8427e', hash.sha1='da39a3ee5e6b4b0d3255bfef95601890afd80709'",
+								"isMap": true,
+								"type": "string"
+							},
+							"hashHitInfo": {
+								"description": "Information about a hash hit. For example: hashHitInfo.nsrl.os='Windows'",
+								"isMap": true,
+								"type": "string"
+							},
+							"hashHits": {
+								"description": "A list of hash sets that contain a hash of this trace.",
+								"isList": true,
+								"type": "string"
+							},
+							"hashMisses": {
+								"description": "A list of hash sets that do NOT contain a hash of this trace.",
+								"isList": true,
+								"type": "string"
+							},
+							"imageOffset": {
+								"description": "The offset at which the start of data can be found, relative to the start of the image data.",
+								"type": "integer",
+								"unit": "B"
+							},
+							"mimeClass": {
+								"description": "MIME type derived classification of the data. For example 'audio', 'document', 'picture', or 'text'.",
+								"type": "string"
+							},
+							"mimeType": {
+								"description": "MIME type of the data. For example 'text/html' or 'audio/mp3'.",
+								"type": "string"
+							},
+							"parentOffset": {
+								"description": "The offset at which the start of data can be found, relative to the start of the parent trace's data.",
+								"type": "integer",
+								"unit": "B"
+							},
+							"size": {
+								"description": "The size of the data in bytes.",
+								"type": "integer",
+								"unit": "B"
+							},
+							"type": {
+								"description": "The type of data, contains the key: raw, text, plain...",
+								"type": "string"
+							}
+						}
+					},
+					"deleted": {
+						"description": "A trace that has been deleted from the file system, or has been placed in a recycle bin or trash can.",
+						"properties": {
+							"deletedOn": {
+								"description": "The deletion time of the trace.",
+								"type": "date"
+							},
+							"misc": {
+								"description": "Additional information about the deleted trace.",
+								"isMap": true,
+								"type": "string"
+							},
+							"originalName": {
+								"description": "The name of the trace before it was deleted.",
+								"type": "string"
+							},
+							"originalPath": {
+								"description": "The path of the trace before it was deleted.",
+								"type": "string"
+							},
+							"originalSize": {
+								"description": "The size of the trace before it was deleted.",
+								"type": "integer",
+								"unit": "B"
+							}
+						}
+					},
+					"dns": {
+						"description": "IP DNS information regardless of lookup or reverselookup",
+						"properties": {
+							"ip": {
+								"description": "An ip address in dotted notation or semicolon notation for IPv6.",
+								"type": "string"
+							},
+							"misc": {
+								"description": "Additional information about the DNS information.",
+								"isMap": true,
+								"type": "string"
+							}
+						}
+					},
+					"document": {
+						"description": "A document, for example an Office documents.",
+						"properties": {
+							"application": {
+								"description": "The name of the application used to author the file.",
+								"type": "string"
+							},
+							"author": {
+								"description": "The author of the document.",
+								"type": "string"
+							},
+							"createdOn": {
+								"description": "The date and time at which the document was created.",
+								"type": "date"
+							},
+							"lastAuthor": {
+								"description": "The last author that updated the document.",
+								"type": "string"
+							},
+							"lastPrintedOn": {
+								"description": "The time at which the document was last printed.",
+								"type": "date"
+							},
+							"lastSavedOn": {
+								"description": "The time at which the document was last saved.",
+								"type": "date"
+							},
+							"misc": {
+								"description": "Additional information about the document, e.g. keywords, comments and revisions.",
+								"isMap": true,
+								"type": "string"
+							},
+							"pageCount": {
+								"description": "The number of pages in the document.",
+								"type": "integer",
+								"unit": "n"
+							},
+							"subject": {
+								"description": "The subject of the document.",
+								"type": "string"
+							},
+							"title": {
+								"description": "The title of the document.",
+								"type": "string"
+							},
+							"type": {
+								"description": "The type of the document, e.g. document, spreadsheet or presentation.",
+								"type": "string"
+							}
+						}
+					},
+					"email": {
+						"description": "An electronically sent mail message.",
+						"properties": {
+							"application": {
+								"description": "The application storing this email.",
+								"type": "string"
+							},
+							"bcc": {
+								"description": "A list of blank carbon copied receiver's email addresses.",
+								"isList": true,
+								"type": "string"
+							},
+							"categories": {
+								"description": "Categories applied to the email.",
+								"isMap": true,
+								"type": "string"
+							},
+							"cc": {
+								"description": "A list of carbon copied receiver's email addresses.",
+								"isList": true,
+								"type": "string"
+							},
+							"createdOn": {
+								"description": "The date and time at which the email was created.",
+								"type": "date"
+							},
+							"from": {
+								"description": "The sender's email address.",
+								"type": "string"
+							},
+							"hasAttachment": {
+								"description": "Indicates if the email has an attachment.",
+								"type": "boolean"
+							},
+							"headers": {
+								"description": "The email headers of the email.",
+								"isMap": true,
+								"type": "string"
+							},
+							"inReplyTo": {
+								"description": "A unique identifier for identifying the email this email is a reply to.",
+								"type": "string"
+							},
+							"labels": {
+								"description": "Named and colored label.",
+								"isMap": true,
+								"type": "string"
+							},
+							"messageId": {
+								"description": "A unique identifier for identifying the email.",
+								"type": "string"
+							},
+							"misc": {
+								"description": "Additional information about the email.",
+								"isMap": true,
+								"type": "string"
+							},
+							"modifiedOn": {
+								"description": "The time at which the email and/or its read status was last modified.",
+								"type": "date"
+							},
+							"priority": {
+								"description": "The priority of the email.",
+								"type": "string"
+							},
+							"read": {
+								"description": "Indicates if the email has been marked as read.",
+								"type": "boolean"
+							},
+							"receivedOn": {
+								"description": "The time at which the email message was received.",
+								"type": "date"
+							},
+							"references": {
+								"description": "A list of email message identifiers this email relates to.",
+								"isList": true,
+								"type": "string"
+							},
+							"sentOn": {
+								"description": "The time at which the email was sent.",
+								"type": "date"
+							},
+							"subject": {
+								"description": "The subject of the email.",
+								"type": "string"
+							},
+							"to": {
+								"description": "A lists of receiver's email addresses.",
+								"isList": true,
+								"type": "string"
+							}
+						}
+					},
+					"emailArchive": {
+						"description": "An archive containing email folders and/or messages.",
+						"properties": {
+							"application": {
+								"description": "The application using this emailArchive.",
+								"type": "string"
+							},
+							"misc": {
+								"description": "Additional information about the email archive.",
+								"isMap": true,
+								"type": "string"
+							},
+							"name": {
+								"description": "The name of the email archive.",
+								"type": "string"
+							}
+						}
+					},
+					"emailFolder": {
+						"description": "A folder containing email messages.",
+						"properties": {
+							"application": {
+								"description": "The application storing this email folder.",
+								"type": "string"
+							},
+							"messageCount": {
+								"description": "The number of email messages in the email folder.",
+								"type": "integer"
+							},
+							"misc": {
+								"description": "Additional information about the email folder.",
+								"isMap": true,
+								"type": "string"
+							},
+							"name": {
+								"description": "The name of the email folder.",
+								"type": "string"
+							},
+							"unreadMessageCount": {
+								"description": "The number of unread email messages in the email folder.",
+								"type": "integer"
+							}
+						}
+					},
+					"encrypted": {
+						"description": "Data is recognized to be encrypted and can only be viewed with a cryptoKey or password.",
+						"properties": {
+							"algorithm": {
+								"description": "The algorithm used to encrypt the trace.",
+								"type": "string"
+							},
+							"application": {
+								"description": "The name of the application used to encrypt the trace.",
+								"type": "string"
+							},
+							"decrypted": {
+								"description": "True when the encrypted trace is decrypted, empty otherwise.",
+								"type": "boolean"
+							},
+							"decryptionKey": {
+								"description": "A string representation of the key used to decrypt this trace, base64 encoded if needed.",
+								"type": "string"
+							},
+							"decryptionKeySerialNumber": {
+								"description": "The serial number of the key used to decrypt this trace.",
+								"type": "string"
+							},
+							"decryptionKeySerialNumbers": {
+								"description": "All serial numbers of the certificates of the keys that can decrypt this trace.",
+								"isList": true,
+								"type": "string"
+							},
+							"description": {
+								"description": "Describes the encrypted trace.",
+								"type": "string"
+							},
+							"misc": {
+								"description": "Additional information about the encrypted trace.",
+								"isMap": true,
+								"type": "string"
+							}
+						}
+					},
+					"event": {
+						"description": "An event, mainly used for operating system events.",
+						"properties": {
+							"action": {
+								"description": "The action taken in response to the event.",
+								"type": "string"
+							},
+							"application": {
+								"description": "The application that generated the event.",
+								"type": "string"
+							},
+							"category": {
+								"description": "The category of the event, a number or text to classify the event.",
+								"type": "string"
+							},
+							"computerName": {
+								"description": "A name of the computer on which the log entry was created.",
+								"type": "string"
+							},
+							"createdOn": {
+								"description": "The date and time at which the event was created.",
+								"type": "date"
+							},
+							"endedOn": {
+								"description": "The time at which the event ended.",
+								"type": "date"
+							},
+							"generatedOn": {
+								"description": "The time at which the event was generated.",
+								"type": "date"
+							},
+							"id": {
+								"description": "The identifier of the event.",
+								"type": "string"
+							},
+							"index": {
+								"description": "The index of the event in the event log.",
+								"type": "integer"
+							},
+							"misc": {
+								"description": "Additional information on the event log entry.",
+								"isMap": true,
+								"type": "string"
+							},
+							"runCount": {
+								"description": "The number or times this event was run.",
+								"type": "integer"
+							},
+							"source": {
+								"description": "The source of the event, for example the name of the application that caused the event to occur.",
+								"type": "string"
+							},
+							"startedOn": {
+								"description": "The time at which the event started.",
+								"type": "date"
+							},
+							"text": {
+								"description": "The textual representation of the event.",
+								"type": "string"
+							},
+							"type": {
+								"description": "The type of the event, for example \"information\", \"warning\" or \"error\".",
+								"type": "string"
+							},
+							"user": {
+								"description": "The user for whom the event was created.",
+								"type": "string"
+							}
+						}
+					},
+					"eventLog": {
+						"description": "Log containing events, amongst others from the operating system.",
+						"properties": {
+							"application": {
+								"description": "The application for which this is an event log.",
+								"type": "string"
+							},
+							"misc": {
+								"description": "Additional information on the event log.",
+								"isMap": true,
+								"type": "string"
+							}
+						}
+					},
+					"executable": {
+						"description": "An executable or dll file.",
+						"properties": {
+							"application": {
+								"description": "The name of the application used to author the file.",
+								"type": "string"
+							},
+							"architecture": {
+								"description": "The architecture of the system this executable was compiled for.",
+								"type": "string"
+							},
+							"compiledOn": {
+								"description": "The date and time at which the executable was compiled.",
+								"type": "date"
+							},
+							"majorVersion": {
+								"description": "The major version of this executable.",
+								"type": "integer"
+							},
+							"minorVersion": {
+								"description": "The minor version of this executable.",
+								"type": "integer"
+							},
+							"misc": {
+								"description": "Additional information.",
+								"isMap": true,
+								"type": "string"
+							},
+							"subSystem": {
+								"description": "The subsystem the executable is built for.",
+								"type": "string"
+							}
+						}
+					},
+					"file": {
+						"description": "A file is a block of arbitrary information, or resource for storing information.",
+						"properties": {
+							"accessedOn": {
+								"description": "The last time at which the file was accessed.",
+								"type": "date"
+							},
+							"changedOn": {
+								"description": "The time at which the metadata of the file was last changed.",
+								"type": "date"
+							},
+							"createdOn": {
+								"description": "The date and time at which the file was created.",
+								"type": "date"
+							},
+							"entryId": {
+								"description": "A unique identifier for the file within the filesystem. Currently, used for NTFS MFT entry id.",
+								"type": "integer"
+							},
+							"extension": {
+								"description": "The file name extension: everything after the last dot. Not present if the file has no dot in its name.",
+								"type": "string"
+							},
+							"misc": {
+								"description": "Additional information.",
+								"isMap": true,
+								"type": "string"
+							},
+							"modifiedOn": {
+								"description": "The time at which the content of the file was last modified.",
+								"type": "date"
+							},
+							"name": {
+								"description": "The name of the file.",
+								"type": "string"
+							},
+							"owner": {
+								"description": "The owner of the file.",
+								"type": "string"
+							},
+							"path": {
+								"description": "The path of the file in the filesystem, including filename.",
+								"type": "string"
+							},
+							"timestamps": {
+								"description": "Additional timestamps found for files.",
+								"isMap": true,
+								"type": "date"
+							}
+						}
+					},
+					"fileArchive": {
+						"description": "A collection of folders and files packed into one file.",
+						"properties": {
+							"misc": {
+								"description": "Additional information about the file archive.",
+								"isMap": true,
+								"type": "string"
+							},
+							"type": {
+								"description": "The type of a file archive, e.g. ZIP, GZIP or RAR.",
+								"type": "string"
+							}
+						}
+					},
+					"fileTransfer": {
+						"description": "A file transfer log entry contains the details of a file transfer that took place.",
+						"properties": {
+							"application": {
+								"description": "The application used for the file transfer., e.g. \"FTP\" or \"MSN\".",
+								"type": "string"
+							},
+							"destinationPath": {
+								"description": "The destination for the file that is transferred.",
+								"type": "string"
+							},
+							"finishedOn": {
+								"description": "The time at which the file transfer finished.",
+								"type": "date"
+							},
+							"from": {
+								"description": "The sending user.",
+								"type": "string"
+							},
+							"fromHost": {
+								"description": "The source address of the file transfer.",
+								"type": "string"
+							},
+							"message": {
+								"description": "Additional message attached to the file transfer.",
+								"type": "string"
+							},
+							"messageId": {
+								"description": "An identifier for the file transfer.",
+								"type": "string"
+							},
+							"misc": {
+								"description": "Additional information on the file transfer.",
+								"isMap": true,
+								"type": "string"
+							},
+							"sessionId": {
+								"description": "An identifier for the session in which the file transfer took place.",
+								"type": "string"
+							},
+							"source": {
+								"description": "The source of the file that is transferred.",
+								"type": "string"
+							},
+							"startedOn": {
+								"description": "The time at which the file transfer started.",
+								"type": "date"
+							},
+							"timestamps": {
+								"description": "Additional timestamps for the file transfer.",
+								"isMap": true,
+								"type": "date"
+							},
+							"to": {
+								"description": "The receiving users.",
+								"isList": true,
+								"type": "string"
+							},
+							"toHosts": {
+								"description": "The destination addresses of the file transfer.",
+								"isList": true,
+								"type": "string"
+							},
+							"transferredOn": {
+								"description": "The time at which the file transfer took place (used when no explicit start and finished time is available).",
+								"type": "date"
+							},
+							"type": {
+								"description": "The direction of the file transfer, e.g. send or receive.",
+								"type": "string"
+							}
+						}
+					},
+					"fileTransferLog": {
+						"description": "A file transfer log contains the history of a file transfers.",
+						"properties": {
+							"application": {
+								"description": "The application used for the file transfer., e.g. \"FTP\" or \"MSN\".",
+								"type": "string"
+							},
+							"misc": {
+								"description": "Additional information about the file transfer.",
+								"isMap": true,
+								"type": "string"
+							}
+						}
+					},
+					"filesystem": {
+						"description": "A filesystem is a special-purpose database for the storage, organization, manipulation, and retrieval of data.",
+						"properties": {
+							"misc": {
+								"description": "Additional information on the filesystem, for example the version number.",
+								"isMap": true,
+								"type": "string"
+							},
+							"type": {
+								"description": "The type of a filesystem, for example NTFS or FAT32.",
+								"type": "string"
+							}
+						}
+					},
+					"folder": {
+						"description": "A folder is a container within a filesystem, in which groups of files and other folders can be kept and organized.",
+						"properties": {
+							"accessedOn": {
+								"description": "The last time at which the folder was accessed.",
+								"type": "date"
+							},
+							"changedOn": {
+								"description": "The time at which the metadata of the folder was last changed.",
+								"type": "date"
+							},
+							"createdOn": {
+								"description": "The date and time at which the folder was created.",
+								"type": "date"
+							},
+							"entryId": {
+								"description": "A unique identifier for the folder within the filesystem. Currently, used for NTFS MFT entry id.",
+								"type": "integer"
+							},
+							"misc": {
+								"description": "Additional information.",
+								"isMap": true,
+								"type": "string"
+							},
+							"modifiedOn": {
+								"description": "The time at which the content of the folder was last modified.",
+								"type": "date"
+							},
+							"name": {
+								"description": "The name of the folder.",
+								"type": "string"
+							},
+							"owner": {
+								"description": "The owner of the folder.",
+								"type": "string"
+							},
+							"path": {
+								"description": "The path of the folder in the filesystem.",
+								"type": "string"
+							},
+							"timestamps": {
+								"description": "Additional timestamps for folders.",
+								"isMap": true,
+								"type": "date"
+							}
+						}
+					},
+					"gps": {
+						"description": "A GPS location, a possibly timed global position.",
+						"properties": {
+							"application": {
+								"description": "The application which stores the GPS entry.",
+								"type": "string"
+							},
+							"createdOn": {
+								"description": "The date and time at which the GPS entry was created.",
+								"type": "date"
+							},
+							"hdop": {
+								"description": "The horizontal dilution of precision of the GPS location.",
+								"type": "real",
+								"scale": 3
+							},
+							"latlong": {
+								"description": "The latitude and longitude of the GPS location in decimal degrees.",
+								"type": "latLong"
+							},
+							"misc": {
+								"description": "Additional information about the GPS location.",
+								"isMap": true,
+								"type": "string"
+							},
+							"pdop": {
+								"description": "The positional (3D) dilution of precision of the GPS location.",
+								"type": "real",
+								"scale": 3
+							},
+							"tdop": {
+								"description": "The temporal dilution of precision of the GPS location.",
+								"type": "real",
+								"scale": 3
+							},
+							"vdop": {
+								"description": "The vertical dilution of precision of the GPS location.",
+								"type": "real",
+								"scale": 3
+							}
+						}
+					},
+					"gpsLog": {
+						"description": "A log containing tracks and/or gps entries.",
+						"properties": {
+							"application": {
+								"description": "The application for which this is a log file, e.g. \"Tom Tom Go 6100\".",
+								"type": "string"
+							},
+							"createdOn": {
+								"description": "The date/time this gpsLog was created.",
+								"type": "date"
+							},
+							"description": {
+								"description": "A free text description of the gpsLog.",
+								"type": "string"
+							},
+							"misc": {
+								"description": "Additional information about the gpsLog.",
+								"isMap": true,
+								"type": "string"
+							},
+							"name": {
+								"description": "The name of the gpsLog.",
+								"type": "string"
+							}
+						}
+					},
+					"identity": {
+						"cardinality": "few",
+						"isList": true,
+						"description": "An identity is a small contact card that describes identifiers used elsewhere in the trace.",
+						"properties": {
+							"emailAddress": {
+								"description": "The email address of the identity.",
+								"type": "string"
+							},
+							"firstName": {
+								"description": "The first name of the identity.",
+								"type": "string"
+							},
+							"id": {
+								"description": "The unique identifier of the identity, for example an email address, username or phone number.",
+								"type": "string"
+							},
+							"lastName": {
+								"description": "The last name of the identity.",
+								"type": "string"
+							},
+							"ldapDn": {
+								"description": "The ldap distinguished names of the identity.",
+								"type": "string"
+							},
+							"name": {
+								"description": "The name of the identity.",
+								"type": "string"
+							},
+							"originalValue": {
+								"description": "The original value from which identity properties were extracted, e.g. \"John Doe <john@doe.com>\".",
+								"type": "string"
+							},
+							"phoneNumber": {
+								"description": "The phone number of the identity.",
+								"type": "string"
+							},
+							"screenName": {
+								"description": "The display name of the identity.",
+								"type": "string"
+							},
+							"status": {
+								"description": "The social status of the identity , e.g. \"being happy\", \"at the gym\", ... .",
+								"type": "string"
+							},
+							"username": {
+								"description": "The username of the identity.",
+								"type": "string"
+							},
+							"uuid": {
+								"description": "The universal unique id of the identity.",
+								"type": "string"
+							}
+						}
+					},
+					"image": {
+						"description": "An image is an artifact, that has a similar appearance to some subject - usually a physical object.",
+						"properties": {
+							"description": {
+								"description": "A free text description of the image.",
+								"type": "string"
+							},
+							"misc": {
+								"description": "Additional information about the image.",
+								"isMap": true,
+								"type": "string"
+							},
+							"name": {
+								"description": "The name of the image.",
+								"type": "string"
+							},
+							"type": {
+								"description": "The type of the image, e.g. EnCase, RAW or LocalFolder.",
+								"type": "string"
+							}
+						}
+					},
+					"intercept": {
+						"description": "The result of a lawful intercept warrant",
+						"properties": {
+							"imei": {
+								"description": "The International Mobile Station Equipment Identity (IMEI) of the device involved in the intercept.",
+								"type": "string"
+							},
+							"imsi": {
+								"description": "The International Mobile Subscriber Identity (IMSI) of the Subscriber Identity Module (SIM) card involved in the intercept.",
+								"type": "string"
+							},
+							"misc": {
+								"description": "Additional information about the intercept.",
+								"isMap": true,
+								"type": "string"
+							},
+							"msisdn": {
+								"description": "The telephone number of the subscriber (MSISDN : Mobile Station International Subscriber Directory Number) involved in the intercept.",
+								"type": "string"
+							},
+							"type": {
+								"description": "The original type of intercept used.",
+								"type": "string"
+							}
+						}
+					},
+					"interceptLocation": {
+						"description": "All location related information.",
+						"properties": {
+							"azimuth": {
+								"description": "Orientation of the main antenna beam",
+								"type": "real",
+								"scale": 6
+							},
+							"ecgi": {
+								"description": "The 'E-UTRAN Cell Global Identity' (E-CGI). This parameter is only applicable to the CS traffic cases where the available location information is the one received from the Mobility Management Entity (MME).",
+								"type": "string"
+							},
+							"globalCellId": {
+								"description": "The global cell id.",
+								"type": "string"
+							},
+							"misc": {
+								"description": "Additional information about the intercept location.",
+								"isMap": true,
+								"type": "string"
+							},
+							"observedOn": {
+								"description": "The date/time this location was observed.",
+								"type": "date"
+							},
+							"rai": {
+								"description": "The Routeing Area Identifier (RAI) in the current Serving GPRS Support Node (SGSN).",
+								"type": "string"
+							},
+							"tai": {
+								"description": "The Tracking Area Identity. This parameter is only applicable to the CS traffic where the available location information is the one received from the Mobility Management Entity (MME).",
+								"type": "string"
+							}
+						}
+					},
+					"ipSession": {
+						"description": "IP Transport layer information",
+						"properties": {
+							"destinationIp": {
+								"description": "The destination ip address in dotted notation or semicolon notation for IPv6.",
+								"type": "string"
+							},
+							"destinationPort": {
+								"description": "The destination port for a UDP or TCP connection.",
+								"type": "integer"
+							},
+							"ipProtocol": {
+								"description": "IP protocol by name like tcp, udp or number for unknown protocols.",
+								"type": "string"
+							},
+							"misc": {
+								"description": "Additional information about the ipSession.",
+								"isMap": true,
+								"type": "string"
+							},
+							"sourceIp": {
+								"description": "The source ip address in dotted notation or semicolon notation for IPv6.",
+								"type": "string"
+							},
+							"sourcePort": {
+								"description": "The source port for a UDP or TCP connection.",
+								"type": "integer"
+							}
+						}
+					},
+					"link": {
+						"description": "A link (or shortcut) is a trace that links to another trace.",
+						"properties": {
+							"accessedOn": {
+								"description": "The last time at which the link (shortcut) was accessed.",
+								"type": "date"
+							},
+							"arguments": {
+								"description": "The arguments that are passed to the trace that is linked.",
+								"type": "string"
+							},
+							"createdOn": {
+								"description": "The date and time at which the link was created.",
+								"type": "date"
+							},
+							"description": {
+								"description": "A free text description of the link.",
+								"type": "string"
+							},
+							"misc": {
+								"description": "Additional information on the link.",
+								"isMap": true,
+								"type": "string"
+							},
+							"modifiedOn": {
+								"description": "The time at which the link was last modified.",
+								"type": "date"
+							},
+							"target": {
+								"description": "The URI, file or folder that is linked.",
+								"type": "string"
+							},
+							"targetFileLength": {
+								"description": "The length of the trace that is linked.",
+								"type": "integer"
+							},
+							"timestamps": {
+								"description": "Additional timestamps found for links.",
+								"isMap": true,
+								"type": "date"
+							},
+							"type": {
+								"description": "The type of the link.",
+								"type": "string"
+							},
+							"visitCount": {
+								"description": "The minimal number of times this link has been visited.",
+								"type": "integer",
+								"unit": "n"
+							},
+							"volumeLabel": {
+								"description": "The label of the volume that is linked to.",
+								"type": "string"
+							},
+							"volumeSerial": {
+								"description": "The serial number of the volume that is linked to.",
+								"type": "string"
+							},
+							"volumeType": {
+								"description": "The type of the volume that is linked to.",
+								"type": "string"
+							},
+							"workingDirectory": {
+								"description": "The name of the directory in which the target of the link must be executed.",
+								"type": "string"
+							}
+						}
+					},
+					"memory": {
+						"description": "A piece of data in memory.",
+						"properties": {
+							"address": {
+								"description": "The address in memory of the trace.",
+								"type": "string"
+							},
+							"misc": {
+								"description": "Additional information about the memory trace.",
+								"isMap": true,
+								"type": "string"
+							}
+						}
+					},
+					"memoryImage": {
+						"description": "An image of a memory dump.",
+						"properties": {
+							"createdOn": {
+								"description": "The date and time at which the memory image was created.",
+								"type": "date"
+							},
+							"misc": {
+								"description": "Additional information about the memoryImage.",
+								"isMap": true,
+								"type": "string"
+							},
+							"name": {
+								"description": "The name of the memory trace.",
+								"type": "string"
+							},
+							"physicalAddressExtension": {
+								"description": "Indicates if the memory image uses physical address extension (PAE).",
+								"type": "boolean"
+							}
+						}
+					},
+					"note": {
+						"description": "An note.",
+						"properties": {
+							"application": {
+								"description": "The application storing the note.",
+								"type": "string"
+							},
+							"categories": {
+								"description": "Categories applied to the note.",
+								"isMap": true,
+								"type": "string"
+							},
+							"content": {
+								"description": "The content of the note.",
+								"type": "string"
+							},
+							"createdOn": {
+								"description": "The date and time at which the note was created.",
+								"type": "date"
+							},
+							"labels": {
+								"description": "Label applied to the note.",
+								"isMap": true,
+								"type": "string"
+							},
+							"misc": {
+								"description": "Additional information about the note.",
+								"isMap": true,
+								"type": "string"
+							},
+							"modifiedOn": {
+								"description": "The date and time at which the note was last modified.",
+								"type": "date"
+							}
+						}
+					},
+					"noteArchive": {
+						"description": "A collection of notes.",
+						"properties": {
+							"application": {
+								"description": "The application storing the notes.",
+								"type": "string"
+							},
+							"misc": {
+								"description": "Additional information about the note archive.",
+								"isMap": true,
+								"type": "string"
+							},
+							"name": {
+								"description": "The name of the notes archive.",
+								"type": "string"
+							}
+						}
+					},
+					"noteFolder": {
+						"description": "A folder containing notes.",
+						"properties": {
+							"application": {
+								"description": "The application which stores the note folder.",
+								"type": "string"
+							},
+							"misc": {
+								"description": "Additional information about the note archive.",
+								"isMap": true,
+								"type": "string"
+							},
+							"name": {
+								"description": "The name of the notes folder.",
+								"type": "string"
+							}
+						}
+					},
+					"phoneCall": {
+						"description": "A phone call.",
+						"properties": {
+							"application": {
+								"description": "The application which received or made the phone call, for example \"Skype\".",
+								"type": "string"
+							},
+							"duration": {
+								"description": "The duration of the phone call in seconds.",
+								"type": "integer"
+							},
+							"endsOn": {
+								"description": "The date and time at which the phone call was terminated.",
+								"type": "date"
+							},
+							"from": {
+								"description": "The phone number of the initiating party.",
+								"type": "string"
+							},
+							"index": {
+								"description": "The index of the phone call in phone calls list.",
+								"type": "integer"
+							},
+							"misc": {
+								"description": "Additional information on the phone call.",
+								"isMap": true,
+								"type": "string"
+							},
+							"startsOn": {
+								"description": "The date and time at which the phone call was initiated.",
+								"type": "date"
+							},
+							"timestamps": {
+								"description": "Additional timestamps for a phone call.",
+								"isMap": true,
+								"type": "date"
+							},
+							"to": {
+								"description": "The receiver's phone number.",
+								"type": "string"
+							},
+							"type": {
+								"description": "The type of a phone call,for example incoming, outgoing, missed.",
+								"type": "string"
+							}
+						}
+					},
+					"phoneCallLog": {
+						"description": "A collection of phone calls.",
+						"properties": {
+							"application": {
+								"description": "The application receiving or making the phone calls contained in this log.",
+								"type": "string"
+							},
+							"misc": {
+								"description": "Additional information about the phoneCallLog.",
+								"isMap": true,
+								"type": "string"
+							}
+						}
+					},
+					"picture": {
+						"description": "A picture is a two-dimensional visual representation.",
+						"properties": {
+							"application": {
+								"description": "The application storing the pictures.",
+								"type": "string"
+							},
+							"aspectRatio": {
+								"description": "The aspect ratio of the picture, <1.0 indicating portrait orientation >1.0 indicating landscape orientation.",
+								"type": "real",
+								"scale": 3
+							},
+							"camera": {
+								"description": "The name/make of the camera that was used for taking the picture.",
+								"type": "string"
+							},
+							"digitizedOn": {
+								"description": "The time at which the picture was digitized.",
+								"type": "date"
+							},
+							"exif": {
+								"description": "The EXIF (Exchangeable Image File Format) information of the picture; the metadata contained in the picture.",
+								"isMap": true,
+								"type": "string"
+							},
+							"format": {
+								"description": "The format of a picture, for example jpg or png.",
+								"type": "string"
+							},
+							"height": {
+								"description": "The height of the picture in pixels.",
+								"type": "integer",
+								"unit": "px"
+							},
+							"index": {
+								"description": "The index of the picture in the container.",
+								"type": "integer"
+							},
+							"misc": {
+								"description": "Additional information about the picture.",
+								"isMap": true,
+								"type": "string"
+							},
+							"modifiedOn": {
+								"description": "The time at which the content of the picture was modified.",
+								"type": "date"
+							},
+							"originalTakenOn": {
+								"description": "The time at which the picture was originally taken.",
+								"type": "date"
+							},
+							"photoDnaHash": {
+								"description": "The PhotoDNA Robust Hash of the picture.",
+								"type": "binary"
+							},
+							"photoDnaVector": {
+								"description": "The PhotoDNA Robust Hash of the picture, encoded as a vector.",
+								"type": "vector"
+							},
+							"type": {
+								"description": "The type of a picture, for example a thumbnail.",
+								"type": "string"
+							},
+							"width": {
+								"description": "The width of the picture in pixels.",
+								"type": "integer",
+								"unit": "px"
+							}
+						}
+					},
+					"process": {
+						"description": "A process that runs (or exited) at the moment that the memory dump was created.",
+						"properties": {
+							"createdOn": {
+								"description": "The date and time at which the process was created.",
+								"type": "date"
+							},
+							"exitStatus": {
+								"description": "A small number passed from the process to the parent process when it has finished executing. In general, 0 indicates successful termination, any other number indicates a failure.",
+								"type": "integer"
+							},
+							"exitedOn": {
+								"description": "The time at which the process exited.",
+								"type": "date"
+							},
+							"id": {
+								"description": "The identifier of the process.",
+								"type": "string"
+							},
+							"memoryAddress": {
+								"description": "The address (in memory) of the process.",
+								"type": "string"
+							},
+							"name": {
+								"description": "The name of the process.",
+								"type": "string"
+							},
+							"parentId": {
+								"description": "The identifier of the process that created this process.",
+								"type": "string"
+							},
+							"status": {
+								"description": "The status of the process, for example active or exited.",
+								"type": "string"
+							},
+							"user": {
+								"description": "The user that owns the process.",
+								"type": "string"
+							}
+						}
+					},
+					"registry": {
+						"description": "A registry hive contains configuration of a Microsoft Windows operating systems.",
+						"properties": {
+							"misc": {
+								"description": "Additional information about the registry.",
+								"isMap": true,
+								"type": "string"
+							},
+							"type": {
+								"description": "The type of a registry hive.",
+								"type": "string"
+							}
+						}
+					},
+					"registryEntry": {
+						"description": "A registry entry is a configuration of a Microsoft Windows operating systems.",
+						"properties": {
+							"className": {
+								"description": "The value of a hidden attribute of the registry key often referred to as class name.",
+								"type": "string"
+							},
+							"key": {
+								"description": "The flattend path, separated by slashes, of the entry in the registry hyve.",
+								"type": "string"
+							},
+							"misc": {
+								"description": "Additional information about the registryEntry.",
+								"isMap": true,
+								"type": "string"
+							},
+							"modifiedOn": {
+								"description": "The time at which the content of the registry key was last modified.",
+								"type": "date"
+							},
+							"name": {
+								"description": "The name of the registry key.",
+								"type": "string"
+							},
+							"type": {
+								"description": "The data type of the registry value.",
+								"type": "string"
+							},
+							"value": {
+								"description": "The registry value is the optional value stored with the key.",
+								"type": "string"
+							}
+						}
+					},
+					"signed": {
+						"description": "Data signed with a private key.",
+						"properties": {
+							"misc": {
+								"description": "Additional information on the signed data.",
+								"isMap": true,
+								"type": "string"
+							},
+							"serialNumbers": {
+								"description": "Serial numbers of the signer certificates.",
+								"isList": true,
+								"type": "string"
+							},
+							"type": {
+								"description": "The type of the signed data.",
+								"type": "string"
+							}
+						}
+					},
+					"task": {
+						"description": "An entry on a to-do list.",
+						"properties": {
+							"application": {
+								"description": "The application storing this task.",
+								"type": "string"
+							},
+							"categories": {
+								"description": "Categories applied to the event.",
+								"isMap": true,
+								"type": "string"
+							},
+							"createdOn": {
+								"description": "The date and time at which the task was created.",
+								"type": "date"
+							},
+							"duration": {
+								"description": "The duration of the task.",
+								"type": "integer",
+								"unit": "s"
+							},
+							"endsOn": {
+								"description": "The date and time at which the task ends.",
+								"type": "date"
+							},
+							"labels": {
+								"description": "Named and colored label.",
+								"isMap": true,
+								"type": "string"
+							},
+							"misc": {
+								"description": "Additional information on the task.",
+								"isMap": true,
+								"type": "string"
+							},
+							"modifiedOn": {
+								"description": "The date and time at which the task was last modified.",
+								"type": "date"
+							},
+							"owner": {
+								"description": "The owner of the task.",
+								"type": "string"
+							},
+							"priority": {
+								"description": "The priority of the task.",
+								"type": "string"
+							},
+							"recurrence": {
+								"description": "Recurrence of the event.",
+								"type": "string"
+							},
+							"remindOn": {
+								"description": "The date and time at which a reminder is given about the calendar entry.",
+								"type": "date"
+							},
+							"startsOn": {
+								"description": "The date and time at which the task starts.",
+								"type": "date"
+							},
+							"status": {
+								"description": "The status of the event, for instance accepted, pending or cancelled.",
+								"type": "string"
+							},
+							"subject": {
+								"description": "The subject of the task.",
+								"type": "string"
+							},
+							"timestamps": {
+								"description": "Additional timestamps for this task.",
+								"isMap": true,
+								"type": "date"
+							},
+							"type": {
+								"description": "The type of task to be performed.",
+								"type": "string"
+							}
+						}
+					},
+					"taskList": {
+						"description": "A collection of to-do tasks.",
+						"properties": {
+							"application": {
+								"description": "The application storing this task list.",
+								"type": "string"
+							},
+							"misc": {
+								"description": "Additional information about the to-do list.",
+								"isMap": true,
+								"type": "string"
+							},
+							"owner": {
+								"description": "The owner of the to-do list.",
+								"type": "string"
+							}
+						}
+					},
+					"textMessage": {
+						"description": "A (mobile) text message.",
+						"properties": {
+							"application": {
+								"description": "The application sending or receiving this text message.",
+								"type": "string"
+							},
+							"from": {
+								"description": "The sender's phone number.",
+								"type": "string"
+							},
+							"index": {
+								"description": "The index of the message in the text messages list.",
+								"type": "integer"
+							},
+							"message": {
+								"description": "The contents of the message.",
+								"type": "string"
+							},
+							"misc": {
+								"description": "Additional information about the text message.",
+								"isMap": true,
+								"type": "string"
+							},
+							"read": {
+								"description": "True if the text message has been read.",
+								"type": "boolean"
+							},
+							"sentOn": {
+								"description": "The time at which the text message was sent.",
+								"type": "date"
+							},
+							"to": {
+								"description": "The receivers' phone numbers.",
+								"isList": true,
+								"type": "string"
+							},
+							"type": {
+								"description": "the type of a text message, for example incoming, draft or outgoing.",
+								"type": "string"
+							}
+						}
+					},
+					"textMessageArchive": {
+						"description": "A collection of text messages.",
+						"properties": {
+							"application": {
+								"description": "The application sending or receiving text messages stored in this archive.",
+								"type": "string"
+							},
+							"misc": {
+								"description": "Additional information about the text message archive.",
+								"isMap": true,
+								"type": "string"
+							},
+							"name": {
+								"description": "The name of the text message archive.",
+								"type": "string"
+							}
+						}
+					},
+					"textMessageFolder": {
+						"description": "A folder containing text messages.",
+						"properties": {
+							"messageCount": {
+								"description": "The number of text messages in the text message folder.",
+								"type": "integer"
+							},
+							"misc": {
+								"description": "Additional information about the text message folder.",
+								"isMap": true,
+								"type": "string"
+							},
+							"name": {
+								"description": "The name of the text message folder.",
+								"type": "string"
+							},
+							"unreadMessageCount": {
+								"description": "The number of unread text messages in the text message folder.",
+								"type": "integer"
+							}
+						}
+					},
+					"thumbnail": {
+						"description": "A miniature view of a picture.",
+						"properties": {
+							"createdOn": {
+								"description": "The date and time at which the thumbnail was created.",
+								"type": "date"
+							},
+							"misc": {
+								"description": "Additional information about the thumbnail.",
+								"isMap": true,
+								"type": "string"
+							},
+							"modifiedOn": {
+								"description": "The date and time at which the thumbnail was modified.",
+								"type": "date"
+							},
+							"type": {
+								"description": "The type of thumbnail.",
+								"type": "string"
+							}
+						}
+					},
+					"thumbnailArchive": {
+						"description": "A collection of thumbnails.",
+						"properties": {
+							"application": {
+								"description": "The application maintaining the thumbnail archive.",
+								"type": "string"
+							},
+							"misc": {
+								"description": "Additional information about the thumbnail archive.",
+								"isMap": true,
+								"type": "string"
+							}
+						}
+					},
+					"track": {
+						"description": "A sequence of GPS locations marking a single track.",
+						"properties": {
+							"application": {
+								"description": "The application storing this track.",
+								"type": "string"
+							},
+							"endsOn": {
+								"description": "The latest date and time of any gps location of the track.",
+								"type": "date"
+							},
+							"misc": {
+								"description": "Additional information about the track.",
+								"isMap": true,
+								"type": "string"
+							},
+							"name": {
+								"description": "The name of the track.",
+								"type": "string"
+							},
+							"startsOn": {
+								"description": "The earliest date and time of any gps location of the track.",
+								"type": "date"
+							}
+						}
+					},
+					"unallocated": {
+						"description": "An unallocated trace is a part of an image that is not allocated to a physical trace.",
+						"properties": {
+							"path": {
+								"description": "The path where the unallocated space can be found in the filesystem.",
+								"type": "string"
+							}
+						}
+					},
+					"url": {
+						"description": "A uniform resource locator",
+						"properties": {
+							"fragment": {
+								"description": "Fragment pointing to a specific part in the resource.",
+								"type": "string"
+							},
+							"fragments": {
+								"description": "Fragment split into its separate parts.",
+								"isList": true,
+								"isMap": true,
+								"type": "string"
+							},
+							"host": {
+								"description": "Domain name or IP address where the resource is located.",
+								"type": "string"
+							},
+							"misc": {
+								"description": "Additional information about the url.",
+								"isMap": true,
+								"type": "string"
+							},
+							"password": {
+								"description": "Password used to authenticate to this resource.",
+								"type": "string"
+							},
+							"path": {
+								"description": "Path where the resource is located on the server.",
+								"type": "string"
+							},
+							"port": {
+								"description": "Port on which communication takes place.",
+								"type": "integer"
+							},
+							"queries": {
+								"description": "Query split into its separate parts.",
+								"isList": true,
+								"isMap": true,
+								"type": "string"
+							},
+							"query": {
+								"description": "Query passed to the resource.",
+								"type": "string"
+							},
+							"scheme": {
+								"description": "Identifies the type of URL.",
+								"type": "string"
+							},
+							"username": {
+								"description": "Username used to authenticate to this resource.",
+								"type": "string"
+							}
+						}
+					},
+					"video": {
+						"description": "A media trace that contains video.",
+						"properties": {
+							"aspectRatio": {
+								"description": "The aspect ratio of the video, <1.0 indicating portrait orientation >1.0 indicating landscape orientation.",
+								"type": "real",
+								"scale": 3
+							},
+							"bitrate": {
+								"description": "The bitrate of the video in bits per second.",
+								"type": "integer",
+								"unit": "b/s"
+							},
+							"createdOn": {
+								"description": "The date and time at which the video was created.",
+								"type": "date"
+							},
+							"duration": {
+								"description": "The duration of the video in seconds.",
+								"type": "integer",
+								"unit": "s"
+							},
+							"format": {
+								"description": "The format of the video. For example: mp4.",
+								"type": "string"
+							},
+							"framerate": {
+								"description": "The framerate of the video in frames per second.",
+								"type": "integer",
+								"unit": "frames/s"
+							},
+							"height": {
+								"description": "The height the video in pixels.",
+								"type": "integer",
+								"unit": "px"
+							},
+							"metadata": {
+								"description": "Video metadata, e.g. title, genre, artist.",
+								"isMap": true,
+								"type": "string"
+							},
+							"misc": {
+								"description": "Additional information about the video.",
+								"isMap": true,
+								"type": "string"
+							},
+							"processedStream": {
+								"description": "Video stream index used for image processing.",
+								"type": "integer"
+							},
+							"streams": {
+								"description": "Stream type per index plus codec, for example audio: MP3 (MPEG audio layer 3), video: FLV / Sorenson Spark / Sorenson H.263 (Flash Video).",
+								"isList": true,
+								"type": "string"
+							},
+							"type": {
+								"description": "The type of video.",
+								"type": "string"
+							},
+							"width": {
+								"description": "The width of the video in pixels.",
+								"type": "integer",
+								"unit": "px"
+							}
+						}
+					},
+					"volume": {
+						"description": "A volume is a single accessible storage area with a single file system.",
+						"properties": {
+							"description": {
+								"description": "A free text description of the volume.",
+								"type": "string"
+							},
+							"id": {
+								"description": "The unique identifier of the volume.",
+								"type": "string"
+							},
+							"misc": {
+								"description": "Additional information about the volume.",
+								"isMap": true,
+								"type": "string"
+							},
+							"name": {
+								"description": "The name of the volume.",
+								"type": "string"
+							},
+							"sectorSize": {
+								"description": "The sector size of the volume.",
+								"type": "integer",
+								"unit": "B"
+							},
+							"timestamps": {
+								"description": "volume timestamps.",
+								"isMap": true,
+								"type": "date"
+							}
+						}
+					}
+				}
+			},
+			"mined": {
+				"types": {
+					"classification": {
+						"cardinality": "few",
+						"isList": true,
+						"description": "A statistical classification of a trace belonging to one or more classes / categories.",
+						"properties": {
+							"class": {
+								"description": "The class that the trace is classified as.",
+								"type": "string"
+							},
+							"confidence": {
+								"description": "The classification confidence, expressed as a number between 0.0 and 1.0.",
+								"type": "real",
+								"scale": 9
+							},
+							"modelName": {
+								"description": "Name of the classification model.",
+								"type": "string"
+							},
+							"modelVersion": {
+								"description": "Version of the classification model.",
+								"type": "string"
+							}
+						}
+					},
+					"entity": {
+						"cardinality": "many",
+						"isList": true,
+						"description": "Information related to an entity.",
+						"properties": {
+							"confidence": {
+								"description": "The confidence value of the entity, between 0 and 1 inclusive.",
+								"type": "real",
+								"scale": 3
+							},
+							"encoding": {
+								"description": "The character encoding of the entity's raw value.",
+								"type": "string"
+							},
+							"fvt": {
+								"description": "If present, indicates the index of the fvt (few-valued tracelet) from which the entity was extracted.",
+								"type": "integer"
+							},
+							"index": {
+								"description": "For properties that have a list of values, indicates from which value the entity was extracted. For example: email.to is a list of values; index=2 indicates that the entity was extracted from the second value",
+								"type": "integer"
+							},
+							"length": {
+								"description": "The raw, unnormalized length of the entity.",
+								"type": "integer"
+							},
+							"offset": {
+								"description": "The offset within the source property or data stream that the entity was found in.",
+								"type": "integer"
+							},
+							"source": {
+								"description": "The property or data stream that the entity was found in, e.g. email.to or data.raw.",
+								"type": "string"
+							},
+							"type": {
+								"description": "The type of entity, e.g. emailAddress, iban, url, etc.",
+								"type": "string"
+							},
+							"value": {
+								"description": "The normalized value of the entity.",
+								"type": "string"
+							}
+						}
+					},
+					"prediction": {
+						"cardinality": "few",
+						"isList": true,
+						"description": "A statistical prediction about a trace.",
+						"properties": {
+							"class": {
+								"description": "The predicted class.",
+								"type": "string"
+							},
+							"confidence": {
+								"description": "The prediction confidence, expressed as a number between 0.0 and 1.0.",
+								"type": "real",
+								"scale": 9
+							},
+							"confidences": {
+								"description": "The prediction confidences, expressed as a numbers between 0.0 and 1.0.",
+								"isList": true,
+								"type": "real",
+								"scale": 9
+							},
+							"count": {
+								"description": "A count for the given prediction.type.",
+								"type": "integer"
+							},
+							"embedding": {
+								"description": "The predicted embedding.",
+								"type": "vector"
+							},
+							"label": {
+								"description": "The predicted label.",
+								"type": "string"
+							},
+							"modelName": {
+								"description": "Name of the model that produced this prediction.",
+								"type": "string"
+							},
+							"modelVersion": {
+								"description": "Version of the model that produced this prediction.",
+								"type": "string"
+							},
+							"offset": {
+								"description": "Offset from the start of this prediction.",
+								"type": "real",
+								"unit": "s"
+							},
+							"offsets": {
+								"description": "Offsets from the start for the predictions, in seconds.",
+								"isList": true,
+								"type": "real",
+								"unit": "s"
+							},
+							"region": {
+								"description": "The prediction region as a polygon [x1, y1, x2, y2, ...] without wrapping back to start.",
+								"isList": true,
+								"type": "integer",
+								"unit": "pixel"
+							},
+							"type": {
+								"description": "The type of the prediction, e.g. a classification, scene text or barcode.",
+								"type": "string"
+							}
+						}
+					},
+					"search": {
+						"description": "Information related to a search query.",
+						"properties": {
+							"accessedOn": {
+								"description": "The time at which the search query was last performed.",
+								"type": "date"
+							},
+							"misc": {
+								"description": "Additional information about the search query.",
+								"isMap": true,
+								"type": "string"
+							},
+							"query": {
+								"description": "The query used to perform the search, containing for example the keyword.",
+								"type": "string"
+							},
+							"source": {
+								"description": "The application or website used to perform the search query.",
+								"type": "string"
+							},
+							"user": {
+								"description": "Name of the user that performed the search query.",
+								"type": "string"
+							}
+						}
+					}
+				}
+			},
+			"processed": {
+				"types": {
+					"audit": {
+						"cardinality": "few",
+						"isList": true,
+						"description": "Describes a trace modification",
+						"properties": {
+							"createdOn": {
+								"description": "The date and time at which the trace was modified.",
+								"type": "date"
+							},
+							"description": {
+								"description": "The description of the modification.",
+								"type": "string"
+							},
+							"operation": {
+								"description": "How the trace properties were modified: added or removed.",
+								"type": "string"
+							},
+							"property": {
+								"description": "The affected property.",
+								"type": "string"
+							},
+							"user": {
+								"description": "The user who modified the trace.",
+								"type": "string"
+							},
+							"valueNew": {
+								"description": "The new value of the audited property.",
+								"type": "string"
+							},
+							"valueOld": {
+								"description": "The old value of the audited property.",
+								"type": "string"
+							}
+						}
+					},
+					"origin": {
+						"description": "Information about the origin of the trace.",
+						"properties": {
+							"createdBy": {
+								"description": "Name of the tool that created the trace.",
+								"type": "string"
+							},
+							"createdOn": {
+								"description": "Date and time when the trace was first created.",
+								"type": "date"
+							}
+						}
+					},
+					"quality": {
+						"cardinality": "few",
+						"isList": true,
+						"description": "Information about the quality of the value of a property.",
+						"properties": {
+							"aspect": {
+								"description": "Aspect of the value that has a quality concern. e.g. timezone, resolution, year",
+								"type": "string"
+							},
+							"description": {
+								"description": "Description of the quality. e.g. using default timezone CET, 2 seconds, copied from parent file.modifiedOn",
+								"type": "string"
+							},
+							"fvt": {
+								"description": "If present, indicates the index of the fvt (few-valued tracelet) which has a quality concern.",
+								"type": "integer"
+							},
+							"index": {
+								"description": "For properties that have a list of values, indicates which value which has a quality concern. It is 0 based. For example: connection.timestamps is a list of values; index=2 indicates the third value.",
+								"type": "integer"
+							},
+							"property": {
+								"description": "The name of the property. e.g. connection.timestamps.",
+								"type": "string"
+							}
+						}
+					},
+					"toolrun": {
+						"cardinality": "few",
+						"isList": true,
+						"description": "Information about the tools that were run to create this trace.",
+						"properties": {
+							"cause": {
+								"description": "In the event of tool failure, its cause message.",
+								"type": "string"
+							},
+							"children": {
+								"description": "The number of fvt, mvt and traces created by the tool.",
+								"type": "integer"
+							},
+							"dataType": {
+								"description": "The data stream to which the tool was applied.",
+								"type": "string"
+							},
+							"dataTypes": {
+								"description": "The data streams created by the tool.",
+								"isList": true,
+								"type": "string"
+							},
+							"duration": {
+								"description": "Duration of the tool's running time in seconds.",
+								"type": "real",
+								"scale": 3,
+								"unit": "s"
+							},
+							"failureType": {
+								"description": "The type of failure: incidental, structural or environmental.",
+								"type": "string"
+							},
+							"hanskenVersion": {
+								"description": "The version of hansken when this tool was run.",
+								"type": "string"
+							},
+							"properties": {
+								"description": "The properties created by the tool.",
+								"isList": true,
+								"type": "string"
+							},
+							"result": {
+								"description": "The tool's result: success or failure.",
+								"type": "string"
+							},
+							"startedOn": {
+								"description": "Date and time when the tool was started.",
+								"type": "date"
+							},
+							"tool": {
+								"description": "Name of the tool.",
+								"type": "string"
+							},
+							"types": {
+								"description": "The types created by the tool.",
+								"isList": true,
+								"type": "string"
+							},
+							"version": {
+								"description": "Version of the tool.",
+								"type": "string"
+							}
+						}
+					}
+				}
+			},
+			"related": {
+				"types": {
+					"collection": {
+						"cardinality": "few",
+						"isList": true,
+						"description": "A trace can be part of a collection of traces, for example traces located in several places in the trace hierarchy that all belong to a single conversation.",
+						"properties": {
+							"name": {
+								"description": "The name of the collection.",
+								"type": "string"
+							},
+							"type": {
+								"description": "The type of the collection; what this collection can be used for.",
+								"type": "string"
+							}
+						}
+					},
+					"cryptoKeyInfo": {
+						"cardinality": "few",
+						"isList": true,
+						"description": "A cryptoKey that is related to this trace.",
+						"properties": {
+							"property": {
+								"description": "The trace property where this key was referenced.",
+								"type": "string"
+							},
+							"serialNumber": {
+								"description": "The id of the key.",
+								"type": "string"
+							},
+							"traceUid": {
+								"description": "The uid of the related trace.",
+								"type": "string"
+							},
+							"userIds": {
+								"description": "The user IDs associated with the key.",
+								"isList": true,
+								"type": "string"
+							}
+						}
+					},
+					"reference": {
+						"cardinality": "few",
+						"isList": true,
+						"description": "A reference to another trace.",
+						"properties": {
+							"traceUid": {
+								"description": "The uid of the referenced trace.",
+								"type": "string"
+							},
+							"type": {
+								"description": "The type of the referenced trace, for example 'content' if the referenced trace contains the data of a fileTransfer.",
+								"type": "string"
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

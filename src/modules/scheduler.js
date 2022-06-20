@@ -29,14 +29,14 @@ class Scheduler {
      *
      * @returns An array of scheduler tasks
      */
-    openTasks = () => this.sessionManager.gatekeeper(`/tasks/open`).then(SessionManager.toJson);
+    openTasks = () => this.sessionManager.gatekeeper(`/tasks/open`).then(SessionManager.json);
 
     /**
      * Get all closed scheduler tasks.
      *
      * @returns An array of scheduler tasks
      */
-    closedTasks = () => this.sessionManager.gatekeeper(`/tasks/closed`).then(SessionManager.toJson);
+    closedTasks = () => this.sessionManager.gatekeeper(`/tasks/closed`).then(SessionManager.json);
 
     /**
      * Get a single scheduler task.
@@ -44,7 +44,7 @@ class Scheduler {
      * @param {UUID} taskId The task id
      * @returns A single scheduler task
      */
-    task = (taskId) => this.sessionManager.gatekeeper(`/tasks/${taskId}`).then(SessionManager.toJson);
+    task = (taskId) => this.sessionManager.gatekeeper(`/tasks/${taskId}`).then(SessionManager.json);
 
     /**
      * Start an extraction on a project image.
