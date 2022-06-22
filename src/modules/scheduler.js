@@ -87,6 +87,46 @@ class Scheduler {
     }).then(SessionManager.parseLocationId);
 
     /**
+     * Retrieve a list of all tools that are available for an extraction.
+     *
+     * @returns The list of all available tools
+     */
+    tools = () => this.sessionManager.gatekeeper(`/tools`).then(SessionManager.json);
+
+    /**
+     * The tool builder is a simple wrapper around the tools list, to enable or disable tools.
+     * The build() result can be used in an extraction request.
+     *
+     * @returns A tool builder
+     */
+    toolsBuilder = () => this.tools().then(tools => {
+        const enabledTools = {...tools};
+        return {
+            /**
+             * Enable a tool to be used in an extraction.
+             *
+             * @param {string} name The name of the tool
+             * @returns
+             */
+            enable: function(name) {
+                if (enabledTools[name]) {
+                    enabledTools[name].defaultEnabled = true;
+                }
+                return this;
+            },
+            disable: function(name) {
+                if (enabledTools[name]) {
+                    enabledTools[name].defaultEnabled = false;
+                }
+                return this;
+            },
+            build: function() {
+                return Object.keys(enabledTools).filter(tool => tools[tool].defaultEnabled);
+            }
+        };
+    });
+
+    /**
      * Wait for the completion of a scheduled task.
      *
      * @param {UUID} taskId The task id

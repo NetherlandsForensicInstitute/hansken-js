@@ -1,0 +1,12 @@
+<script type="module">
+    import {HanskenClient} from './src/hansken-js.js';
+    const hansken = new HanskenClient('/gatekeeper', '/keystore');
+
+    hansken.scheduler().tools()
+        .then(tools => Object.keys(tools).forEach(tool => {
+            document.write(tool + ': ' + tools[tool].description + '<br>')
+        }))
+        .then(() => hansken.scheduler().toolsBuilder())
+        .then(builder => builder.enable('HelloWorldPlugin').disable('imaging/picture').build())
+        .then(tools => document.write('<br>Enabled tools: ' + tools + '<br>'));
+</script>

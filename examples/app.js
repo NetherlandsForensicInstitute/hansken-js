@@ -22,6 +22,10 @@ app.get('/gatekeeper/projects', (request, response) => {
     response.json(require('./mocks/projects.json'));
 });
 
+app.get('/gatekeeper/tools', (request, response) => {
+    response.json(require('./mocks/tools.json'));
+});
+
 app.get('/gatekeeper/tracemodel', (request, response) => {
     response.json(require('./mocks/traceModel.json'));
 });
