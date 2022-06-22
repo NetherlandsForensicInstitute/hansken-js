@@ -89,7 +89,7 @@ class Scheduler {
     /**
      * Retrieve a list of all tools that are available for an extraction.
      *
-     * @returns The list of all available tools
+     * @returns A Promise with the list of all available tools
      */
     tools = () => this.sessionManager.gatekeeper(`/tools`).then(SessionManager.json);
 
@@ -97,7 +97,7 @@ class Scheduler {
      * The tool builder is a simple wrapper around the tools list, to enable or disable tools.
      * The build() result can be used in an extraction request.
      *
-     * @returns A tool builder
+     * @returns A Promise with a tool builder
      */
     toolsBuilder = () => this.tools().then(tools => {
         const enabledTools = {...tools};
