@@ -92,6 +92,59 @@ class HanskenClient {
     };
 
     /**
+     * Retrieve a list of all tools that are available for an extraction.
+     *
+     * @returns A Promise with the list of all available tools
+     */
+     tools = () => this.sessionManager.gatekeeper(`/tools`).then(SessionManager.json);
+
+     /**
+      * The tool builder is a simple wrapper around the tools list, to enable or disable tools.
+      * The build() result can be used in an extraction request.
+      *
+      * @returns A Promise with a tool builder
+      */
+     toolsBuilder = () => this.tools().then(tools => {
+         const enabledTools = {...tools};
+         return {
+             /**
+              * Enable a tool to be used in an extraction.
+              *
+              * @param {string} name The name of the tool
+              * @returns this builder
+              */
+             enable: function(name) {
+                 if (enabledTools[name]) {
+                     enabledTools[name].defaultEnabled = true;
+                     return this;
+                 }
+                 throw `Tool "${name}" does not exist`;
+             },
+             /**
+              * Disable a tool so it will not be used in an extraction.
+              *
+              * @param {string} name The name of the tool
+              * @returns this builder
+              */
+             disable: function(name) {
+                 if (enabledTools[name]) {
+                     enabledTools[name].defaultEnabled = false;
+                     return this;
+                 }
+                 throw `Tool "${name}" does not exist`;
+             },
+             /**
+              * Build an array of all enabled tool names.
+              *
+              * @returns An array of all enabled tools names to be used in an extraction request: `{tools: builder.build()}`
+              */
+             build: function() {
+                 return Object.keys(enabledTools).filter(tool => tools[tool].defaultEnabled);
+             }
+         };
+     });
+
+    /**
      * Get the default trace model or a project trace model.
      *
      * @param {UUID} projectId The projectId to get the traceModel from, or don't provide one to use the default trace model.

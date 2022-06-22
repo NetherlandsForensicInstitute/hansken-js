@@ -752,7 +752,7 @@ function Scheduler(sessionManager) {
          * Enable a tool to be used in an extraction.
          *
          * @param {string} name The name of the tool
-         * @returns
+         * @returns this builder
          */
         enable: function enable(name) {
           if (enabledTools[name]) {
@@ -761,6 +761,13 @@ function Scheduler(sessionManager) {
 
           return this;
         },
+
+        /**
+         * Disable a tool so it will not be used in an extraction.
+         *
+         * @param {string} name The name of the tool
+         * @returns this builder
+         */
         disable: function disable(name) {
           if (enabledTools[name]) {
             enabledTools[name].defaultEnabled = false;
@@ -768,6 +775,12 @@ function Scheduler(sessionManager) {
 
           return this;
         },
+
+        /**
+         * Build an array of all enabled tool names.
+         *
+         * @returns An array of all enabled tools names to be used in an extraction request: `{tools: builder.build()}`
+         */
         build: function build() {
           return Object.keys(enabledTools).filter(function (tool) {
             return tools[tool].defaultEnabled;
