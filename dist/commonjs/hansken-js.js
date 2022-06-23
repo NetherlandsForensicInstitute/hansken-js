@@ -654,6 +654,10 @@ exports.Scheduler = void 0;
 
 var _sessionManager = require("./sessionManager.js");
 
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
@@ -733,6 +737,57 @@ function Scheduler(sessionManager) {
       },
       body: JSON.stringify(request)
     }).then(_sessionManager.SessionManager.parseLocationId);
+  });
+
+  _defineProperty(this, "tools", function () {
+    return _this.sessionManager.gatekeeper("/tools").then(_sessionManager.SessionManager.json);
+  });
+
+  _defineProperty(this, "toolsBuilder", function () {
+    return _this.tools().then(function (tools) {
+      var enabledTools = _objectSpread({}, tools);
+
+      return {
+        /**
+         * Enable a tool to be used in an extraction.
+         *
+         * @param {string} name The name of the tool
+         * @returns this builder
+         */
+        enable: function enable(name) {
+          if (enabledTools[name]) {
+            enabledTools[name].defaultEnabled = true;
+          }
+
+          return this;
+        },
+
+        /**
+         * Disable a tool so it will not be used in an extraction.
+         *
+         * @param {string} name The name of the tool
+         * @returns this builder
+         */
+        disable: function disable(name) {
+          if (enabledTools[name]) {
+            enabledTools[name].defaultEnabled = false;
+          }
+
+          return this;
+        },
+
+        /**
+         * Build an array of all enabled tool names.
+         *
+         * @returns An array of all enabled tools names to be used in an extraction request: `{tools: builder.build()}`
+         */
+        build: function build() {
+          return Object.keys(enabledTools).filter(function (tool) {
+            return tools[tool].defaultEnabled;
+          });
+        }
+      };
+    });
   });
 
   _defineProperty(this, "waitForCompletion", function (taskId) {

@@ -1,0 +1,43 @@
+{
+	"HelloWorldPlugin": {
+		"author": {
+			"email": "foo@bar.com",
+			"name": "Foo",
+			"organisation": "NFI"
+		},
+		"defaultEnabled": false,
+		"description": "Plugin to say hello to the world",
+		"dockerImageId": "http://localhost:5000/anyId",
+		"maturityLevel": "proofOfConcept",
+		"resources": {
+			"maxCpu": "0.25",
+			"maxMemory": "256M"
+		},
+		"type": "plugin",
+		"version": "0.0.1",
+		"webpageUrl": "https://hansken.org"
+	},
+	"imaging/picture": {
+		"config": {
+			"preview.width": {
+				"default": 150,
+				"description": "Preview picture width upper bound",
+				"type": "int"
+			},
+			"preview.height": {
+				"default": 100,
+				"description": "Preview picture height upper bound",
+				"type": "int"
+			},
+			"max.size": {
+				"default": "100M",
+				"description": "Max byte size of a trace to be considered a valid picture",
+				"type": "string"
+			}
+		},
+		"defaultEnabled": true,
+		"description": "Extracts picture information such as height and width from pictures.",
+		"type": "native",
+		"version": "3.1"
+	}
+}
