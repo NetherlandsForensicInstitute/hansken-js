@@ -23,13 +23,16 @@ class ProjectSearchContext {
         let inEscape = false;
         let inQuote = false;
         for (let i = 1; i < buffer.length; i++) {
-            const character = buffer[i];
+            const character = buffer.charAt(i);
 
-            if (character === '\\') {
+            if (character === '\\' && inQuote) {
                 inEscape = !inEscape;
             } else if (!inEscape) {
                 if (character === '"') {
-                    inQuote = !inQuote;
+                    if ((i >= 2 && buffer.charAt(i -1) === '\\' && buffer.charAt(i - 2) === '\\') ||
+                        (i >= 1 && buffer.charAt(i - 1) !== '\\') || i == 0) {
+                        inQuote = !inQuote;
+                    }
                 } else if (!inQuote) {
                     if (character === '{') {
                         if (depth === 0) {
