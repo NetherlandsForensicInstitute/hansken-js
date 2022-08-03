@@ -902,6 +902,7 @@ function _fetch(base, path, req) {
     var contentType = response.headers.get('Content-Type');
 
     if (response.status === 401 || response.status === 200 && contentType.indexOf('text/html') === 0) {
+      var clone = response.clone();
       return response.text().then(function (text) {
         if (text.indexOf('SAMLRequest') !== -1) {
           // This is an html form page redirecting you to the default Identity Provider.
@@ -937,10 +938,10 @@ function _fetch(base, path, req) {
 
             return Promise.reject(new Error('No Identity Provider chosen, unable to retrieve data'));
           });
-        } // TODO recreate request and return?
+        } // The response body can only be read once, so return the clone
 
 
-        return Promise.reject(new Error('Body was of type "text/html" but no SAMLRequest was found in the text'));
+        return clone;
       });
     }
 
