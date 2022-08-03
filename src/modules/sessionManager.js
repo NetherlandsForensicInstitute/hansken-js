@@ -31,6 +31,7 @@ class SessionManager {
             .then((response) => {
                 const contentType = response.headers.get('Content-Type');
                 if (response.status === 401 || (response.status === 200 && contentType.indexOf('text/html') === 0)) {
+                    const clone = response.clone();
                     return response.text()
                         .then((text) => {
                             if (text.indexOf('SAMLRequest') !== -1) {
@@ -61,8 +62,8 @@ class SessionManager {
                                     });
                             }
 
-                            // TODO recreate request and return?
-                            return Promise.reject(new Error('Body was of type "text/html" but no SAMLRequest was found in the text'))
+                            // The response body can only be read once, so return the clone
+                            return clone;
                         });
                 }
                 return response;
