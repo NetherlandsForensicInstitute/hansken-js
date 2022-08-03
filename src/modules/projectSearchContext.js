@@ -19,34 +19,27 @@ class ProjectSearchContext {
         }
 
         let start = 0;
-        let depth = 1;
-        let inEscape = false;
-        let inQuote = false;
-        for (let i = 1; i < buffer.length; i++) {
-            const character = buffer[i];
+        let inObject = false;
 
-            if (character === '\\') {
-                inEscape = !inEscape;
-            } else if (!inEscape) {
-                if (character === '"') {
-                    inQuote = !inQuote;
-                } else if (!inQuote) {
-                    if (character === '{') {
-                        if (depth === 0) {
-                            start = i;
-                        }
-                        depth++;
-                    }
-                    else if (character === '}') {
-                        depth--;
-                        if (depth === 0) {
-                            callback(JSON.parse(buffer.substring(start, i + 1)));
-                            start = i + 1;
-                        }
-                    }
+        for (let i = 0; i < buffer.length; i++) {
+            const character = buffer.charAt(i);
+
+            if (!inObject && character === '{') {
+                // This is the first encounter of an JSON object
+                inObject = true;
+                start = i;
+            }
+            else if (inObject && character === '}') {
+                // Whenever we come across an JSON object end, try to parse the part that we read
+                // The JSON.parse will throw an exception when the token is not complete (missing })
+                // and we'll try to parse the next time
+                try {
+                    const trace = JSON.parse(buffer.substring(start, i + 1));
+                    start = i + 1;
+                    inObject = false;
+                    callback(trace);
+                } catch {
                 }
-            } else {
-                inEscape = false;
             }
         }
         return start;
