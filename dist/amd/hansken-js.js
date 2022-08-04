@@ -1176,6 +1176,10 @@ define('hansken-js',["exports", "./modules/projectContext.js", "./modules/singef
       }).then(_sessionManager.SessionManager.parseLocationId);
     });
 
+    _defineProperty(this, "keyManager", function () {
+      return _this.sessionManager.keyManager();
+    });
+
     _defineProperty(this, "singlefile", function (singlefileId) {
       return new _singefileContext.SinglefileContext(_this.sessionManager, singlefileId);
     });

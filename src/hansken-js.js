@@ -65,6 +65,13 @@ class HanskenClient {
     }).then(SessionManager.parseLocationId);
 
     /**
+     * Retrieve and store keys from the Hansken keystore.
+     *
+     * @returns The keystore manager
+     */
+    keyManager = () => this.sessionManager.keyManager();
+
+    /**
      * Get a context for a single file, to do project specific REST calls.
      *
      * @param {UUID} singlefileId The single file id
