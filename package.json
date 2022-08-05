@@ -41,5 +41,11 @@
     },
     "dependencies": {
         "lodash": "4.17.21"
+    },
+    "exports": {
+        ".": {
+            "import": "./src/hansken-js.js",
+            "require": "./dist/commonjs/hansken-js.js"
+        }
     }
 }
