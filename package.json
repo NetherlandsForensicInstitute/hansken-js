@@ -4,6 +4,7 @@
     "description": "The Hansken Javascript API",
     "main": "src/hansken.js",
     "license": "Apache-2.0",
+    "type": "module",
     "keywords": [
         "Hansken"
     ],
