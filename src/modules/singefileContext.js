@@ -8,9 +8,10 @@ class SinglefileContext extends AbstractProjectContext {
      *
      * @param {SessionManager} sessionManager The session manager, used for connections to the Hansken servers
      * @param {UUID} collectionId The project id or single file id
+     * @param {Map} customProjectHeaders A map of custom headers to add to every /projects/* REST request
      */
-    constructor(sessionManager, collectionId) {
-        super(sessionManager, 'singlefiles', collectionId);
+    constructor(sessionManager, collectionId, customProjectHeaders) {
+        super(sessionManager, 'singlefiles', collectionId, customProjectHeaders);
     }
 }
 

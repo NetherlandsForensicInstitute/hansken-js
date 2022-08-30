@@ -57,6 +57,9 @@ app.post('/gatekeeper/projects/de554b81-e4a3-4759-96ec-0abf942be72c/traces/searc
     response.json(searchResult);
 });
 
+app.get('/gatekeeper/projects/de554b81-e4a3-4759-96ec-0abf942be72c/traces/1a85b2d2-972a-4131-86f7-f55b61b19158:0-0-10-3/data', (request, response) => {
+    response.send(`This is the data stream for ${request.query.dataType || 'raw'}`);
+});
 
 app.listen(port, () => {
     console.log(`Example server started at http://localhost:${port}`);

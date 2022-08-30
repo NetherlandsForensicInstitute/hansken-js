@@ -258,6 +258,10 @@ define('modules/projectImageContext.js',["exports", "./sessionManager.js"], func
   });
   _exports.ProjectImageContext = void 0;
 
+  function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+  function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+
   function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
   function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
@@ -273,22 +277,27 @@ define('modules/projectImageContext.js',["exports", "./sessionManager.js"], func
    * @param {SessionManager} sessionManager The session manager, used for connections to the Hansken servers
    * @param {UUID} projectId The project id
    * @param {UUID} imageId The project image id
+   * @param {Map} customProjectHeaders A map of custom headers to add to every /projects/* REST request
    */
   function ProjectImageContext(sessionManager, projectId, imageId) {
     var _this = this;
 
+    var customProjectHeaders = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+
     _classCallCheck(this, ProjectImageContext);
 
     _defineProperty(this, "get", function () {
-      return _this.sessionManager.gatekeeper("/projects/".concat(_this.projectId, "/images/").concat(_this.imageId)).then(_sessionManager.SessionManager.json);
+      return _this.sessionManager.gatekeeper("/projects/".concat(_this.projectId, "/images/").concat(_this.imageId), {
+        headers: _objectSpread({}, _this.customProjectHeaders)
+      }).then(_sessionManager.SessionManager.json);
     });
 
     _defineProperty(this, "update", function (image) {
       return _this.sessionManager.gatekeeper("/projects/".concat(_this.projectId, "/images/").concat(_this.imageId), {
         method: 'PUT',
-        headers: {
+        headers: _objectSpread({
           'Content-Type': 'application/json'
-        },
+        }, _this.customProjectHeaders),
         body: JSON.stringify(image)
       });
     });
@@ -296,6 +305,7 @@ define('modules/projectImageContext.js',["exports", "./sessionManager.js"], func
     this.sessionManager = sessionManager;
     this.projectId = projectId;
     this.imageId = imageId;
+    this.customProjectHeaders = customProjectHeaders;
   }
   /**
    * Get the project image.
@@ -313,6 +323,10 @@ define('modules/projectSearchContext.js',["exports", "./sessionManager.js"], fun
     value: true
   });
   _exports.ProjectSearchContext = void 0;
+
+  function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+  function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 
   function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
@@ -346,9 +360,12 @@ define('modules/projectSearchContext.js',["exports", "./sessionManager.js"], fun
    *
    * @param {SessionManager} sessionManager The session manager, used for connections to the Hansken servers
    * @param {UUID} collectionId The project id
+   * @param {Map} customProjectHeaders A map of custom headers to add to every /projects/* REST request
    */
   function ProjectSearchContext(sessionManager, collectionId) {
     var _this = this;
+
+    var customProjectHeaders = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
     _classCallCheck(this, ProjectSearchContext);
 
@@ -368,10 +385,10 @@ define('modules/projectSearchContext.js',["exports", "./sessionManager.js"], fun
         var searchResultRegex = /^(\{("[a-z0-9]+"\:\s?("[a-z0-9]+"|[0-9]+|\[\]),?\s?)*"traces"\:\s?\[)/i;
         return _this.sessionManager.gatekeeper("/projects/".concat(_this.collectionId, "/traces/search"), {
           method: 'POST',
-          headers: {
+          headers: _objectSpread({
             'Accept': 'application/json',
             'Content-Type': 'application/json'
-          },
+          }, _this.customProjectHeaders),
           body: JSON.stringify(searchRequest)
         }).then(function (response) {
           var reader = response.body.getReader();
@@ -431,16 +448,17 @@ define('modules/projectSearchContext.js',["exports", "./sessionManager.js"], fun
       } : request;
       return _this.sessionManager.gatekeeper("/projects/".concat(_this.collectionId, "/traces/search"), {
         method: 'POST',
-        headers: {
+        headers: _objectSpread({
           'Accept': 'application/json',
           'Content-Type': 'application/json'
-        },
+        }, _this.customProjectHeaders),
         body: JSON.stringify(searchRequest)
       }).then(_sessionManager.SessionManager.json);
     });
 
     this.sessionManager = sessionManager;
     this.collectionId = collectionId;
+    this.customProjectHeaders = customProjectHeaders;
   });
 
   _exports.ProjectSearchContext = ProjectSearchContext;
@@ -556,9 +574,12 @@ define('modules/traceContext.js',["exports", "./traceUid.js"], function (_export
    * @param {SessionManager} sessionManager The session manager, used for connections to the Hansken servers
    * @param {UUID} collectionId The project id or single file id
    * @param {string | TraceUid} traceUid The traceUid of the trace, format 'imageId:traceId', e.g. '093da8cb-77f8-46df-ac99-ea93aeede0be:0-1-1-a3f'
+   * @param {Map} customProjectHeaders A map of custom headers to add to every /projects/* REST request
    */
   function TraceContext(sessionManager, collectionId, traceUid) {
     var _this = this;
+
+    var customProjectHeaders = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
 
     _classCallCheck(this, TraceContext);
 
@@ -568,7 +589,7 @@ define('modules/traceContext.js',["exports", "./traceUid.js"], function (_export
       return _this.sessionManager.keyManager().getKeyHeaders(_this.traceUid.imageId).then(function (headers) {
         return _this.sessionManager.gatekeeper("/projects/".concat(_this.collectionId, "/traces/").concat(_this.traceUid.traceUid, "/data?dataType=").concat(dataType), {
           method: 'GET',
-          headers: _objectSpread(_objectSpread({}, headers), {}, {
+          headers: _objectSpread(_objectSpread(_objectSpread({}, headers), _this.customProjectHeaders), {}, {
             Range: "bytes=".concat(start, "-").concat(end || '')
           })
         }).then(function (response) {
@@ -580,6 +601,7 @@ define('modules/traceContext.js',["exports", "./traceUid.js"], function (_export
     this.sessionManager = sessionManager;
     this.collectionId = collectionId;
     this.traceUid = typeof traceUid === 'string' ? _traceUid.TraceUid.fromString(traceUid) : traceUid;
+    this.customProjectHeaders = customProjectHeaders;
   }
   /**
    * Get the data from a trace as array buffer.
@@ -600,6 +622,10 @@ define('modules/abstractProjectContext.js',["exports", "./projectImageContext.js
   });
   _exports.AbstractProjectContext = void 0;
 
+  function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+  function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+
   function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
   function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
@@ -615,15 +641,19 @@ define('modules/abstractProjectContext.js',["exports", "./projectImageContext.js
    * @param {SessionManager} sessionManager The session manager, used for connections to the Hansken servers
    * @param {'projects' | 'singlefiles'} collection 'projects' or 'singlefiles'
    * @param {UUID} collectionId The project id or single file id
+   * @param {Map} customProjectHeaders A map of custom headers to add to every /projects/* REST request
    */
   function AbstractProjectContext(sessionManager, collection, collectionId) {
     var _this = this;
+
+    var customProjectHeaders = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
 
     _classCallCheck(this, AbstractProjectContext);
 
     _defineProperty(this, "delete", function () {
       return _this.sessionManager.gatekeeper("/".concat(_this.collection, "/").concat(_this.collectionId), {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: _objectSpread({}, _this.customProjectHeaders)
       });
     });
 
@@ -634,32 +664,35 @@ define('modules/abstractProjectContext.js',["exports", "./projectImageContext.js
     _defineProperty(this, "update", function (project) {
       return _this.sessionManager.gatekeeper("/".concat(_this.collection, "/").concat(_this.collectionId), {
         method: 'PUT',
-        headers: {
+        headers: _objectSpread({
           'Content-Type': 'application/json'
-        },
+        }, _this.customProjectHeaders),
         body: JSON.stringify(project)
       });
     });
 
     _defineProperty(this, "image", function (imageId) {
-      return new _projectImageContext.ProjectImageContext(_this.sessionManager, _this.collectionId, imageId);
+      return new _projectImageContext.ProjectImageContext(_this.sessionManager, _this.collectionId, imageId, _this.customProjectHeaders);
     });
 
     _defineProperty(this, "images", function () {
-      return _this.sessionManager.gatekeeper("/projects/".concat(_this.collectionId, "/images")).then(_sessionManager.SessionManager.json);
+      return _this.sessionManager.gatekeeper("/projects/".concat(_this.collectionId, "/images"), {
+        headers: _objectSpread({}, _this.customProjectHeaders)
+      }).then(_sessionManager.SessionManager.json);
     });
 
     _defineProperty(this, "search", function () {
-      return new _projectSearchContext.ProjectSearchContext(_this.sessionManager, _this.collectionId);
+      return new _projectSearchContext.ProjectSearchContext(_this.sessionManager, _this.collectionId, _this.customProjectHeaders);
     });
 
     _defineProperty(this, "trace", function (traceUid) {
-      return new _traceContext.TraceContext(_this.sessionManager, _this.collectionId, traceUid);
+      return new _traceContext.TraceContext(_this.sessionManager, _this.collectionId, traceUid, _this.customProjectHeaders);
     });
 
     this.sessionManager = sessionManager;
     this.collection = collection;
     this.collectionId = collectionId;
+    this.customProjectHeaders = customProjectHeaders;
   }
   /**
    * Delete the project or singlefile.
@@ -679,6 +712,10 @@ define('modules/projectContext.js',["exports", "./abstractProjectContext.js", ".
     value: true
   });
   _exports.ProjectContext = void 0;
+
+  function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+  function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 
   function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
@@ -712,27 +749,31 @@ define('modules/projectContext.js',["exports", "./abstractProjectContext.js", ".
      *
      * @param {SessionManager} sessionManager The session manager, used for connections to the Hansken servers
      * @param {UUID} collectionId The project id or single file id
+     * @param {Map} customProjectHeaders A map of custom headers to add to every /projects/* REST request
      */
     function ProjectContext(sessionManager, collectionId) {
       var _this;
 
+      var customProjectHeaders = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
       _classCallCheck(this, ProjectContext);
 
-      _this = _super.call(this, sessionManager, 'projects', collectionId);
+      _this = _super.call(this, sessionManager, 'projects', collectionId, customProjectHeaders);
 
       _defineProperty(_assertThisInitialized(_this), "createImage", function (image) {
         return _this.sessionManager.gatekeeper('/images', {
           method: 'POST',
-          headers: {
+          headers: _objectSpread({
             'Content-Type': 'application/json'
-          },
+          }, _this.customProjectHeaders),
           body: JSON.stringify(image)
         }).then(_sessionManager.SessionManager.parseLocationId).then(_this.linkImage);
       });
 
       _defineProperty(_assertThisInitialized(_this), "linkImage", function (imageId) {
         return _this.sessionManager.gatekeeper("/projects/".concat(_this.collectionId, "/images/").concat(imageId), {
-          method: 'PUT'
+          method: 'PUT',
+          headers: _objectSpread({}, _this.customProjectHeaders)
         }).then(function () {
           return _this.image(imageId);
         });
@@ -740,7 +781,8 @@ define('modules/projectContext.js',["exports", "./abstractProjectContext.js", ".
 
       _defineProperty(_assertThisInitialized(_this), "unlinkImage", function (imageId) {
         return _this.sessionManager.gatekeeper("/projects/".concat(_this.collectionId, "/images/").concat(imageId), {
-          method: 'DELETE'
+          method: 'DELETE',
+          headers: _objectSpread({}, _this.customProjectHeaders)
         });
       });
 
@@ -800,11 +842,12 @@ define('modules/singefileContext.js',["exports", "./abstractProjectContext.js", 
      *
      * @param {SessionManager} sessionManager The session manager, used for connections to the Hansken servers
      * @param {UUID} collectionId The project id or single file id
+     * @param {Map} customProjectHeaders A map of custom headers to add to every /projects/* REST request
      */
-    function SinglefileContext(sessionManager, collectionId) {
+    function SinglefileContext(sessionManager, collectionId, customProjectHeaders) {
       _classCallCheck(this, SinglefileContext);
 
-      return _super.call(this, sessionManager, 'singlefiles', collectionId);
+      return _super.call(this, sessionManager, 'singlefiles', collectionId, customProjectHeaders);
     }
 
     return _createClass(SinglefileContext);
@@ -1157,7 +1200,8 @@ define('hansken-js',["exports", "./modules/projectContext.js", "./modules/singef
     });
 
     _defineProperty(this, "project", function (projectId) {
-      return new _projectContext.ProjectContext(_this.sessionManager, projectId);
+      var customProjectHeaders = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+      return new _projectContext.ProjectContext(_this.sessionManager, projectId, customProjectHeaders);
     });
 
     _defineProperty(this, "projects", function () {

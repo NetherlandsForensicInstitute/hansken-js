@@ -1,0 +1,16 @@
+<script type="text/javascript" src="./node_modules/lodash/lodash.min.js"></script>
+<script type="module">
+    import {HanskenClient} from './src/hansken-js.js';
+
+    const hansken = new HanskenClient('/gatekeeper', '/keystore');
+    const projectId = 'de554b81-e4a3-4759-96ec-0abf942be72c';
+    const traceUid = '1a85b2d2-972a-4131-86f7-f55b61b19158:0-0-10-3';
+
+    const customProjectHeaders = {
+        'X-Case-Name': 'Test case'
+    };
+
+    hansken.project(projectId, customProjectHeaders).trace(traceUid).data('text').then((buffer) => {
+        document.write('<pre>' + new TextDecoder('UTF-8').decode(buffer) + '</pre>');
+    });
+</script>

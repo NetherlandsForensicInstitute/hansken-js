@@ -38,9 +38,10 @@ class HanskenClient {
      * Get a context for a single project, to do project specific REST calls.
      *
      * @param {UUID} projectId The project id
+     * @param {Map} customProjectHeaders A map of custom headers to add to every /projects/* REST request
      * @returns A ProjectContext for a project
      */
-    project = (projectId) => new ProjectContext(this.sessionManager, projectId);
+    project = (projectId, customProjectHeaders = {}) => new ProjectContext(this.sessionManager, projectId, customProjectHeaders);
 
     /**
      * Get all projects.
