@@ -104,6 +104,10 @@ function HanskenClient(gatekeeperUrl, keystoreUrl) {
     return _this.sessionManager.keyManager();
   });
 
+  _defineProperty(this, "session", function (serviceName) {
+    return _this.sessionManager.session(serviceName);
+  });
+
   _defineProperty(this, "singlefile", function (singlefileId) {
     return new _singefileContext.SinglefileContext(_this.sessionManager, singlefileId);
   });
@@ -195,7 +199,7 @@ function HanskenClient(gatekeeperUrl, keystoreUrl) {
 );
 
 exports.HanskenClient = HanskenClient;
-},{"./modules/projectContext.js":4,"./modules/scheduler.js":7,"./modules/sessionManager.js":8,"./modules/singefileContext.js":9,"./modules/traceModelContext.js":11}],2:[function(require,module,exports){
+},{"./modules/projectContext.js":4,"./modules/scheduler.js":7,"./modules/sessionManager.js":9,"./modules/singefileContext.js":10,"./modules/traceModelContext.js":12}],2:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -291,7 +295,7 @@ function AbstractProjectContext(sessionManager, collection, collectionId) {
 );
 
 exports.AbstractProjectContext = AbstractProjectContext;
-},{"./projectImageContext.js":5,"./projectSearchContext.js":6,"./sessionManager.js":8,"./traceContext.js":10}],3:[function(require,module,exports){
+},{"./projectImageContext.js":5,"./projectSearchContext.js":6,"./sessionManager.js":9,"./traceContext.js":11}],3:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -343,7 +347,7 @@ function KeyManager(sessionManager) {
       return Promise.resolve(_classPrivateFieldGet(_this, _cache)[imageId]);
     }
 
-    return _this.sessionManager.keystore('/session/whoami').then(_sessionManager.SessionManager.json).then(function (whoami) {
+    return _this.sessionContext.whoami().then(function (whoami) {
       return _this.sessionManager.keystore("/entries/".concat(imageId, "/").concat(whoami.uid), {
         method: 'GET'
       });
@@ -373,6 +377,7 @@ function KeyManager(sessionManager) {
   });
 
   this.sessionManager = sessionManager;
+  this.sessionContext = this.sessionManager.session('keystore');
 }
 /**
  * Retrieve a key.
@@ -383,7 +388,7 @@ function KeyManager(sessionManager) {
 );
 
 exports.KeyManager = KeyManager;
-},{"./sessionManager.js":8}],4:[function(require,module,exports){
+},{"./sessionManager.js":9}],4:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
@@ -485,7 +490,7 @@ var ProjectContext = /*#__PURE__*/function (_AbstractProjectConte) {
 }(_abstractProjectContext.AbstractProjectContext);
 
 exports.ProjectContext = ProjectContext;
-},{"./abstractProjectContext.js":2,"./sessionManager.js":8}],5:[function(require,module,exports){
+},{"./abstractProjectContext.js":2,"./sessionManager.js":9}],5:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -552,7 +557,7 @@ function ProjectImageContext(sessionManager, projectId, imageId) {
 );
 
 exports.ProjectImageContext = ProjectImageContext;
-},{"./sessionManager.js":8}],6:[function(require,module,exports){
+},{"./sessionManager.js":9}],6:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -733,7 +738,7 @@ var _tryObjectParse = {
     return start;
   }
 };
-},{"./sessionManager.js":8}],7:[function(require,module,exports){
+},{"./sessionManager.js":9}],7:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -853,7 +858,75 @@ function Scheduler(sessionManager) {
 );
 
 exports.Scheduler = Scheduler;
-},{"./sessionManager.js":8}],8:[function(require,module,exports){
+},{"./sessionManager.js":9}],8:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.SessionContext = void 0;
+
+var _sessionManager = require("./sessionManager.js");
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function _classPrivateFieldInitSpec(obj, privateMap, value) { _checkPrivateRedeclaration(obj, privateMap); privateMap.set(obj, value); }
+
+function _checkPrivateRedeclaration(obj, privateCollection) { if (privateCollection.has(obj)) { throw new TypeError("Cannot initialize the same private elements twice on an object"); } }
+
+function _classPrivateFieldSet(receiver, privateMap, value) { var descriptor = _classExtractFieldDescriptor(receiver, privateMap, "set"); _classApplyDescriptorSet(receiver, descriptor, value); return value; }
+
+function _classApplyDescriptorSet(receiver, descriptor, value) { if (descriptor.set) { descriptor.set.call(receiver, value); } else { if (!descriptor.writable) { throw new TypeError("attempted to set read only private field"); } descriptor.value = value; } }
+
+function _classPrivateFieldGet(receiver, privateMap) { var descriptor = _classExtractFieldDescriptor(receiver, privateMap, "get"); return _classApplyDescriptorGet(receiver, descriptor); }
+
+function _classExtractFieldDescriptor(receiver, privateMap, action) { if (!privateMap.has(receiver)) { throw new TypeError("attempted to " + action + " private field on non-instance"); } return privateMap.get(receiver); }
+
+function _classApplyDescriptorGet(receiver, descriptor) { if (descriptor.get) { return descriptor.get.call(receiver); } return descriptor.value; }
+
+var _whoami = /*#__PURE__*/new WeakMap();
+
+var SessionContext = /*#__PURE__*/_createClass(
+/**
+ * Create a context for the session of a hansken service.
+ *
+ * @param {SessionManager} sessionManager The session manager, used for connections to the Hansken servers
+ * @param {string} The url of the hansken service
+ */
+function SessionContext(sessionManager, serviceUrl) {
+  var _this = this;
+
+  _classCallCheck(this, SessionContext);
+
+  _classPrivateFieldInitSpec(this, _whoami, {
+    writable: true,
+    value: void 0
+  });
+
+  _defineProperty(this, "whoami", function () {
+    if (_classPrivateFieldGet(_this, _whoami)) {
+      return Promise.resolve(_classPrivateFieldGet(_this, _whoami));
+    }
+
+    return _this.sessionManager.fetch(_this.serviceUrl, '/session/whoami').then(_sessionManager.SessionManager.json).then(function (whoami) {
+      _classPrivateFieldSet(_this, _whoami, whoami);
+
+      return whoami;
+    });
+  });
+
+  this.sessionManager = sessionManager;
+  this.serviceUrl = serviceUrl;
+});
+
+exports.SessionContext = SessionContext;
+},{"./sessionManager.js":9}],9:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -862,6 +935,8 @@ Object.defineProperty(exports, "__esModule", {
 exports.SessionManager = void 0;
 
 var _keyManager2 = require("./keyManager.js");
+
+var _sessionContext2 = require("./sessionContext.js");
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
@@ -891,6 +966,10 @@ function _classCheckPrivateStaticAccess(receiver, classConstructor) { if (receiv
 
 var _keyManager = /*#__PURE__*/new WeakMap();
 
+var _sessions = /*#__PURE__*/new WeakMap();
+
+var _sessionContext = /*#__PURE__*/new WeakMap();
+
 var SessionManager = /*#__PURE__*/_createClass(
 /**
  * Creates an object that handles the authentication of SAML services.
@@ -908,12 +987,74 @@ function SessionManager(gatekeeperUrl, keystoreUrl) {
     value: void 0
   });
 
+  _classPrivateFieldInitSpec(this, _sessions, {
+    writable: true,
+    value: {}
+  });
+
+  _defineProperty(this, "fetch", function (base, path, req) {
+    // Defaults for Cross Origin Resource Sharing
+    var request = req || {};
+    request.credentials = 'include';
+    request.mode = 'cors'; // TODO accept Request as argument
+
+    return window.fetch("".concat(base).concat(path), request).then(function (response) {
+      var contentType = response.headers.get('Content-Type');
+
+      if (response.status === 401 || response.status === 200 && contentType.indexOf('text/html') === 0) {
+        var clone = response.clone();
+        return response.text().then(function (text) {
+          if (text.indexOf('SAMLRequest') !== -1) {
+            // This is an html form page redirecting you to the default Identity Provider.
+            // Let's orchestrate that request ourself
+            return window.fetch("".concat(base, "/saml/idps"), {
+              credentials: 'include',
+              mode: 'cors'
+            }).then(function (idps) {
+              return idps.json();
+            }).then(function (idps) {
+              if (idps.length === 1) {
+                // Only one Identity Provider available, redirect to login page with redirectUrl
+                return _classStaticPrivateMethodGet(SessionManager, SessionManager, _login).call(SessionManager, base, idps[0].entityID);
+              } // Ask the user which Identity Provider should be used
+
+
+              var descriptions = idps.map(function (idp) {
+                return idp.description || idp.entityID;
+              }).map(function (idp) {
+                return "\"".concat(idp, "\"");
+              }).join(', ');
+
+              for (var i = 0; i < idps.length; i += 1) {
+                var idp = idps[i]; // Disable these eslint rules to make sure we can use confirm().
+                // This is an old browser component, but it is very useful for this case as it is UI Framework independent
+                // and blocking the thread.
+                // eslint-disable-next-line no-alert, no-restricted-globals
+
+                if (confirm("Multiple Identity Providers found: ".concat(descriptions, ". Do you want to login with Identity Provider \"").concat(idp.description ? idp.description : idp.entityID, "\"?"))) {
+                  return _classStaticPrivateMethodGet(SessionManager, SessionManager, _login).call(SessionManager, base, idp.entityID);
+                }
+              }
+
+              return Promise.reject(new Error('No Identity Provider chosen, unable to retrieve data'));
+            });
+          } // The response body can only be read once, so return the clone
+
+
+          return clone;
+        });
+      }
+
+      return response;
+    });
+  });
+
   _defineProperty(this, "gatekeeper", function (path, request) {
-    return _classStaticPrivateMethodGet(SessionManager, SessionManager, _fetch).call(SessionManager, _this.gatekeeperUrl, path, request);
+    return _this.fetch(_this.gatekeeperUrl, path, request);
   });
 
   _defineProperty(this, "keystore", function (path, request) {
-    return _classStaticPrivateMethodGet(SessionManager, SessionManager, _fetch).call(SessionManager, _this.keystoreUrl, path, request);
+    return _this.fetch(_this.keystoreUrl, path, request);
   });
 
   _defineProperty(this, "keyManager", function () {
@@ -922,6 +1063,28 @@ function SessionManager(gatekeeperUrl, keystoreUrl) {
     }
 
     return _classPrivateFieldGet(_this, _keyManager);
+  });
+
+  _classPrivateFieldInitSpec(this, _sessionContext, {
+    writable: true,
+    value: function value(serviceName) {
+      switch (serviceName) {
+        case 'gatekeeper':
+          return new _sessionContext2.SessionContext(_this, _this.gatekeeperUrl);
+
+        case 'keystore':
+          return new _sessionContext2.SessionContext(_this, _this.keystoreUrl);
+      }
+    }
+  });
+
+  _defineProperty(this, "session", function (serviceName) {
+    // Create the session context only once
+    if (!_classPrivateFieldGet(_this, _sessions)[serviceName]) {
+      _classPrivateFieldGet(_this, _sessions)[serviceName] = _classPrivateFieldGet(_this, _sessionContext).call(_this, serviceName);
+    }
+
+    return _classPrivateFieldGet(_this, _sessions)[serviceName];
   });
 
   this.gatekeeperUrl = gatekeeperUrl.replace(/\/+$/, '');
@@ -933,63 +1096,6 @@ exports.SessionManager = SessionManager;
 function _login(base, entityID) {
   window.location.href = "".concat(base, "/saml/login?idp=").concat(encodeURIComponent(entityID), "&redirectUrl=").concat(encodeURIComponent(window.location.href));
   return Promise.reject(new Error('Redirecting to login page')); // We won't get here
-}
-
-function _fetch(base, path, req) {
-  // Defaults for Cross Origin Resource Sharing
-  var request = req || {};
-  request.credentials = 'include';
-  request.mode = 'cors'; // TODO accept Request as argument
-
-  return window.fetch("".concat(base).concat(path), request).then(function (response) {
-    var contentType = response.headers.get('Content-Type');
-
-    if (response.status === 401 || response.status === 200 && contentType.indexOf('text/html') === 0) {
-      var clone = response.clone();
-      return response.text().then(function (text) {
-        if (text.indexOf('SAMLRequest') !== -1) {
-          // This is an html form page redirecting you to the default Identity Provider.
-          // Let's orchestrate that request ourself
-          return window.fetch("".concat(base, "/saml/idps"), {
-            credentials: 'include',
-            mode: 'cors'
-          }).then(function (idps) {
-            return idps.json();
-          }).then(function (idps) {
-            if (idps.length === 1) {
-              // Only one Identity Provider available, redirect to login page with redirectUrl
-              return _classStaticPrivateMethodGet(SessionManager, SessionManager, _login).call(SessionManager, base, idps[0].entityID);
-            } // Ask the user which Identity Provider should be used
-
-
-            var descriptions = idps.map(function (idp) {
-              return idp.description || idp.entityID;
-            }).map(function (idp) {
-              return "\"".concat(idp, "\"");
-            }).join(', ');
-
-            for (var i = 0; i < idps.length; i += 1) {
-              var idp = idps[i]; // Disable these eslint rules to make sure we can use confirm().
-              // This is an old browser component, but it is very useful for this case as it is UI Framework independent
-              // and blocking the thread.
-              // eslint-disable-next-line no-alert, no-restricted-globals
-
-              if (confirm("Multiple Identity Providers found: ".concat(descriptions, ". Do you want to login with Identity Provider \"").concat(idp.description ? idp.description : idp.entityID, "\"?"))) {
-                return _classStaticPrivateMethodGet(SessionManager, SessionManager, _login).call(SessionManager, base, idp.entityID);
-              }
-            }
-
-            return Promise.reject(new Error('No Identity Provider chosen, unable to retrieve data'));
-          });
-        } // The response body can only be read once, so return the clone
-
-
-        return clone;
-      });
-    }
-
-    return response;
-  });
 }
 
 _defineProperty(SessionManager, "json", function (response) {
@@ -1015,7 +1121,7 @@ _defineProperty(SessionManager, "parseLocationId", function (response) {
 
   return Promise.reject(response);
 });
-},{"./keyManager.js":3}],9:[function(require,module,exports){
+},{"./keyManager.js":3,"./sessionContext.js":8}],10:[function(require,module,exports){
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
@@ -1071,7 +1177,7 @@ var SinglefileContext = /*#__PURE__*/function (_AbstractProjectConte) {
 }(_abstractProjectContext.AbstractProjectContext);
 
 exports.SinglefileContext = SinglefileContext;
-},{"./abstractProjectContext.js":2,"./sessionManager.js":8}],10:[function(require,module,exports){
+},{"./abstractProjectContext.js":2,"./sessionManager.js":9}],11:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1139,7 +1245,7 @@ function TraceContext(sessionManager, collectionId, traceUid) {
 );
 
 exports.TraceContext = TraceContext;
-},{"./traceUid.js":12}],11:[function(require,module,exports){
+},{"./traceUid.js":13}],12:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1294,7 +1400,7 @@ function TraceModelContext(sessionManager, projectId) {
 );
 
 exports.TraceModelContext = TraceModelContext;
-},{"./sessionManager.js":8}],12:[function(require,module,exports){
+},{"./sessionManager.js":9}],13:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {

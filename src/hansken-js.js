@@ -73,6 +73,14 @@ class HanskenClient {
     keyManager = () => this.sessionManager.keyManager();
 
     /**
+     * Create a session context for a specific service. (gatekeeper or keystore).
+     *
+     * @param {'gatekeeper' | ' keystore'} serviceName The name of the service
+     * @returns A SessionContext for the service
+     */
+    session = (serviceName) => this.sessionManager.session(serviceName);
+
+    /**
      * Get a context for a single file, to do project specific REST calls.
      *
      * @param {UUID} singlefileId The single file id

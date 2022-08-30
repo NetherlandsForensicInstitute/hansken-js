@@ -48,7 +48,7 @@ define('modules/keyManager.js',["exports", "./sessionManager.js"], function (_ex
         return Promise.resolve(_classPrivateFieldGet(_this, _cache)[imageId]);
       }
 
-      return _this.sessionManager.keystore('/session/whoami').then(_sessionManager.SessionManager.json).then(function (whoami) {
+      return _this.sessionContext.whoami().then(function (whoami) {
         return _this.sessionManager.keystore("/entries/".concat(imageId, "/").concat(whoami.uid), {
           method: 'GET'
         });
@@ -78,6 +78,7 @@ define('modules/keyManager.js',["exports", "./sessionManager.js"], function (_ex
     });
 
     this.sessionManager = sessionManager;
+    this.sessionContext = this.sessionManager.session('keystore');
   }
   /**
    * Retrieve a key.
@@ -89,7 +90,74 @@ define('modules/keyManager.js',["exports", "./sessionManager.js"], function (_ex
 
   _exports.KeyManager = KeyManager;
 });
-define('modules/sessionManager.js',["exports", "./keyManager.js"], function (_exports, _keyManager2) {
+define('modules/sessionContext.js',["exports", "./sessionManager.js"], function (_exports, _sessionManager) {
+  "use strict";
+
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.SessionContext = void 0;
+
+  function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+  function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+
+  function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+  function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+  function _classPrivateFieldInitSpec(obj, privateMap, value) { _checkPrivateRedeclaration(obj, privateMap); privateMap.set(obj, value); }
+
+  function _checkPrivateRedeclaration(obj, privateCollection) { if (privateCollection.has(obj)) { throw new TypeError("Cannot initialize the same private elements twice on an object"); } }
+
+  function _classPrivateFieldSet(receiver, privateMap, value) { var descriptor = _classExtractFieldDescriptor(receiver, privateMap, "set"); _classApplyDescriptorSet(receiver, descriptor, value); return value; }
+
+  function _classApplyDescriptorSet(receiver, descriptor, value) { if (descriptor.set) { descriptor.set.call(receiver, value); } else { if (!descriptor.writable) { throw new TypeError("attempted to set read only private field"); } descriptor.value = value; } }
+
+  function _classPrivateFieldGet(receiver, privateMap) { var descriptor = _classExtractFieldDescriptor(receiver, privateMap, "get"); return _classApplyDescriptorGet(receiver, descriptor); }
+
+  function _classExtractFieldDescriptor(receiver, privateMap, action) { if (!privateMap.has(receiver)) { throw new TypeError("attempted to " + action + " private field on non-instance"); } return privateMap.get(receiver); }
+
+  function _classApplyDescriptorGet(receiver, descriptor) { if (descriptor.get) { return descriptor.get.call(receiver); } return descriptor.value; }
+
+  var _whoami = /*#__PURE__*/new WeakMap();
+
+  var SessionContext = /*#__PURE__*/_createClass(
+  /**
+   * Create a context for the session of a hansken service.
+   *
+   * @param {SessionManager} sessionManager The session manager, used for connections to the Hansken servers
+   * @param {string} The url of the hansken service
+   */
+  function SessionContext(sessionManager, serviceUrl) {
+    var _this = this;
+
+    _classCallCheck(this, SessionContext);
+
+    _classPrivateFieldInitSpec(this, _whoami, {
+      writable: true,
+      value: void 0
+    });
+
+    _defineProperty(this, "whoami", function () {
+      if (_classPrivateFieldGet(_this, _whoami)) {
+        return Promise.resolve(_classPrivateFieldGet(_this, _whoami));
+      }
+
+      return _this.sessionManager.fetch(_this.serviceUrl, '/session/whoami').then(_sessionManager.SessionManager.json).then(function (whoami) {
+        _classPrivateFieldSet(_this, _whoami, whoami);
+
+        return whoami;
+      });
+    });
+
+    this.sessionManager = sessionManager;
+    this.serviceUrl = serviceUrl;
+  });
+
+  _exports.SessionContext = SessionContext;
+});
+define('modules/sessionManager.js',["exports", "./keyManager.js", "./sessionContext.js"], function (_exports, _keyManager2, _sessionContext2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -125,6 +193,10 @@ define('modules/sessionManager.js',["exports", "./keyManager.js"], function (_ex
 
   var _keyManager = /*#__PURE__*/new WeakMap();
 
+  var _sessions = /*#__PURE__*/new WeakMap();
+
+  var _sessionContext = /*#__PURE__*/new WeakMap();
+
   var SessionManager = /*#__PURE__*/_createClass(
   /**
    * Creates an object that handles the authentication of SAML services.
@@ -142,12 +214,74 @@ define('modules/sessionManager.js',["exports", "./keyManager.js"], function (_ex
       value: void 0
     });
 
+    _classPrivateFieldInitSpec(this, _sessions, {
+      writable: true,
+      value: {}
+    });
+
+    _defineProperty(this, "fetch", function (base, path, req) {
+      // Defaults for Cross Origin Resource Sharing
+      var request = req || {};
+      request.credentials = 'include';
+      request.mode = 'cors'; // TODO accept Request as argument
+
+      return window.fetch("".concat(base).concat(path), request).then(function (response) {
+        var contentType = response.headers.get('Content-Type');
+
+        if (response.status === 401 || response.status === 200 && contentType.indexOf('text/html') === 0) {
+          var clone = response.clone();
+          return response.text().then(function (text) {
+            if (text.indexOf('SAMLRequest') !== -1) {
+              // This is an html form page redirecting you to the default Identity Provider.
+              // Let's orchestrate that request ourself
+              return window.fetch("".concat(base, "/saml/idps"), {
+                credentials: 'include',
+                mode: 'cors'
+              }).then(function (idps) {
+                return idps.json();
+              }).then(function (idps) {
+                if (idps.length === 1) {
+                  // Only one Identity Provider available, redirect to login page with redirectUrl
+                  return _classStaticPrivateMethodGet(SessionManager, SessionManager, _login).call(SessionManager, base, idps[0].entityID);
+                } // Ask the user which Identity Provider should be used
+
+
+                var descriptions = idps.map(function (idp) {
+                  return idp.description || idp.entityID;
+                }).map(function (idp) {
+                  return "\"".concat(idp, "\"");
+                }).join(', ');
+
+                for (var i = 0; i < idps.length; i += 1) {
+                  var idp = idps[i]; // Disable these eslint rules to make sure we can use confirm().
+                  // This is an old browser component, but it is very useful for this case as it is UI Framework independent
+                  // and blocking the thread.
+                  // eslint-disable-next-line no-alert, no-restricted-globals
+
+                  if (confirm("Multiple Identity Providers found: ".concat(descriptions, ". Do you want to login with Identity Provider \"").concat(idp.description ? idp.description : idp.entityID, "\"?"))) {
+                    return _classStaticPrivateMethodGet(SessionManager, SessionManager, _login).call(SessionManager, base, idp.entityID);
+                  }
+                }
+
+                return Promise.reject(new Error('No Identity Provider chosen, unable to retrieve data'));
+              });
+            } // The response body can only be read once, so return the clone
+
+
+            return clone;
+          });
+        }
+
+        return response;
+      });
+    });
+
     _defineProperty(this, "gatekeeper", function (path, request) {
-      return _classStaticPrivateMethodGet(SessionManager, SessionManager, _fetch).call(SessionManager, _this.gatekeeperUrl, path, request);
+      return _this.fetch(_this.gatekeeperUrl, path, request);
     });
 
     _defineProperty(this, "keystore", function (path, request) {
-      return _classStaticPrivateMethodGet(SessionManager, SessionManager, _fetch).call(SessionManager, _this.keystoreUrl, path, request);
+      return _this.fetch(_this.keystoreUrl, path, request);
     });
 
     _defineProperty(this, "keyManager", function () {
@@ -156,6 +290,28 @@ define('modules/sessionManager.js',["exports", "./keyManager.js"], function (_ex
       }
 
       return _classPrivateFieldGet(_this, _keyManager);
+    });
+
+    _classPrivateFieldInitSpec(this, _sessionContext, {
+      writable: true,
+      value: function value(serviceName) {
+        switch (serviceName) {
+          case 'gatekeeper':
+            return new _sessionContext2.SessionContext(_this, _this.gatekeeperUrl);
+
+          case 'keystore':
+            return new _sessionContext2.SessionContext(_this, _this.keystoreUrl);
+        }
+      }
+    });
+
+    _defineProperty(this, "session", function (serviceName) {
+      // Create the session context only once
+      if (!_classPrivateFieldGet(_this, _sessions)[serviceName]) {
+        _classPrivateFieldGet(_this, _sessions)[serviceName] = _classPrivateFieldGet(_this, _sessionContext).call(_this, serviceName);
+      }
+
+      return _classPrivateFieldGet(_this, _sessions)[serviceName];
     });
 
     this.gatekeeperUrl = gatekeeperUrl.replace(/\/+$/, '');
@@ -167,63 +323,6 @@ define('modules/sessionManager.js',["exports", "./keyManager.js"], function (_ex
   function _login(base, entityID) {
     window.location.href = "".concat(base, "/saml/login?idp=").concat(encodeURIComponent(entityID), "&redirectUrl=").concat(encodeURIComponent(window.location.href));
     return Promise.reject(new Error('Redirecting to login page')); // We won't get here
-  }
-
-  function _fetch(base, path, req) {
-    // Defaults for Cross Origin Resource Sharing
-    var request = req || {};
-    request.credentials = 'include';
-    request.mode = 'cors'; // TODO accept Request as argument
-
-    return window.fetch("".concat(base).concat(path), request).then(function (response) {
-      var contentType = response.headers.get('Content-Type');
-
-      if (response.status === 401 || response.status === 200 && contentType.indexOf('text/html') === 0) {
-        var clone = response.clone();
-        return response.text().then(function (text) {
-          if (text.indexOf('SAMLRequest') !== -1) {
-            // This is an html form page redirecting you to the default Identity Provider.
-            // Let's orchestrate that request ourself
-            return window.fetch("".concat(base, "/saml/idps"), {
-              credentials: 'include',
-              mode: 'cors'
-            }).then(function (idps) {
-              return idps.json();
-            }).then(function (idps) {
-              if (idps.length === 1) {
-                // Only one Identity Provider available, redirect to login page with redirectUrl
-                return _classStaticPrivateMethodGet(SessionManager, SessionManager, _login).call(SessionManager, base, idps[0].entityID);
-              } // Ask the user which Identity Provider should be used
-
-
-              var descriptions = idps.map(function (idp) {
-                return idp.description || idp.entityID;
-              }).map(function (idp) {
-                return "\"".concat(idp, "\"");
-              }).join(', ');
-
-              for (var i = 0; i < idps.length; i += 1) {
-                var idp = idps[i]; // Disable these eslint rules to make sure we can use confirm().
-                // This is an old browser component, but it is very useful for this case as it is UI Framework independent
-                // and blocking the thread.
-                // eslint-disable-next-line no-alert, no-restricted-globals
-
-                if (confirm("Multiple Identity Providers found: ".concat(descriptions, ". Do you want to login with Identity Provider \"").concat(idp.description ? idp.description : idp.entityID, "\"?"))) {
-                  return _classStaticPrivateMethodGet(SessionManager, SessionManager, _login).call(SessionManager, base, idp.entityID);
-                }
-              }
-
-              return Promise.reject(new Error('No Identity Provider chosen, unable to retrieve data'));
-            });
-          } // The response body can only be read once, so return the clone
-
-
-          return clone;
-        });
-      }
-
-      return response;
-    });
   }
 
   _defineProperty(SessionManager, "json", function (response) {
@@ -1222,6 +1321,10 @@ define('hansken-js',["exports", "./modules/projectContext.js", "./modules/singef
 
     _defineProperty(this, "keyManager", function () {
       return _this.sessionManager.keyManager();
+    });
+
+    _defineProperty(this, "session", function (serviceName) {
+      return _this.sessionManager.session(serviceName);
     });
 
     _defineProperty(this, "singlefile", function (singlefileId) {

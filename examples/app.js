@@ -61,6 +61,14 @@ app.get('/gatekeeper/projects/de554b81-e4a3-4759-96ec-0abf942be72c/traces/1a85b2
     response.send(`This is the data stream for ${request.query.dataType || 'raw'}`);
 });
 
+app.get('/gatekeeper/session/whoami', (request, response) => {
+    response.json(require('./mocks/whoami.json'));
+});
+
+app.get('/keystore/session/whoami', (request, response) => {
+    response.json(require('./mocks/whoami.json'));
+});
+
 app.listen(port, () => {
     console.log(`Example server started at http://localhost:${port}`);
 });
