@@ -11,6 +11,7 @@ class KeyManager {
      */
     constructor(sessionManager) {
         this.sessionManager = sessionManager;
+        this.sessionContext = this.sessionManager.session('keystore');
     }
 
     /**
@@ -24,8 +25,7 @@ class KeyManager {
             // Return key from cache
             return Promise.resolve(this.#cache[imageId]);
         }
-        return this.sessionManager.keystore('/session/whoami')
-            .then(SessionManager.json)
+        return this.sessionContext.whoami()
             .then((whoami) => this.sessionManager.keystore(`/entries/${imageId}/${whoami.uid}`, {
                 method: 'GET'
             }))

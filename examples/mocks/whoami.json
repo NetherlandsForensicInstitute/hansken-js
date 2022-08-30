@@ -1,0 +1,6 @@
+{
+	"fquid": "https://user@keycloak.dev.local/auth/realms/idp",
+	"id": "user",
+	"name": "User 1",
+	"uid": "user@keycloak.dev.local"
+}
