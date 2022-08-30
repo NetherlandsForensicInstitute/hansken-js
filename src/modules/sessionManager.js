@@ -1,8 +1,10 @@
 import { KeyManager } from './keyManager.js';
+import { SessionContext } from './sessionContext.js';
 
 class SessionManager {
 
     #keyManager;
+    #sessions = {};
 
     /**
      * Creates an object that handles the authentication of SAML services.
@@ -20,7 +22,7 @@ class SessionManager {
         return Promise.reject(new Error('Redirecting to login page')); // We won't get here
     }
 
-    static #fetch(base, path, req) {
+    fetch = (base, path, req) => {
         // Defaults for Cross Origin Resource Sharing
         const request = req || {};
         request.credentials = 'include';
@@ -77,7 +79,7 @@ class SessionManager {
      * @param {object} request The request object for the window.fetch API
      * @returns A promise from the window.fetch API
      */
-    gatekeeper = (path, request) => SessionManager.#fetch(this.gatekeeperUrl, path, request);
+    gatekeeper = (path, request) => this.fetch(this.gatekeeperUrl, path, request);
 
     /**
      * Make a REST call to the keystore.
@@ -86,7 +88,7 @@ class SessionManager {
      * @param {object} request The request object for the window.fetch API
      * @returns A promise from the window.fetch API
      */
-    keystore = (path, request) => SessionManager.#fetch(this.keystoreUrl, path, request);
+    keystore = (path, request) => this.fetch(this.keystoreUrl, path, request);
 
     /**
      * Retrieve and store keys from the Hansken keystore.
@@ -98,7 +100,36 @@ class SessionManager {
             this.#keyManager = new KeyManager(this);
         }
         return this.#keyManager;
-    }
+    };
+
+    /**
+     * Create new session context from serviceName.
+     *
+     * @param {'gatekeeper' | 'keystore'} serviceName
+     * @returns A new session context
+     */
+    #sessionContext = (serviceName) => {
+        switch (serviceName) {
+            case 'gatekeeper':
+                return new SessionContext(this, this.gatekeeperUrl);
+            case 'keystore':
+                return new SessionContext(this, this.keystoreUrl);
+        }
+    };
+
+    /**
+     * Create a session context for a specific service. (gatekeeper or keystore).
+     *
+     * @param {'gatekeeper' | ' keystore'} serviceName The name of the service
+     * @returns A SessionContext for the service
+     */
+    session = (serviceName) => {
+        // Create the session context only once
+        if (!this.#sessions[serviceName]) {
+            this.#sessions[serviceName] = this.#sessionContext(serviceName);
+        }
+        return this.#sessions[serviceName];
+    };
 
     /**
      * Convert a fetch response to json when the result was valid.

@@ -1,0 +1,14 @@
+<script type="text/javascript" src="./node_modules/lodash/lodash.min.js"></script>
+<script type="module">
+    import {HanskenClient} from './src/hansken-js.js';
+
+    const hansken = new HanskenClient('/gatekeeper', '/keystore');
+
+    hansken.session('gatekeeper').whoami().then((whoami) => {
+        document.write('<pre>' + JSON.stringify(whoami, null, 2) + '<pre>');
+
+        hansken.session('gatekeeper').whoami().then((whoami) => {
+            document.write('<pre>' + JSON.stringify(whoami, null, 2) + '<pre>');
+        });
+    });
+</script>
