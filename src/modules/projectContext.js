@@ -8,9 +8,10 @@ class ProjectContext extends AbstractProjectContext {
      *
      * @param {SessionManager} sessionManager The session manager, used for connections to the Hansken servers
      * @param {UUID} collectionId The project id or single file id
+     * @param {Map} customProjectHeaders A map of custom headers to add to every /projects/* REST request
      */
-    constructor(sessionManager, collectionId) {
-        super(sessionManager, 'projects', collectionId);
+    constructor(sessionManager, collectionId, customProjectHeaders = {}) {
+        super(sessionManager, 'projects', collectionId, customProjectHeaders);
     }
 
     /**
@@ -23,7 +24,8 @@ class ProjectContext extends AbstractProjectContext {
     createImage = (image) => this.sessionManager.gatekeeper('/images', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            ...this.customProjectHeaders
         },
         body: JSON.stringify(image)
     }).then(SessionManager.parseLocationId)
@@ -37,7 +39,10 @@ class ProjectContext extends AbstractProjectContext {
      * @returns The new ProjectImageContext
      */
     linkImage = (imageId) => this.sessionManager.gatekeeper(`/projects/${this.collectionId}/images/${imageId}`, {
-        method: 'PUT'
+        method: 'PUT',
+        headers: {
+            ...this.customProjectHeaders
+        }
     }).then(() => this.image(imageId));
 
     /**
@@ -48,7 +53,10 @@ class ProjectContext extends AbstractProjectContext {
      * @returns The image id
      */
     unlinkImage = (imageId) => this.sessionManager.gatekeeper(`/projects/${this.collectionId}/images/${imageId}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: {
+            ...this.customProjectHeaders
+        }
     });
 }
 

@@ -7,10 +7,12 @@ class ProjectSearchContext {
      *
      * @param {SessionManager} sessionManager The session manager, used for connections to the Hansken servers
      * @param {UUID} collectionId The project id
+     * @param {Map} customProjectHeaders A map of custom headers to add to every /projects/* REST request
      */
-    constructor(sessionManager, collectionId) {
+    constructor(sessionManager, collectionId, customProjectHeaders = {}) {
         this.sessionManager = sessionManager;
         this.collectionId = collectionId;
+        this.customProjectHeaders = customProjectHeaders;
     }
 
     static #tryObjectParse = (buffer, callback) => {
@@ -63,7 +65,8 @@ class ProjectSearchContext {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                ...this.customProjectHeaders
             },
             body: JSON.stringify(searchRequest)
         }).then((response) => {
@@ -122,7 +125,8 @@ class ProjectSearchContext {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                ...this.customProjectHeaders
             },
             body: JSON.stringify(searchRequest)
         }).then(SessionManager.json);

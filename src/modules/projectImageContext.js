@@ -8,11 +8,13 @@ class ProjectImageContext {
      * @param {SessionManager} sessionManager The session manager, used for connections to the Hansken servers
      * @param {UUID} projectId The project id
      * @param {UUID} imageId The project image id
+     * @param {Map} customProjectHeaders A map of custom headers to add to every /projects/* REST request
      */
-    constructor(sessionManager, projectId, imageId) {
+    constructor(sessionManager, projectId, imageId, customProjectHeaders = {}) {
         this.sessionManager = sessionManager;
         this.projectId = projectId;
         this.imageId = imageId;
+        this.customProjectHeaders = customProjectHeaders;
     }
 
     /**
@@ -20,7 +22,11 @@ class ProjectImageContext {
      *
      * @returns The project image
      */
-    get = () => this.sessionManager.gatekeeper(`/projects/${this.projectId}/images/${this.imageId}`).then(SessionManager.json);
+    get = () => this.sessionManager.gatekeeper(`/projects/${this.projectId}/images/${this.imageId}`, {
+        headers: {
+            ...this.customProjectHeaders
+        }
+    }).then(SessionManager.json);
 
     /**
      * Update an existing project image.
@@ -31,7 +37,8 @@ class ProjectImageContext {
     update = (image) => this.sessionManager.gatekeeper(`/projects/${this.projectId}/images/${this.imageId}`, {
         method: 'PUT',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            ...this.customProjectHeaders
         },
         body: JSON.stringify(image)
     });

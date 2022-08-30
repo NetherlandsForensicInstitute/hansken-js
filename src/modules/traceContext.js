@@ -8,11 +8,13 @@ class TraceContext {
      * @param {SessionManager} sessionManager The session manager, used for connections to the Hansken servers
      * @param {UUID} collectionId The project id or single file id
      * @param {string | TraceUid} traceUid The traceUid of the trace, format 'imageId:traceId', e.g. '093da8cb-77f8-46df-ac99-ea93aeede0be:0-1-1-a3f'
+     * @param {Map} customProjectHeaders A map of custom headers to add to every /projects/* REST request
      */
-     constructor(sessionManager, collectionId, traceUid) {
+     constructor(sessionManager, collectionId, traceUid, customProjectHeaders = {}) {
         this.sessionManager = sessionManager;
         this.collectionId = collectionId;
         this.traceUid = typeof traceUid === 'string' ? TraceUid.fromString(traceUid) : traceUid;
+        this.customProjectHeaders = customProjectHeaders;
     }
 
     /**
@@ -28,6 +30,7 @@ class TraceContext {
                 method: 'GET',
                 headers: {
                     ...headers,
+                    ...this.customProjectHeaders,
                     Range: `bytes=${start}-${end || ''}`
                 }
             }).then((response) => response.arrayBuffer()));
