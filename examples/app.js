@@ -61,6 +61,14 @@ app.get('/gatekeeper/projects/de554b81-e4a3-4759-96ec-0abf942be72c/traces/1a85b2
     response.send(`This is the data stream for ${request.query.dataType || 'raw'}`);
 });
 
+app.put('/gatekeeper/projects/de554b81-e4a3-4759-96ec-0abf942be72c/traces/1a85b2d2-972a-4131-86f7-f55b61b19158:0-0-10-3/tags/hello', (request, response) => {
+    response.send();
+});
+
+app.delete('/gatekeeper/projects/de554b81-e4a3-4759-96ec-0abf942be72c/traces/1a85b2d2-972a-4131-86f7-f55b61b19158:0-0-10-3/tags/world', (request, response) => {
+    response.send();
+});
+
 app.get('/gatekeeper/session/whoami', (request, response) => {
     response.json(require('./mocks/whoami.json'));
 });

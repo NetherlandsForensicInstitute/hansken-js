@@ -32,7 +32,7 @@ class SessionManager {
         return window.fetch(`${base}${path}`, request)
             .then((response) => {
                 const contentType = response.headers.get('Content-Type');
-                if (response.status === 401 || (response.status === 200 && contentType.indexOf('text/html') === 0)) {
+                if (response.status === 401 || (response.status === 200 && contentType && contentType.indexOf('text/html') === 0)) {
                     const clone = response.clone();
                     return response.text()
                         .then((text) => {
