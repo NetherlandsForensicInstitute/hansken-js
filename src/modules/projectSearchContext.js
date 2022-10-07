@@ -1,5 +1,6 @@
 import { SessionManager } from './sessionManager.js';
 
+const SEARCH_AFTER_BATCH_SIZE = 180;
 class ProjectSearchContext {
 
     /**
@@ -111,7 +112,7 @@ class ProjectSearchContext {
     /**
      * Search for traces in a project.
      *
-     * @param {string|object} request The query as an HQL query string, or the full REST request for the /search
+     * @param {string|object} request The query as an HQL human query string, or the full REST request for the /search
      * @param {function} callback When provided, all trace results are fed to the callback. This can be used to process large trace results, as the JSON parsing is streaming
      * @returns A promise with the trace result. Note that when given a callback, the traces array in the search result is empty
      */
@@ -130,6 +131,56 @@ class ProjectSearchContext {
             },
             body: JSON.stringify(searchRequest)
         }).then(SessionManager.json);
+    };
+
+    #searchAfter = (searchRequest, query, callback, uid) => {
+        if (uid) {
+            searchRequest.query.human = `${query} uid>'${uid}'`;
+        }
+
+        return this.sessionManager.gatekeeper(`/projects/${this.collectionId}/traces/search`, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                ...this.customProjectHeaders
+            },
+            body: JSON.stringify(searchRequest)
+        })
+        .then(SessionManager.json)
+        .then((results) => {
+            results.traces.forEach(callback);
+
+            if (results.traces.length === SEARCH_AFTER_BATCH_SIZE) {
+                return this.#searchAfter(searchRequest, query, callback, results.traces[results.traces.length - 1].trace.uid);
+            }
+        })
+    };
+
+    /**
+     * A streaming implementation based on separate requests, using 'search after', a way to batch the search results.
+     * All separate search results are pushed to the callback.
+     *
+     * @param {string|object} request The query as an HQL human query string, or the full REST request for the /search
+     * @param {function} callback All trace results are fed to the callback
+     * @returns An empty promise
+     */
+    tracesAfter = (request = '', callback) => {
+        if (!callback) {
+            throw 'Expected callback';
+        }
+        if (typeof request !== 'object' || !request.query || !request.query.human) {
+            throw 'Search after is currenly only supported for HQL human queries';
+        }
+
+        const searchRequest = typeof request === 'string' ? {query: {human: request}} : request;
+        searchRequest.count = SEARCH_AFTER_BATCH_SIZE;
+        searchRequest.sort = [{
+            field: 'uid',
+            direction: 'ascending'
+        }];
+
+        return this.#searchAfter(searchRequest, searchRequest.query.human, callback);
     };
 }
 
