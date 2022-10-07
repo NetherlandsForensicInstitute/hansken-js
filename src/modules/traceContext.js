@@ -41,16 +41,16 @@ class TraceContext {
      * Add a tag to this trace.
      *
      * @param {string} tag Text to be added as tag, usually a single word
-     * @param {boolean} refresh Default set to `true` to refresh the project index after the tag is added.
+     * @param {boolean} options.refresh Default set to `true` to refresh the project index after the tag is added.
      *     This makes sure the tag is directly searchable, but is also slower for larger add operations.
      *     In case of large amounts of add operations, it is better to set refresh to `false` and let Hansken decide when the index should be refreshed or call refresh on the last added tag.
      * @returns The promise of the response
      */
-    addTag = (tag, refresh = true) => {
+    addTag = (tag, options = {refresh: true}) => {
         return this.sessionManager.gatekeeper(`/projects/${this.collectionId}/traces/${this.traceUid.traceUid}/tags/${window.encodeURIComponent(tag)}`, {
             method: 'PUT',
             headers: {
-                'Hansken-Project-Refresh': refresh ? 'refresh' : 'no-refresh',
+                'Hansken-Project-Refresh': options.refresh ? 'refresh' : 'no-refresh',
                 ...this.customProjectHeaders
             }
         });
@@ -60,16 +60,16 @@ class TraceContext {
      * Remove a tag from this trace.
      *
      * @param {string} tag Text to be removed as tag, usually a single word
-     * @param {boolean} refresh Default set to `true` to refresh the project index after the tag is removed.
+     * @param {boolean} options.refresh Default set to `true` to refresh the project index after the tag is removed.
      *     This makes sure the tag is directly removed from the search results, but is also slower for larger remove operations.
      *     In case of large amounts of remove operations, it is better to set refresh to `false` and let Hansken decide when the index should be refreshed or call refresh on the last removed tag.
      * @returns The promise of the response
      */
-    removeTag = (tag, refresh = true) => {
+    removeTag = (tag, options = {refresh: true}) => {
         return this.sessionManager.gatekeeper(`/projects/${this.collectionId}/traces/${this.traceUid.traceUid}/tags/${window.encodeURIComponent(tag)}`, {
             method: 'DELETE',
             headers: {
-                'Hansken-Project-Refresh': refresh ? 'refresh' : 'no-refresh',
+                'Hansken-Project-Refresh': options.refresh ? 'refresh' : 'no-refresh',
                 ...this.customProjectHeaders
             }
         });
