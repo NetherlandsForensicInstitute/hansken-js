@@ -48,7 +48,6 @@ class TraceContext {
      * @returns The promise of the response
      */
     addTag = (tag, {refresh = true} = {}) => {
-        console.log(refresh);
         return this.sessionManager.gatekeeper(`/projects/${this.collectionId}/traces/${this.traceUid.traceUid}/tags/${window.encodeURIComponent(tag)}`, {
             method: 'PUT',
             headers: {
@@ -69,7 +68,6 @@ class TraceContext {
      * @returns The promise of the response
      */
     removeTag = (tag, {refresh = true} = {}) => {
-        console.log(refresh);
         return this.sessionManager.gatekeeper(`/projects/${this.collectionId}/traces/${this.traceUid.traceUid}/tags/${window.encodeURIComponent(tag)}`, {
             method: 'DELETE',
             headers: {
