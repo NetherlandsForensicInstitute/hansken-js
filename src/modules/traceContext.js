@@ -43,11 +43,11 @@ class TraceContext {
      * @param {string} tag Text to be added as tag, usually a single word
      * @returns The promise of the response
      */
-    addTag = (tag) => {
+    addTag = (tag, refresh = true) => {
         return this.sessionManager.gatekeeper(`/projects/${this.collectionId}/traces/${this.traceUid.traceUid}/tags/${window.encodeURIComponent(tag)}`, {
             method: 'PUT',
             headers: {
-                'Hansken-Project-Refresh': 'refresh',
+                'Hansken-Project-Refresh': refresh ? 'refresh' : 'no-refresh',
                 ...this.customProjectHeaders
             }
         });
@@ -59,11 +59,11 @@ class TraceContext {
      * @param {string} tag Text to be removed as tag, usually a single word
      * @returns The promise of the response
      */
-    removeTag = (tag) => {
+    removeTag = (tag, refresh = true) => {
         return this.sessionManager.gatekeeper(`/projects/${this.collectionId}/traces/${this.traceUid.traceUid}/tags/${window.encodeURIComponent(tag)}`, {
             method: 'DELETE',
             headers: {
-                'Hansken-Project-Refresh': 'refresh',
+                'Hansken-Project-Refresh': refresh ? 'refresh' : 'no-refresh',
                 ...this.customProjectHeaders
             }
         });

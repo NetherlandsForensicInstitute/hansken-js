@@ -6,6 +6,6 @@
     const traceUid = '1a85b2d2-972a-4131-86f7-f55b61b19158:0-0-10-3';
 
     const traceContext = hansken.project(projectId).trace(traceUid);
-    traceContext.addTag('hello');
+    traceContext.addTag('hello', false);
     traceContext.removeTag('world');
 </script>
