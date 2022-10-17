@@ -228,7 +228,7 @@ define('modules/sessionManager.js',["exports", "./keyManager.js", "./sessionCont
       return window.fetch("".concat(base).concat(path), request).then(function (response) {
         var contentType = response.headers.get('Content-Type');
 
-        if (response.status === 401 || response.status === 200 && contentType.indexOf('text/html') === 0) {
+        if (response.status === 401 || response.status === 200 && contentType && contentType.indexOf('text/html') === 0) {
           var clone = response.clone();
           return response.text().then(function (text) {
             if (text.indexOf('SAMLRequest') !== -1) {
@@ -697,6 +697,32 @@ define('modules/traceContext.js',["exports", "./traceUid.js"], function (_export
       });
     });
 
+    _defineProperty(this, "addTag", function (tag) {
+      var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+          _ref$refresh = _ref.refresh,
+          refresh = _ref$refresh === void 0 ? true : _ref$refresh;
+
+      return _this.sessionManager.gatekeeper("/projects/".concat(_this.collectionId, "/traces/").concat(_this.traceUid.traceUid, "/tags/").concat(window.encodeURIComponent(tag)), {
+        method: 'PUT',
+        headers: _objectSpread({
+          'Hansken-Project-Refresh': refresh ? 'refresh' : 'no-refresh'
+        }, _this.customProjectHeaders)
+      });
+    });
+
+    _defineProperty(this, "removeTag", function (tag) {
+      var _ref2 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+          _ref2$refresh = _ref2.refresh,
+          refresh = _ref2$refresh === void 0 ? true : _ref2$refresh;
+
+      return _this.sessionManager.gatekeeper("/projects/".concat(_this.collectionId, "/traces/").concat(_this.traceUid.traceUid, "/tags/").concat(window.encodeURIComponent(tag)), {
+        method: 'DELETE',
+        headers: _objectSpread({
+          'Hansken-Project-Refresh': refresh ? 'refresh' : 'no-refresh'
+        }, _this.customProjectHeaders)
+      });
+    });
+
     this.sessionManager = sessionManager;
     this.collectionId = collectionId;
     this.traceUid = typeof traceUid === 'string' ? _traceUid.TraceUid.fromString(traceUid) : traceUid;
@@ -708,6 +734,7 @@ define('modules/traceContext.js',["exports", "./traceUid.js"], function (_export
    * @param {string} dataType The name of the data stream, as described in the trace, e.g. 'raw', 'text', 'ocr'
    * @param {number} start Optional: The start of a subrange, inclusive. See spec https://tools.ietf.org/html/rfc7233#section-2.1
    * @param {number} end Optional: The end of a subrange, inclusive. See spec https://tools.ietf.org/html/rfc7233#section-2.1
+   * @returns The data in an array buffer
    */
   );
 
