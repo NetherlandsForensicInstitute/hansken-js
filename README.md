@@ -1,5 +1,4 @@
 # Hansken Javascript Client
-Work in progress
 
 ## Installation
 Install via NPM:
@@ -22,3 +21,15 @@ hansken.projects().then((projects) => {
 
 ## Examples
 Start examples with `node examples/app.js`
+
+# Development
+```
+nvm install 14.21.3
+npm install --global gulp@4.0.2
+```
+
+Start demo server:
+`node examples/app.js`
+
+Build project:
+`gulp`
