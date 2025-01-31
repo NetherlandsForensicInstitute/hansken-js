@@ -68,7 +68,12 @@ class SessionManager {
                             return clone;
                         });
                 }
-                return response;
+
+                if (response.status >= 200 && response.status < 300) {
+                    return response;
+                } else {
+                    return Promise.reject(response);
+                }
             });
     };
 
@@ -138,7 +143,7 @@ class SessionManager {
      * @returns json as object or a rejected Promise when the response status was not 2xx or the Content-Type was not application/json
      */
     static json = (response) => {
-        if (response.status < 200 || response.status >= 300 || response.headers.get('Content-Type').indexOf('application/json') !== 0) {
+        if (response.status < 200 || response.status >= 300 || !response.headers.get('Content-Type').startsWith('application/json')) {
             return Promise.reject(response);
         }
         return response.json();

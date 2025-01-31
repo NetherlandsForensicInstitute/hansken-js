@@ -30,7 +30,7 @@ class KeyManager {
                 method: 'GET'
             }))
             .then((response) => {
-                if (response.status !== 200 || response.headers.get('Content-Type') !== 'text/plain') {
+                if (response.status !== 200 || !(response.headers.get('Content-Type') === 'text/plain' || response.headers.get('Content-Type').startsWith('text/plain;'))) {
                     // Key not found or other error, reject
                     return Promise.reject();
                 }
