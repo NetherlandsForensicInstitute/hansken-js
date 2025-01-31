@@ -77,6 +77,11 @@ app.get('/keystore/session/whoami', (request, response) => {
     response.json(require('./mocks/whoami.json'));
 });
 
+app.get('/keystore/entries/1a85b2d2-972a-4131-86f7-f55b61b19158/user@keycloak.dev.local', (request, response) => {
+    response.set('Content-Type', 'text/plain');
+    response.send('uiv9w4KbgXE1SnYRMhvuI0q3nxRyxG2pwz/12tbJeno=');
+});
+
 app.listen(port, () => {
     console.log(`Example server started at http://localhost:${port}`);
 });
