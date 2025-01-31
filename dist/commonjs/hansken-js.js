@@ -352,7 +352,7 @@ function KeyManager(sessionManager) {
         method: 'GET'
       });
     }).then(function (response) {
-      if (response.status !== 200 || response.headers.get('Content-Type') !== 'text/plain') {
+      if (response.status !== 200 || !(response.headers.get('Content-Type') === 'text/plain' || response.headers.get('Content-Type').startsWith('text/plain;'))) {
         // Key not found or other error, reject
         return Promise.reject();
       }
@@ -1045,7 +1045,11 @@ function SessionManager(gatekeeperUrl, keystoreUrl) {
         });
       }
 
-      return response;
+      if (response.status >= 200 && response.status < 300) {
+        return response;
+      } else {
+        return Promise.reject(response);
+      }
     });
   });
 
@@ -1099,7 +1103,7 @@ function _login(base, entityID) {
 }
 
 _defineProperty(SessionManager, "json", function (response) {
-  if (response.status < 200 || response.status >= 300 || response.headers.get('Content-Type').indexOf('application/json') !== 0) {
+  if (response.status < 200 || response.status >= 300 || !response.headers.get('Content-Type').startsWith('application/json')) {
     return Promise.reject(response);
   }
 
